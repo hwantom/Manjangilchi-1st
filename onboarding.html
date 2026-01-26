@@ -256,112 +256,33 @@
     };
 
     const getRecommendations = async (selection, storeList, lang) => {
-      // 1. API 키 확인 (파일 상단에 선언된 API_KEY 사용)
-      if (!API_KEY || API_KEY.includes("YOUR_API")) {
-        return { data: [], error: "API 키를 설정해주세요." };
-      }
-
-      // 2. 프롬프트 구성
-      // 최적화: 불필요한 공백 제거 및 토큰 절약형 포맷
+      // 1. 프롬프트 구성
       const storeListText = storeList.map(s => `${s.name}(${s.category})`).join(',');
       const prompt = `통인시장 상점목록: ${storeListText}
 사용자: 목적-${selection.purpose}, 동행-${selection.companion}, 관심-${selection.interests.join(',')}, 선호-${selection.preference}
 위 목록에서 가장 적합한 4곳을 골라 JSON으로 답해줘. 답변 언어: ${lang}. 형식: [{ "name": "상점명", "description": "한줄추천이유" }]`;
 
       try {
-        // 3. SDK 대신 직접 호출 (ListModels로 사용 가능 모델 확인 후 호출)
-        const normalizeModelName = (name) => name.replace(/^models\//, '');
-        const callGemini = async (apiVersion, modelName) => {
-          const normalized = normalizeModelName(modelName);
-          const url = `https://generativelanguage.googleapis.com/${apiVersion}/models/${normalized}:generateContent?key=${API_KEY}`;
-          const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ role: 'user', parts: [{ text: prompt }] }],
-              generationConfig: { responseMimeType: "application/json" }
-            })
-          });
+        // 2. Netlify Function (Proxy) 호출
+        // 배포 환경과 로컬 환경 모두 대응하기 위해 절대 경로 사용 (실제 배포 시 /.netlify/functions/... 가 됩니다)
+        const response = await fetch('/.netlify/functions/recommend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
 
-          const bodyText = await response.text();
-          let bodyJson = null;
-          try { bodyJson = JSON.parse(bodyText); } catch { }
+        const result = await response.json();
 
-          if (!response.ok) {
-            const msg = bodyJson?.error?.message || bodyJson?.message || bodyText || 'API 호출 실패';
-            const error = new Error(msg);
-            error.status = response.status;
-            error.url = url;
-            error.body = bodyJson || bodyText;
-            throw error;
-          }
-
-          return bodyJson;
-        };
-
-        const listModels = async (apiVersion) => {
-          const url = `https://generativelanguage.googleapis.com/${apiVersion}/models?key=${API_KEY}`;
-          const response = await fetch(url);
-          const bodyText = await response.text();
-          let bodyJson = null;
-          try { bodyJson = JSON.parse(bodyText); } catch { }
-          if (!response.ok) {
-            const msg = bodyJson?.error?.message || bodyJson?.message || bodyText || 'ListModels 실패';
-            const error = new Error(msg);
-            error.status = response.status;
-            error.url = url;
-            error.body = bodyJson || bodyText;
-            throw error;
-          }
-          return bodyJson?.models || [];
-        };
-
-        const pickModel = (models) => {
-          const preferred = [
-            'models/gemini-1.5-flash-8b', // 최우선: 가장 빠름
-            'models/gemini-1.5-flash',
-            'models/gemini-1.5-flash-001',
-            'models/gemini-1.5-pro'
-          ];
-          const supportsGenerate = (m) => (m.supportedGenerationMethods || []).includes('generateContent');
-          const available = models.filter(supportsGenerate);
-          for (const name of preferred) {
-            const match = available.find(m => m.name === name);
-            if (match) return match.name;
-          }
-          return available[0]?.name || '';
-        };
-
-        const apiVersions = ['v1', 'v1beta'];
-        let result = null;
-        let lastError = null;
-
-        for (const apiVersion of apiVersions) {
-          try {
-            const models = await listModels(apiVersion);
-            const picked = pickModel(models);
-            if (!picked) {
-              throw new Error(`사용 가능한 모델을 찾지 못했습니다 (${apiVersion})`);
-            }
-            result = await callGemini(apiVersion, picked);
-            if (result) break;
-          } catch (err) {
-            lastError = err;
-            console.error(`Gemini Direct Call Error (${apiVersion}):`, err);
-          }
-          if (result) break;
+        if (!response.ok) {
+          throw new Error(result.error || '추천을 불러오지 못했습니다.');
         }
 
-        if (!result) {
-          throw lastError || new Error('API 호출 실패');
-        }
-
+        // 3. 응답 데이터 변환 (Gemini 응답 구조 처리)
         const rawText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!rawText) {
-          throw new Error('응답 텍스트를 찾을 수 없습니다');
+          throw new Error('응답 텍스트를 찾을 수 없습니다.');
         }
 
-        // JSON 파싱 및 데이터 변환
         const parsed = JSON.parse(rawText.replace(/```json|```/g, "").trim());
         const items = parsed.map((item, index) => ({
           id: `gen-${Date.now()}-${index}`,
@@ -373,7 +294,7 @@
         return { data: items, error: "" };
 
       } catch (error) {
-        console.error("Gemini Direct Call Error:", error);
+        console.error("Recommendation Error:", error);
         return { data: [], error: error.message || '추천을 불러오지 못했습니다' };
       }
     };

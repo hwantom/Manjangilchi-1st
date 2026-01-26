@@ -19,22 +19,24 @@
 > **설명**: `node generate-config.js` 명령어는 배포 전에 환경 변수를 읽어 `config.js` 파일을 뚝딱 만들어주는 역할을 합니다.
 
 ## 4. Environment variables (환경 변수 설정)
-**"Add environment variables"** 버튼을 누르고, `config.js`에 있던 값들을 하나씩 추가해줍니다.
+**"Add environment variables"** 버튼을 누르고, 아래 값들을 추가해줍니다.
 
-| Key | Value (값) |
-| :--- | :--- |
-| `GOOGLE_MAPS_API_KEY` | (Google Maps API 키 입력) |
-| `MAP_ID` | `8fbca58624e4405a846adbea` |
-| `GEMINI_API_KEY` | (Gemini API 키 입력) |
-| `SHEET_ID` | (Google Sheet ID 입력) |
+| Key | Value (값) | 용도 |
+| :--- | :--- | :--- |
+| `GEMINI_API_KEY` | (Gemini API 키 입력) | 서버(Functions)에서 API 호출 시 사용 |
+| `GOOGLE_MAPS_API_KEY` | (Google Maps API 키 입력) | 지도 표시용 (config.js 생성용) |
+| `MAP_ID` | `8fbca58624e4405a846adbea` | 지도 스타일 ID |
+| `SHEET_ID` | (Google Sheet ID 입력) | 구글 시트 데이터 연동 |
 
 *값은 `config.js` 파일에 있는 내용 그대로 복사해서 넣으시면 됩니다.*
 
 ## 5. 배포 시작 (Deploy)
-모든 설정이 끝났으면 **Deploy** 버튼을 누르세요. 잠시 후 배포가 완료되면 사이트 주소가 생성됩니다.
+모든 설정이 끝났으면 **Deploy** 버튼을 누르세요. 
+
+> **보안 알림**: 이제 추천 기능은 `netlify/functions/recommend.js`를 통해 실행됩니다. 이 방식은 브라우저에 API 키가 절대 노출되지 않으므로 안심하고 사용하셔도 됩니다.
 
 ---
 
 ### ⚠️ 주의사항
-*   **Google Maps API 키 보안**: Google Cloud Console에서 API 키 설정을 통해 **'HTTP 리퍼러 제한'**을 걸어두는 것을 강력 추천합니다. Netlify에서 생성된 도메인(예: `your-site.netlify.app`)만 허용하도록 설정하세요.
-*   **Gemini API 키 보안**: 이 방식은 API 키가 브라우저에 노출될 수밖에 없습니다. 서비스가 커지면 백엔드 서버를 통해 호출하도록 구조를 변경해야 합니다. 현재 단계에서는 API 사용량 제한(Quota)을 걸어두는 것이 좋습니다.
+*   **Gemini API 보안**: 이제 API 키가 서버 사이드에서만 관리되므로 훨씬 안전합니다. 
+*   **Google Maps API 키 보안**: Google Cloud Console에서 **'HTTP 리퍼러 제한'**을 꼭 설정하세요. Netlify 주소(예: `*.netlify.app`)만 허용하도록 지정하면 키 도용을 막을 수 있습니다.
