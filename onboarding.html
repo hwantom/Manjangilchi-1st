@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tongin Market Guide</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#FAFBFC',
+              ink: '#1A1A1B',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    ::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18.2.0",
+        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client?deps=react@18.2.0",
+        "@google/generative-ai": "https://esm.sh/@google/generative-ai",
+        "lucide-react": "https://esm.sh/lucide-react@0.344.0?deps=react@18.2.0"
+      }
+    }
+    </script>
+  <script src="config.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-type="module">
+    import React, { useState, useCallback, useEffect } from 'react';
+    import ReactDOM from 'react-dom/client';
+    import { MapPin, Users, Utensils, Zap, Search, Globe, User, Heart } from 'lucide-react';
+
+    // --- Types & Constants ---
+    const API_KEY = AppConfig.GEMINI_API_KEY;
+    const SHEET_ID = AppConfig.SHEET_ID;
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv`;
+
+    const LOADING_MESSAGES = {
+      ko: ["만장일치가 딱 맞는 점포를 찾고 있어요..", "그거 아시나요? 통인시장은 엽전으로 구매할 수 있어요!", "통인시장의 기름떡볶이는 정말 유명해요!", "취향 분석 중...", "잠시만 기다려주세요..."],
+      en: ["Finding the perfect shop for you...", "Did you know? You can pay with Yeopjeon coins!", "Oil Tteokbokki is famous here!", "Analyzing preferences...", "Please wait a moment..."],
+      zh: ["正在为您寻找最合适的店铺...", "您知道吗？通仁市场可以使用铜钱支付！", "这里的油炒年糕非常有名！", "正在分析您的喜好...", "请稍候..."],
+      ja: ["あなたにぴったりの店舗を探しています...", "ご存知ですか？通仁市場ではヨプジョン（真鍮貨）で支払い可能です！", "通仁市場のキルムトッポッキは本当に有名です！", "好みを分析中...", "少々お待ちください..."]
+    };
+
+    const TRANSLATIONS = {
+      ko: {
+        title: "만장일치",
+        subTitle: "통인시장",
+        landingTitle: "통인시장을 어떻게 둘러볼까요?",
+        landingDesc: "원하는 방식을 선택해 주세요",
+        btnMap: "지도 보러가기",
+        btnRec: "점포 추천 받기",
+        step1Title: "오늘 통인시장을 찾은 이유는\n무엇인가요?",
+        step1Desc: "방문 목적을 선택해주세요",
+        step1Opts: ['먹거리', '시장 구경', '체험 • 선물', '추천받기'],
+        step2Title: "누구와 함께 오셨나요?",
+        step2Desc: "동행 형태를 선택해주세요",
+        step2Opts: [{ label: '혼자', icon: User }, { label: '친구', icon: Users }, { label: '연인', icon: Heart }, { label: '가족', icon: Users }],
+        step3Title: "지금 시장에서 가장 하고 싶은것은\n무엇인가요?",
+        step3Desc: "복수 선택 가능 (최대 3개까지)",
+        step3Opts: ['식사', '간식 • 디저트', '전통 먹거리', '구경 • 소품'],
+        step4Title: "어떤 방식으로 추천해드릴까요?",
+        step4Desc: "원하는 추천 방식을 선택해주세요",
+        step4Opts: [
+          { id: '핫플', label: '핫플', Icon: MapPin },
+          { id: '첫 방문', label: '첫 방문', Icon: Search },
+          { id: '숨은 맛집', label: '숨은 맛집', Icon: Utensils },
+          { id: '빠른 동선', label: '빠른 동선', Icon: Zap },
+        ],
+        recTitle: "당신에게 이런\n통인시장을 추천해요",
+        recLoading: "맞춤 상점을 찾는 중입니다...",
+        recRetry: "다시 시도",
+        recMapBtn: "지도에서 위치 보기",
+        recResetBtn: "추천 다시 고르기",
+        next: "다음"
+      },
+      en: {
+        title: "Manjanilchi",
+        subTitle: "Tongin Market",
+        landingTitle: "How would you like to explore?",
+        landingDesc: "Please select your preference",
+        btnMap: "View Map",
+        btnRec: "Get Recommendations",
+        step1Title: "What brings you to\nTongin Market today?",
+        step1Desc: "Select your purpose",
+        step1Opts: ['Food', 'Market Tour', 'Experience/Gift', 'Recommendation'],
+        step2Title: "Who are you with?",
+        step2Desc: "Select your companion",
+        step2Opts: [{ label: 'Solo', icon: User }, { label: 'Friends', icon: Users }, { label: 'Couple', icon: Heart }, { label: 'Family', icon: Users }],
+        step3Title: "What do you want to do\nmost right now?",
+        step3Desc: "Multiple selections allowed (Max 3)",
+        step3Opts: ['Meal', 'Snack/Dessert', 'Traditional Food', 'Sightseeing/Goods'],
+        step4Title: "How should we recommend?",
+        step4Desc: "Select your recommendation style",
+        step4Opts: [
+          { id: 'Hot Place', label: 'Hot Place', Icon: MapPin },
+          { id: 'First Visit', label: 'First Visit', Icon: Search },
+          { id: 'Hidden Gem', label: 'Hidden Gem', Icon: Utensils },
+          { id: 'Efficient', label: 'Efficient Route', Icon: Zap },
+        ],
+        recTitle: "We recommend these\nspots for you",
+        recLoading: "Finding custom shops...",
+        recRetry: "Try Again",
+        recMapBtn: "View on Map",
+        recResetBtn: "Start Over",
+        next: "Next"
+      },
+      zh: {
+        title: "万众一致",
+        subTitle: "通仁市场",
+        landingTitle: "您想如何游览通仁市场？",
+        landingDesc: "请选择您的方式",
+        btnMap: "查看地图",
+        btnRec: "获取店铺推荐",
+        step1Title: "您今天来通仁市场的\n理由是什么？",
+        step1Desc: "请选择访问目的",
+        step1Opts: ['美食', '逛市场', '体验 • 礼物', '求推荐'],
+        step2Title: "您和谁一起来的？",
+        step2Desc: "请选择同行人员",
+        step2Opts: [{ label: '独自', icon: User }, { label: '朋友', icon: Users }, { label: '情侣', icon: Heart }, { label: '家人', icon: Users }],
+        step3Title: "您现在最想做什么？",
+        step3Desc: "可多选（最多3个）",
+        step3Opts: ['正餐', '零食 • 甜点', '传统小吃', '参观 • 纪念品'],
+        step4Title: "希望如何为您推荐？",
+        step4Desc: "请选择推荐方式",
+        step4Opts: [
+          { id: '热门打卡', label: '热门打卡', Icon: MapPin },
+          { id: '首次访问', label: '首次访问', Icon: Search },
+          { id: '隐秘美食', label: '隐秘美食', Icon: Utensils },
+          { id: '高效路线', label: '高效路线', Icon: Zap },
+        ],
+        recTitle: "为您推荐以下\n通仁市场好去处",
+        recLoading: "正在寻找适合的店铺...",
+        recRetry: "重试",
+        recMapBtn: "在地图上查看位置",
+        recResetBtn: "重新推荐",
+        next: "下一步"
+      },
+      ja: {
+        title: "満場一致",
+        subTitle: "通仁市場",
+        landingTitle: "通仁市場をどう楽しみますか？",
+        landingDesc: "ご希望の方法を選んでください",
+        btnMap: "地図を見る",
+        btnRec: "店舗のおすすめ",
+        step1Title: "今日、通仁市場に来た\n理由は何ですか？",
+        step1Desc: "訪問目的を選んでください",
+        step1Opts: ['グルメ', '市場巡り', '体験・ギフト', 'おすすめ'],
+        step2Title: "どなたと一緒に来ましたか？",
+        step2Desc: "同行者を選んでください",
+        step2Opts: [{ label: '一人', icon: User }, { label: '友達', icon: Users }, { label: '恋人', icon: Heart }, { label: '家族', icon: Users }],
+        step3Title: "今、一番したいことは\n何ですか？",
+        step3Desc: "複数選択可能（最大3つ）",
+        step3Opts: ['食事', '軽食・デザート', '伝統料理', '観光・雑貨'],
+        step4Title: "どのようにおすすめしましょうか？",
+        step4Desc: "おすすめのスタイルを選んでください",
+        step4Opts: [
+          { id: 'ホットプレイス', label: '人気店', Icon: MapPin },
+          { id: '初訪問', label: '初訪問', Icon: Search },
+          { id: '隠れた名店', label: '隠れた名店', Icon: Utensils },
+          { id: '効率重視', label: '効率ルート', Icon: Zap },
+        ],
+        recTitle: "あなたにこんな\n通仁市場をおすすめします",
+        recLoading: "ぴったりの店舗を探しています...",
+        recRetry: "再試行",
+        recMapBtn: "地図で位置を見る",
+        recResetBtn: "選び直す",
+        next: "次へ"
+      }
+    };
+
+    const Step = {
+      LANDING: 0,
+      PURPOSE: 1,
+      COMPANION: 2,
+      INTEREST: 3,
+      PREFERENCE: 4,
+      RECOMMENDATION: 5,
+    };
+
+    const TOTAL_STEPS = 4;
+
+    // --- Service ---
+    const parseCSV = (text) => {
+      if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+      const rows = text.split('\n').filter(line => line.trim());
+      const parsedRows = rows.map(line => {
+        const parts = []; let current = ''; let inQuote = false;
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"') { inQuote = !inQuote; continue; }
+          if (char === ',' && !inQuote) { parts.push(current.trim()); current = ''; continue; }
+          current += char;
+        }
+        parts.push(current.trim());
+        return parts;
+      });
+      const cleaned = parsedRows.map(row => row.map(cell => cell.replace(/\r/g, '').trim()));
+      const header = cleaned[0];
+      if (!header) return [];
+      return cleaned.slice(1).map(row => {
+        const obj = {};
+        header.forEach((h, i) => { obj[h] = row[i]; });
+        return obj;
+      });
+    };
+
+    const fetchStoreList = async () => {
+      try {
+        const res = await fetch(CSV_URL);
+        const text = await res.text();
+        const rawData = parseCSV(text);
+        if (!rawData.length) return [];
+        const getVal = (row, keys) => {
+          for (const key of keys) {
+            const lowerKey = key.toLowerCase();
+            const actualKey = Object.keys(row).find(k => k.toLowerCase() === lowerKey);
+            if (actualKey && row[actualKey]) return row[actualKey].trim();
+          }
+          return "";
+        };
+        const stores = rawData.map(row => ({
+          name: getVal(row, ['name', '점포명']),
+          description: getVal(row, ['description', 'shortDesc', '설명']),
+          category: getVal(row, ['category', '분류'])
+        })).filter(s => s.name);
+        return stores;
+      } catch (error) {
+        console.error("Store list fetch failed:", error);
+        return [];
+      }
+    };
+
+    const getRecommendations = async (selection, storeList, lang) => {
+      // 1. API 키 확인 (파일 상단에 선언된 API_KEY 사용)
+      if (!API_KEY || API_KEY.includes("YOUR_API")) {
+        return { data: [], error: "API 키를 설정해주세요." };
+      }
+
+      // 2. 프롬프트 구성
+      // 최적화: 불필요한 공백 제거 및 토큰 절약형 포맷
+      const storeListText = storeList.map(s => `${s.name}(${s.category})`).join(',');
+      const prompt = `통인시장 상점목록: ${storeListText}
+사용자: 목적-${selection.purpose}, 동행-${selection.companion}, 관심-${selection.interests.join(',')}, 선호-${selection.preference}
+위 목록에서 가장 적합한 4곳을 골라 JSON으로 답해줘. 답변 언어: ${lang}. 형식: [{ "name": "상점명", "description": "한줄추천이유" }]`;
+
+      try {
+        // 3. SDK 대신 직접 호출 (ListModels로 사용 가능 모델 확인 후 호출)
+        const normalizeModelName = (name) => name.replace(/^models\//, '');
+        const callGemini = async (apiVersion, modelName) => {
+          const normalized = normalizeModelName(modelName);
+          const url = `https://generativelanguage.googleapis.com/${apiVersion}/models/${normalized}:generateContent?key=${API_KEY}`;
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ role: 'user', parts: [{ text: prompt }] }],
+              generationConfig: { responseMimeType: "application/json" }
+            })
+          });
+
+          const bodyText = await response.text();
+          let bodyJson = null;
+          try { bodyJson = JSON.parse(bodyText); } catch { }
+
+          if (!response.ok) {
+            const msg = bodyJson?.error?.message || bodyJson?.message || bodyText || 'API 호출 실패';
+            const error = new Error(msg);
+            error.status = response.status;
+            error.url = url;
+            error.body = bodyJson || bodyText;
+            throw error;
+          }
+
+          return bodyJson;
+        };
+
+        const listModels = async (apiVersion) => {
+          const url = `https://generativelanguage.googleapis.com/${apiVersion}/models?key=${API_KEY}`;
+          const response = await fetch(url);
+          const bodyText = await response.text();
+          let bodyJson = null;
+          try { bodyJson = JSON.parse(bodyText); } catch { }
+          if (!response.ok) {
+            const msg = bodyJson?.error?.message || bodyJson?.message || bodyText || 'ListModels 실패';
+            const error = new Error(msg);
+            error.status = response.status;
+            error.url = url;
+            error.body = bodyJson || bodyText;
+            throw error;
+          }
+          return bodyJson?.models || [];
+        };
+
+        const pickModel = (models) => {
+          const preferred = [
+            'models/gemini-1.5-flash-8b', // 최우선: 가장 빠름
+            'models/gemini-1.5-flash',
+            'models/gemini-1.5-flash-001',
+            'models/gemini-1.5-pro'
+          ];
+          const supportsGenerate = (m) => (m.supportedGenerationMethods || []).includes('generateContent');
+          const available = models.filter(supportsGenerate);
+          for (const name of preferred) {
+            const match = available.find(m => m.name === name);
+            if (match) return match.name;
+          }
+          return available[0]?.name || '';
+        };
+
+        const apiVersions = ['v1', 'v1beta'];
+        let result = null;
+        let lastError = null;
+
+        for (const apiVersion of apiVersions) {
+          try {
+            const models = await listModels(apiVersion);
+            const picked = pickModel(models);
+            if (!picked) {
+              throw new Error(`사용 가능한 모델을 찾지 못했습니다 (${apiVersion})`);
+            }
+            result = await callGemini(apiVersion, picked);
+            if (result) break;
+          } catch (err) {
+            lastError = err;
+            console.error(`Gemini Direct Call Error (${apiVersion}):`, err);
+          }
+          if (result) break;
+        }
+
+        if (!result) {
+          throw lastError || new Error('API 호출 실패');
+        }
+
+        const rawText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!rawText) {
+          throw new Error('응답 텍스트를 찾을 수 없습니다');
+        }
+
+        // JSON 파싱 및 데이터 변환
+        const parsed = JSON.parse(rawText.replace(/```json|```/g, "").trim());
+        const items = parsed.map((item, index) => ({
+          id: `gen-${Date.now()}-${index}`,
+          name: item.name,
+          description: item.description,
+          checked: false
+        }));
+
+        return { data: items, error: "" };
+
+      } catch (error) {
+        console.error("Gemini Direct Call Error:", error);
+        return { data: [], error: error.message || '추천을 불러오지 못했습니다' };
+      }
+    };
+
+    // --- Components ---
+
+    const Layout = ({ children, step, totalSteps, title, showProgress = true, lang, setLang }) => {
+      const progressPercentage = (step / totalSteps) * 100;
+      const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+      const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+      const changeLang = (l) => {
+        setLang(l);
+        setIsMenuOpen(false);
+      };
+
+      const langLabels = { ko: '한국어', en: 'English', zh: '中文', ja: '日本語' };
+
+      return (
+        <div className="min-h-screen bg-gray-50 flex justify-center">
+          <div className="w-full max-w-md bg-white min-h-screen shadow-lg flex flex-col relative">
+            <header className="px-6 pt-6 pb-2 flex justify-between items-center bg-white z-10 relative">
+              <div className="text-gray-500 text-sm font-medium">
+                {showProgress && step > 0 && step <= totalSteps ? `Step ${step} / ${totalSteps}` : ''}
+                {!showProgress && title && <span className="text-lg font-bold text-gray-800">{title}</span>}
+              </div>
+
+              <div className="relative">
+                <button onClick={toggleMenu} className="p-1 rounded-full hover:bg-gray-100 transition-colors">
+                  <Globe className="text-[#A68A64] w-6 h-6" />
+                </button>
+
+                {isMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50">
+                    {Object.entries(langLabels).map(([key, label]) => (
+                      <button
+                        key={key}
+                        onClick={() => changeLang(key)}
+                        className={`w-full text-left px-4 py-3 text-sm font-medium hover:bg-gray-50 transition-colors ${lang === key ? 'text-[#A68A64] bg-[#FDFBF7]' : 'text-gray-600'}`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </header>
+
+            {showProgress && step > 0 && step <= totalSteps && (
+              <div className="px-6 pb-6">
+                <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[#A68A64] transition-all duration-300 ease-out"
+                    style={{ width: `${progressPercentage}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
+
+            <main className="flex-1 px-6 pb-24 overflow-y-auto">
+              {children}
+            </main>
+          </div>
+        </div>
+      );
+    };
+
+    const SelectionButton = ({ selected, onClick, children, className = "" }) => {
+      return (
+        <button
+          onClick={onClick}
+          className={`
+              w-full aspect-square flex flex-col items-center justify-center rounded-2xl border transition-all duration-200
+              ${selected
+              ? 'border-[#A68A64] bg-[#FDFBF7] text-[#A68A64] ring-1 ring-[#A68A64]'
+              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+            }
+              ${className}
+            `}
+        >
+          {children}
+        </button>
+      );
+    };
+
+    const NextButton = ({ onClick, disabled = false, label = "다음", variant = 'secondary' }) => {
+      const baseClasses = "w-full py-4 rounded-xl font-medium text-lg transition-colors";
+      const variants = {
+        primary: "bg-[#A68A64] text-white hover:bg-[#8D7350]",
+        secondary: "bg-[#E6E0D4] text-gray-700 hover:bg-[#D9D1C1] disabled:opacity-50 disabled:cursor-not-allowed"
+      };
+
+      return (
+        <div className="fixed bottom-0 w-full max-w-md bg-white p-6 border-t border-gray-50 left-0 right-0 mx-auto">
+          <button
+            onClick={onClick}
+            disabled={disabled}
+            className={`${baseClasses} ${variants[variant]}`}
+          >
+            {label}
+          </button>
+        </div>
+      );
+    };
+
+    // --- Main App Logic ---
+
+    const App = () => {
+      const [step, setStep] = useState(Step.LANDING);
+      const [lang, setLang] = useState(localStorage.getItem('tongin_lang') || 'ko');
+
+      const t = TRANSLATIONS[lang];
+
+      // Update localStorage when lang changes
+      useEffect(() => {
+        localStorage.setItem('tongin_lang', lang);
+      }, [lang]);
+
+      const [loading, setLoading] = useState(false);
+      const [recommendations, setRecommendations] = useState([]);
+      const [storeList, setStoreList] = useState([]);
+      const [errorMessage, setErrorMessage] = useState('');
+
+      // Loading State
+      const [progress, setProgress] = useState(0);
+      const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+
+      const [selection, setSelection] = useState({
+        purpose: '',
+        companion: '',
+        interests: [],
+        preference: ''
+      });
+
+      const handleNext = () => setStep(prev => prev + 1);
+      const handleReset = () => {
+        setSelection({ purpose: '', companion: '', interests: [], preference: '' });
+        setStep(Step.LANDING);
+        setRecommendations([]);
+      };
+
+      const updateSelection = (field, value) => {
+        setSelection(prev => ({ ...prev, [field]: value }));
+      };
+
+      const handleInterestToggle = (value) => {
+        setSelection(prev => {
+          const current = prev.interests;
+          if (current.includes(value)) return { ...prev, interests: current.filter(i => i !== value) };
+          if (current.length >= 3) return prev;
+          return { ...prev, interests: [...current, value] };
+        });
+      };
+
+      useEffect(() => {
+        let mounted = true;
+        fetchStoreList().then((list) => {
+          if (mounted) setStoreList(list);
+        }).catch(() => {
+          if (mounted) setErrorMessage('데이터를 불러오지 못했습니다. 다시 시도해주세요.');
+        });
+        return () => { mounted = false; };
+      }, []);
+
+      // Loading Effect
+      useEffect(() => {
+        if (!loading) return;
+        setProgress(0);
+        setCurrentMessageIndex(0);
+
+        const progressInterval = setInterval(() => {
+          setProgress(prev => {
+            if (prev >= 90) return prev;
+            const diff = Math.random() * 10;
+            return Math.min(prev + diff, 90);
+          });
+        }, 500);
+
+        const messageInterval = setInterval(() => {
+          setCurrentMessageIndex(prev => (prev + 1) % LOADING_MESSAGES[lang].length);
+        }, 2500);
+
+        return () => {
+          clearInterval(progressInterval);
+          clearInterval(messageInterval);
+        };
+      }, [loading, lang]);
+
+      const fetchRecommendations = useCallback(async () => {
+        setLoading(true);
+        setErrorMessage('');
+        setStep(Step.RECOMMENDATION);
+        const result = await getRecommendations(selection, storeList, lang);
+        if (result.error) {
+          setRecommendations([]);
+          setErrorMessage(result.error);
+        } else {
+          setRecommendations(result.data);
+        }
+        setLoading(false);
+      }, [selection, storeList, lang]);
+
+      // Rendering helpers
+      const renderLanding = () => (
+        <div className="h-full flex flex-col justify-between pt-8">
+          <div>
+            <h1 className="text-2xl font-bold mb-8">{t.title}</h1>
+            <div className="w-full h-64 bg-gray-200 rounded-2xl overflow-hidden mb-8 relative">
+              <img src="https://picsum.photos/800/800?grayscale" alt="Tongin Market" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
+                <span className="text-white font-bold text-3xl drop-shadow-md">{t.subTitle}</span>
+              </div>
+            </div>
+            <h2 className="text-xl font-bold mb-2">{t.landingTitle}</h2>
+            <p className="text-gray-500 text-sm">{t.landingDesc}</p>
+          </div>
+          <div className="space-y-3 mt-auto mb-6">
+            <button
+              onClick={() => { window.location.href = `index.html`; }}
+              className="w-full py-4 bg-[#E6E0D4] text-gray-700 rounded-xl font-medium"
+            >
+              {t.btnMap}
+            </button>
+            <button onClick={handleNext} className="w-full py-4 bg-[#A68A64] text-white rounded-xl font-medium">{t.btnRec}</button>
+          </div>
+        </div>
+      );
+
+      const renderStep1 = () => (
+        <React.Fragment>
+          <h2 className="text-xl font-bold mb-2 whitespace-pre-wrap">{t.step1Title}</h2>
+          <p className="text-gray-400 text-sm mb-8">{t.step1Desc}</p>
+          <div className="grid grid-cols-2 gap-4">
+            {t.step1Opts.map((item) => (
+              <SelectionButton key={item} selected={selection.purpose === item} onClick={() => updateSelection('purpose', item)}>
+                <span className="font-medium text-lg">{item}</span>
+              </SelectionButton>
+            ))}
+          </div>
+          <NextButton onClick={handleNext} disabled={!selection.purpose} label={t.next} />
+        </React.Fragment>
+      );
+
+      const renderStep2 = () => (
+        <React.Fragment>
+          <h2 className="text-xl font-bold mb-2">{t.step2Title}</h2>
+          <p className="text-gray-400 text-sm mb-8">{t.step2Desc}</p>
+          <div className="grid grid-cols-2 gap-4">
+            {t.step2Opts.map((item) => (
+              <SelectionButton key={item.label} selected={selection.companion === item.label} onClick={() => updateSelection('companion', item.label)}>
+                <div className="mb-2 text-[#A68A64]">
+                  <item.icon className="w-6 h-6" />
+                </div>
+                <span className="font-medium text-lg">{item.label}</span>
+              </SelectionButton>
+            ))}
+          </div>
+          <NextButton onClick={handleNext} disabled={!selection.companion} label={t.next} />
+        </React.Fragment>
+      );
+
+      const renderStep3 = () => (
+        <React.Fragment>
+          <h2 className="text-xl font-bold mb-2 whitespace-pre-wrap">{t.step3Title}</h2>
+          <p className="text-gray-400 text-sm mb-8">{t.step3Desc}</p>
+          <div className="grid grid-cols-2 gap-4">
+            {t.step3Opts.map((item) => (
+              <SelectionButton key={item} selected={selection.interests.includes(item)} onClick={() => handleInterestToggle(item)} className="aspect-[4/3]">
+                <span className="font-medium text-lg">{item}</span>
+              </SelectionButton>
+            ))}
+          </div>
+          <NextButton onClick={handleNext} disabled={selection.interests.length === 0} label={t.next} />
+        </React.Fragment>
+      );
+
+      const renderStep4 = () => (
+        <React.Fragment>
+          <h2 className="text-xl font-bold mb-2">{t.step4Title}</h2>
+          <p className="text-gray-400 text-sm mb-8">{t.step4Desc}</p>
+          <div className="grid grid-cols-2 gap-4">
+            {t.step4Opts.map((item) => (
+              <SelectionButton key={item.id} selected={selection.preference === item.id} onClick={() => updateSelection('preference', item.id)}>
+                <div className={`mb-3 ${selection.preference === item.id ? 'text-[#A68A64]' : 'text-gray-300'}`}>
+                  <item.Icon size={28} />
+                </div>
+                <span className="font-medium">{item.label}</span>
+              </SelectionButton>
+            ))}
+          </div>
+          <NextButton onClick={fetchRecommendations} disabled={!selection.preference} label={t.next} />
+        </React.Fragment>
+      );
+
+      const renderRecommendation = () => {
+        if (loading) {
+          return (
+            <div className="h-full flex flex-col items-center justify-center px-6">
+              <div className="w-full max-w-[240px] mb-8 relative">
+                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[#A68A64] transition-all duration-500 ease-out"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+                <p className="text-right text-xs text-[#A68A64] font-bold mt-2">{Math.round(progress)}%</p>
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2 text-center animate-pulse">
+                {LOADING_MESSAGES[lang][currentMessageIndex]}
+              </h3>
+            </div>
+          );
+        }
+
+        if (errorMessage) {
+          return (
+            <div className="h-full flex flex-col items-center justify-center space-y-4 text-center">
+              <p className="text-gray-600">{errorMessage}</p>
+              <button
+                onClick={fetchRecommendations}
+                className="px-5 py-2.5 rounded-lg bg-[#A68A64] text-white text-sm font-medium"
+              >
+                {t.recRetry}
+              </button>
+            </div>
+          );
+        }
+
+        const handleOpenMap = () => {
+          const selectedStore = recommendations.find((store) => store.checked);
+
+          // Auto-Favorites Logic
+          try {
+            const currentFavs = new Set(JSON.parse(localStorage.getItem('tongin_favs') || '[]'));
+            recommendations.forEach(r => currentFavs.add(r.name));
+            localStorage.setItem('tongin_favs', JSON.stringify(Array.from(currentFavs)));
+          } catch (e) { console.error("Auto-fav failed", e); }
+
+          if (!selectedStore) {
+            // 선택된게 없으면 첫번째 추천 상점으로 이동하거나 그냥 맵으로 이동
+            const target = recommendations[0]?.name;
+            window.location.href = target ? `index.html?open=${encodeURIComponent(target)}` : 'index.html';
+            return;
+          }
+          window.location.href = `index.html?open=${encodeURIComponent(selectedStore.name)}`;
+        };
+
+        return (
+          <div className="pb-32">
+            <h2 className="text-xl font-bold mb-8 whitespace-pre-wrap">{t.recTitle}</h2>
+            <div className="space-y-4">
+              {recommendations.map((store) => (
+                <div
+                  key={store.id}
+                  className="p-4 border border-gray-200 rounded-xl flex items-start gap-3 bg-white hover:border-[#A68A64] transition-colors cursor-pointer"
+                  onClick={() => setRecommendations(prev => prev.map(s => s.id === store.id ? { ...s, checked: !s.checked } : s))}
+                >
+                  <div className={`mt-1 w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${store.checked ? 'bg-[#A68A64] border-[#A68A64]' : 'border-gray-300'}`}>
+                    {store.checked && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-800 text-lg mb-1">[{store.name}]</h3>
+                    <p className="text-sm text-gray-500 leading-relaxed">{store.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto bg-white p-6 border-t border-gray-50 space-y-3 z-20">
+              <button
+                onClick={handleOpenMap}
+                className="w-full py-4 bg-[#A68A64] text-white rounded-xl font-medium"
+              >
+                {t.recMapBtn}
+              </button>
+              <button onClick={handleReset} className="w-full py-4 bg-[#E6E0D4] text-gray-700 rounded-xl font-medium">{t.recResetBtn}</button>
+            </div>
+          </div>
+        );
+      };
+
+      return (
+        <Layout
+          step={step}
+          totalSteps={TOTAL_STEPS}
+          title={step === Step.LANDING ? t.title : undefined}
+          showProgress={step !== Step.LANDING && step !== Step.RECOMMENDATION}
+          lang={lang}
+          setLang={setLang}
+        >
+          {step === Step.LANDING && renderLanding()}
+          {step === Step.PURPOSE && renderStep1()}
+          {step === Step.COMPANION && renderStep2()}
+          {step === Step.INTEREST && renderStep3()}
+          {step === Step.PREFERENCE && renderStep4()}
+          {step === Step.RECOMMENDATION && renderRecommendation()}
+        </Layout>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>

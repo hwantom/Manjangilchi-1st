@@ -1,0 +1,7 @@
+{
+  "name": "길찾기포함UI",
+  "description": "A modern, interactive guide map for Tongin Market, featuring store discovery, category filtering, and coin store location services.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "tongin-market-guide-vanilla",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A modern, interactive guide map for Tongin Market, as a single-file vanilla JS application.",
+  "scripts": {
+    "start": "echo \"Open index.html in your browser\"",
+    "build:css": "tailwindcss -i input.css -o style.css",
+    "watch:css": "tailwindcss -i input.css -o style.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.1.18"
+  }
+}
