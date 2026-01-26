@@ -13,10 +13,10 @@
 ## 3. Build Settings (빌드 설정)
 배포 설정 단계에서 아래와 같이 입력합니다:
 
-*   **Build command**: `node generate-config.js`
+*   **Build command**: `npm install && node generate-config.js`
 *   **Publish directory**: `.` (점 하나, 또는 비워두기)
 
-> **설명**: `node generate-config.js` 명령어는 배포 전에 환경 변수를 읽어 `config.js` 파일을 뚝딱 만들어주는 역할을 합니다.
+> **설명**: `npm install`은 필요한 라이브러리(`node-fetch` 등)를 설치하고, `node generate-config.js`는 환경 변수를 읽어 `config.js`를 생성합니다.
 
 ## 4. Environment variables (환경 변수 설정)
 **"Add environment variables"** 버튼을 누르고, 아래 값들을 추가해줍니다.
