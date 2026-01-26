@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-5FGH5DW2');</script>
+    <!-- End Google Tag Manager -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Tongin Market Guide</title>
+    <!-- External Resources -->
+    <script src="config.js"></script>
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#FAFBFC',
+                            ink: '#1A1A1B',
+                            accent: '#F3F4F6',
+                            food: '#F4AFA0',
+                            life: '#A8D8C9',
+                            snack: '#F6D267',
+                            coin: '#FF922B',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-brand-bg text-brand-ink h-full overflow-hidden font-sans">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5FGH5DW2" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <div id="app" class="relative w-full h-screen overflow-hidden">
+
+        <!-- Header & Filters -->
+        <div
+            class="absolute top-0 left-0 right-0 z-30 p-4 pointer-events-none flex flex-col items-center gap-3 overflow-visible safe-header">
+            <div id="header-bar"
+                class="pointer-events-auto relative z-20 w-full max-w-md bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 p-1.5 flex items-center gap-2 min-w-0 overflow-visible">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 cursor-pointer"
+                    onclick="window.location.href='index.html'">
+                    <img src="assets/mjlogo.png" class="w-6 h-6 object-contain" alt="Manjanilchi logo" />
+                </div>
+                <input id="searchInput" type="search" placeholder="상점이나 메뉴를 검색하세요"
+                    class="flex-1 min-w-0 w-full bg-transparent border-none outline-none text-brand-ink placeholder-gray-400 font-bold px-2 text-sm truncate appearance-none" />
+
+                <div class="relative shrink-0 overflow-visible z-[9999]">
+                    <button id="langBtn"
+                        class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-gray-100 transition-all text-gray-500 shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                    </button>
+                    <div id="langMenu" class="hidden w-32 bg-white rounded-xl shadow-2xl border border-gray-100"></div>
+                </div>
+
+                <button id="favTrigger"
+                    class="w-10 h-10 flex items-center justify-center rounded-xl transition-all relative text-gray-400 hover:bg-gray-100 shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
+                    </svg>
+                    <span id="favCount"
+                        class="hidden absolute -top-1 -right-1 w-4 h-4 bg-pink-500 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </button>
+            </div>
+            <div id="filtersContainer"
+                class="pointer-events-auto relative z-10 flex gap-2 overflow-x-auto max-w-full pb-2 no-scrollbar px-2">
+            </div>
+        </div>
+
+        <!-- Map -->
+        <div id="map" class="w-full h-full bg-[#f1f3f4]"></div>
+
+        <!-- Locate Me Button -->
+        <button id="locateMeBtn"
+            class="absolute bottom-8 right-8 z-20 w-14 h-14 bg-white rounded-2xl shadow-2xl flex items-center justify-center border border-gray-100 active:scale-90 transition-all">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+        </button>
+
+        <!-- Panels -->
+        <div id="favoritesPanel"
+            class="fixed top-0 left-0 h-full z-50 bg-white shadow-[10px_0_30px_rgba(0,0,0,0.1)] panel-transition hidden-panel-left w-full sm:w-[380px] flex flex-col">
+        </div>
+        <div id="detailPanel"
+            class="fixed top-0 right-0 h-full z-50 bg-white shadow-[-10px_0_30px_rgba(0,0,0,0.1)] panel-transition hidden-panel-right w-full sm:w-[450px]">
+        </div>
+        <div id="overlay" class="fixed inset-0 bg-black/20 z-40 backdrop-blur-[2px] hidden"></div>
+        <div id="toast"
+            class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl font-bold text-sm hidden">
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- From constants.ts ---
+            const SHEET_ID = AppConfig.SHEET_ID;
+            const CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv`;
+            const MAP_CENTER = { lat: 37.58069307821511, lng: 126.96977251335169 };
+            const CATEGORY_STYLES = {
+                '식당': { bg: 'bg-brand-food', icon: 'https://img.icons8.com/?size=100&id=59873&format=png&color=000000' },
+                '생활형': { bg: 'bg-brand-life', icon: 'https://img.icons8.com/?size=100&id=qbYyif5npmoi&format=png&color=000000' },
+                '간식': { bg: 'bg-brand-snack', icon: 'https://img.icons8.com/?size=100&id=vBj95fYekPO0&format=png&color=000000' },
+                '엽전': { bg: 'bg-brand-coin', icon: 'https://img.icons8.com/?size=100&id=vIMsgn8yO0Jk&format=png&color=000000' }
+            };
+            const UI_TRANSLATIONS = {
+                ko: { searchPlaceholder: "상점이나 메뉴를 검색하세요", directions: "현재 위치에서 길찾기", naverReview: "네이버 리뷰", kakaoReview: "카카오 리뷰", menuDetail: "메뉴 상세보기", hoursLabel: "영업 시간", priceLabel: "평균 가격", keywordsLabel: "키워드", moreLabel: "더보기", yeopjeonBadge: "엽전 가맹점", yeopjeonTitle: "엽전 도시락 가맹점", yeopjeonDesc: "통인시장 엽전으로 결제가 가능합니다.", favoritesTitle: "즐겨찾기", emptyFavorites: "목록이 비어있습니다.", copySuccess: "링크가 복사되었습니다! 🔗", cat_food: "식당", cat_snack: "간식", cat_life: "생활형", cat_coin: "엽전" },
+                en: { searchPlaceholder: "Search shops or menus", directions: "Get Directions", naverReview: "Naver Review", kakaoReview: "Kakao Review", menuDetail: "View Menu", hoursLabel: "Business Hours", priceLabel: "Average Price", keywordsLabel: "Keywords", moreLabel: "More", yeopjeonBadge: "Yeopjeon Member", yeopjeonTitle: "Yeopjeon Member Store", yeopjeonDesc: "You can pay with Tongin Market brass coins.", favoritesTitle: "Favorites", emptyFavorites: "Your list is empty.", copySuccess: "Link copied to clipboard! 🔗", cat_food: "Restaurant", cat_snack: "Snacks", cat_life: "Lifestyle", cat_coin: "Yeopjeon" },
+                zh: { searchPlaceholder: "搜索店铺或菜单", directions: "获取路线", naverReview: "Naver 评论", kakaoReview: "Kakao 评论", menuDetail: "查看菜单", hoursLabel: "营业时间", priceLabel: "人均消费", keywordsLabel: "关键词", moreLabel: "更多", yeopjeonBadge: "铜钱加盟店", yeopjeonTitle: "通仁市场铜钱加盟店", yeopjeonDesc: "可以使用通仁市场铜钱支付。", favoritesTitle: "我的收藏", emptyFavorites: "列表为空。", copySuccess: "链接已复制！ 🔗", cat_food: "美食店", cat_snack: "零食点心", cat_life: "生活用品", cat_coin: "铜钱" },
+                ja: { searchPlaceholder: "店舗やメニューを検索", directions: "道案内を開始", naverReview: "Naver レビュー", kakaoReview: "Kakao レビュー", menuDetail: "メニューを見る", hoursLabel: "営業時間", priceLabel: "平均価格", keywordsLabel: "キーワード", moreLabel: "もっと見る", yeopjeonBadge: "ヨプジョン加盟店", yeopjeonTitle: "通仁市場ヨプジョン加盟店", yeopjeonDesc: "通仁市場のヨプジョン（真鍮貨）で決済可能です。", favoritesTitle: "お気に入り", emptyFavorites: "リストが空です。", copySuccess: "リンクをコピーしました！ 🔗", cat_food: "食堂", cat_snack: "軽食・カフェ", cat_life: "生活・雑貨", cat_coin: "ヨプジョン" }
+            };
+            const PLACEHOLDER_IMG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 360'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop offset='0%25' stop-color='%23f3f4f7'/%3E%3Cstop offset='100%25' stop-color='%23e7eaf0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='360' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='22' fill='%2313203B'%3ENo Image%3C/text%3E%3C/svg%3E";
+            const STORY_LINKS = [
+                "https://www.instagram.com/p/DTVA-k9D5W7/?img_index=1",
+                "https://www.instagram.com/p/DS5F7L2j6KQ/?img_index=1",
+                "https://www.instagram.com/p/DSxEDQgjyH0/?img_index=1"
+            ];
+            const STORY_THUMBS = [
+                "assets/story-thumb-1.jpg",
+                "assets/story-thumb-2.jpg",
+                "assets/story-thumb-3.jpg"
+            ];
+            const STORES_WITH_TOP_LABEL = new Set(["푸른할인마트", "송림정육점", "청과코너", "야채코너", "송림사우나", "피노키오 옷수선", "서촌호떡", "엄마손반찬", "정금이네 모두의 분식", "명방앗간", "충남방앗간", "우리농산물유통", "서울수산물회센타", "체크인첸킨", "통인초록", "통인다방", "티각태각", "서촌의 진심", "이레해물칼국수", "BYC", "손맛김밥", "박현순미용실", "도시락카페", "도깨비한과강정", "현대식품", "알뜰옷수선전문점", "신일참기름", "소문난김구이", "효자365김밥", "반찬나라", "통인시장사진관", "점순이네반찬", "서촌주막", "다듬이", "그릇∙혼수용품도소매", "아빠김치찌개", "통인정", "나하나미용실", "보물창고", "효자청과마트", "효자지하생선"]);
+            const STORES_WITH_RIGHT_LABEL = new Set(["푸른할인마트", "송림정육점", "청과코너", "야채코너", "송림사우나", "피노키오 옷수선", "서촌호떡", "엄마손반찬", "정금이네 모두의 분식", "명방앗간", "충남방앗간", "우리농산물유통", "서울수산물회센타", "체크인첸킨", "통인초록", "통인다방", "티각태각", "서촌의 진심", "이레해물칼국수", "인타코야끼", "BYC", "손맛김밥", "박현순미용실", "도시락카페", "도깨비한과강정", "현대식품", "알뜰옷수선전문점", "신일참기름", "소문난김구이", "효자365김밥", "반찬나라", "통인시장사진관", "점순이네반찬", "서촌주막", "다듬이", "그릇∙혼수용품도소매", "아빠김치찌개", "통인정", "나하나미용실", "보물창고", "효자청과마트", "효자지하생선"]);
+            const STORES_WITH_LEFT_LABEL = new Set(["자미당", "고기백화점", "서촌로또방", "용인야채가게", "삼화식당", "개화플로이죵", "우리상회", "참괜찮소", "뜻밖의 조각가", "부여떡방아간", "서촌와인상점", "싱싱과일나라", "불란집", "중앙전주반찬", "루루마켓", "설야만두", "신앙촌상회", "인왕산건강원", "코코로레시피", "효자동닭꼬치", "원조정할머니 기름떡볶이", "옛날통인감자탕", "경복궁 떡 방앗간", "반찬하우스", "우리동네", "원조할머니 기름떡볶이", "체부동잔치집", "효자떡집", "반디수블", "하림생닭토종닭", "육곳간축산물", "여주상회", "호남상회", "개성상회"]);
+            const EXCLUDED_STORE_KEYS = new Set(["점순이네반찬"]);
+            const normalizeStoreKey = (name) => (name || "").replace(/\s+/g, "");
+
+            // --- State Management ---
+            let stores = [];
+            let selectedStore = null;
+            let activeCategories = new Set();
+            let searchQuery = '';
+            let coinFilter = false;
+            let favoritesFilter = false;
+            let map = null;
+            let markers = new Map();
+            let userMarker = null;
+            let favorites = new Set();
+            let userLocation = null;
+            let currentLang = 'ko';
+
+            // --- DOM Elements ---
+            const searchInput = document.getElementById('searchInput');
+            const filtersContainer = document.getElementById('filtersContainer');
+            const mapEl = document.getElementById('map');
+            const detailPanel = document.getElementById('detailPanel');
+            const favoritesPanel = document.getElementById('favoritesPanel');
+            const overlay = document.getElementById('overlay');
+            const langBtn = document.getElementById('langBtn');
+            const langMenu = document.getElementById('langMenu');
+            const favTrigger = document.getElementById('favTrigger');
+            const favCount = document.getElementById('favCount');
+            const locateMeBtn = document.getElementById('locateMeBtn');
+            const toastEl = document.getElementById('toast');
+
+            // --- Data Service Logic ---
+            const fetchStores = async () => {
+                try {
+                    const res = await fetch(CSV_URL);
+                    const text = await res.text();
+                    const rawData = parseCSV(text);
+                    stores = rawData
+                        .map(normalizeRow)
+                        .filter(s => s.name && s.lat && s.lng)
+                        .filter(s => !EXCLUDED_STORE_KEYS.has(normalizeStoreKey(s.name)));
+                } catch (error) { console.error("Data fetch failed", error); }
+            };
+            const parseCSV = (text) => {
+                if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+                const rows = text.split('\n').filter(line => line.trim());
+                const parsedRows = rows.map(line => {
+                    const parts = []; let current = ''; let inQuote = false;
+                    for (let i = 0; i < line.length; i++) {
+                        const char = line[i];
+                        if (char === '"') { inQuote = !inQuote; continue; }
+                        if (char === ',' && !inQuote) { parts.push(current.trim()); current = ''; continue; }
+                        current += char;
+                    }
+                    parts.push(current.trim());
+                    return parts;
+                });
+                const header = parsedRows[0].map(h => h.replace(/\r/, '').trim());
+                return parsedRows.slice(1).map(row => {
+                    const obj = {};
+                    header.forEach((h, i) => { obj[h] = row[i]; });
+                    return obj;
+                });
+            };
+            const normalizeRow = (r) => {
+                const getVal = (row, keys) => {
+                    for (const key of keys) {
+                        const lowerKey = key.toLowerCase();
+                        const actualKey = Object.keys(row).find(k => k.toLowerCase() === lowerKey);
+                        if (actualKey && row[actualKey]) return row[actualKey].trim();
+                    }
+                    return "";
+                };
+                const rawCat = getVal(r, ['category', '분류']);
+                let cat = "생활형";
+                if (/식당/.test(rawCat)) cat = "식당";
+                else if (/(간식|디저트|카페)/.test(rawCat)) cat = "간식";
+
+                return {
+                    name: getVal(r, ['name', '점포명']), name_en: getVal(r, ['name_eng', 'name_en']), name_zh: getVal(r, ['name_zh', 'name_cn']), name_ja: getVal(r, ['name_ja', 'name_jp']),
+                    category: cat,
+                    shortDesc: getVal(r, ['shortDesc', '설명']), shortDesc_en: getVal(r, ['shortDesc_en']), shortDesc_zh: getVal(r, ['shortDesc_zh']), shortDesc_ja: getVal(r, ['shortDesc_ja']),
+                    reviewLink_Naver: getVal(r, ['reviewLink_Naver', '네이버']), reviewLink_Kakao: getVal(r, ['reviewLink_Kakao', '카카오']),
+                    hours: getVal(r, ['hours', '영업시간']), hours_en: getVal(r, ['hours_en']), hours_zh: getVal(r, ['hours_zh']), hours_ja: getVal(r, ['hours_ja']),
+                    repre_image: getVal(r, ['repre_image', 'image']),
+                    price: getVal(r, ['price', '가격']), price_en: getVal(r, ['price_en']), price_zh: getVal(r, ['price_zh']), price_ja: getVal(r, ['price_ja']),
+                    coin: getVal(r, ['coin', '엽전']).toLowerCase() === 'o' ? 'o' : '',
+                    lat: getVal(r, ['lat', '위도']), lng: getVal(r, ['lng', '경도']),
+                    menuLink: getVal(r, ['menuLink']),
+                    keyword: getVal(r, ['keyword', '키워드']),
+                };
+            };
+
+            // --- Core Application Logic ---
+            const init = async () => {
+                loadState();
+                await loadGoogleMaps();
+                await fetchStores();
+                initMap();
+                setupEventListeners();
+                updateUI();
+                initGeolocation();
+                checkUrlParams();
+            };
+
+            const loadGoogleMaps = () => {
+                return new Promise((resolve, reject) => {
+                    if (window.google && window.google.maps) { resolve(); return; }
+                    const script = document.createElement('script');
+                    script.src = `https://maps.googleapis.com/maps/api/js?key=${AppConfig.GOOGLE_MAPS_API_KEY}&libraries=maps,marker&v=beta&map_ids=${AppConfig.MAP_ID}`;
+                    script.async = true;
+                    script.defer = true;
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+            };
+
+            const checkUrlParams = () => {
+                const params = new URLSearchParams(window.location.search);
+                const openName = params.get('open');
+                if (openName) {
+                    const store = stores.find(s => s.name === openName);
+                    if (store) openDetailPanel(store);
+                }
+            };
+
+            const loadState = () => {
+                try {
+                    const savedFavs = localStorage.getItem('tongin_favs');
+                    if (savedFavs) {
+                        favorites = new Set(JSON.parse(savedFavs));
+                        favorites.forEach(name => {
+                            if (EXCLUDED_STORE_KEYS.has(normalizeStoreKey(name))) {
+                                favorites.delete(name);
+                            }
+                        });
+                        localStorage.setItem('tongin_favs', JSON.stringify(Array.from(favorites)));
+                    }
+                    const savedLang = localStorage.getItem('tongin_lang');
+                    if (savedLang) currentLang = savedLang;
+                } catch { }
+            };
+
+            const setupEventListeners = () => {
+                searchInput.addEventListener('input', (e) => {
+                    searchQuery = e.target.value;
+                    updateMarkers();
+                });
+                langBtn.addEventListener('click', () => langMenu.classList.toggle('hidden'));
+                favTrigger.addEventListener('click', () => openFavoritesPanel(true));
+                overlay.addEventListener('click', closeAllPanels);
+                locateMeBtn.addEventListener('click', handleLocateMe);
+            };
+
+            const updateUI = () => {
+                renderFilters();
+                renderLangMenu();
+                updateMarkers();
+                updateFavCount();
+                searchInput.placeholder = UI_TRANSLATIONS[currentLang].searchPlaceholder;
+            };
+
+            const initGeolocation = () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                            updateUserMarker();
+                        },
+                        (err) => console.warn("Geolocation error:", err.message),
+                        { enableHighAccuracy: true }
+                    );
+                }
+            };
+
+            const handleLocateMe = () => {
+                if (userLocation && map) {
+                    map.panTo(userLocation);
+                    map.setZoom(19);
+                } else {
+                    initGeolocation(); // try again if not available
+                }
+            };
+
+            // --- Map Logic ---
+            const initMap = () => {
+                if (!window.google) { setTimeout(initMap, 100); return; }
+                map = new google.maps.Map(mapEl, {
+                    center: MAP_CENTER, zoom: 19, mapId: '8fbca58624e4405a846adbea', heading: -90, tilt: 0,
+                    disableDefaultUI: true, clickableIcons: false, gestureHandling: 'greedy'
+                });
+                createStoreMarkers();
+            };
+
+            const createStoreMarkers = () => {
+                stores.forEach(store => {
+                    const container = document.createElement('div');
+                    container.className = 'nmap-marker';
+                    container.setAttribute('data-cat', store.category);
+                    const labelClass = STORES_WITH_LEFT_LABEL.has(store.name)
+                        ? 'pos-left'
+                        : (STORES_WITH_RIGHT_LABEL.has(store.name)
+                            ? 'pos-right'
+                            : (STORES_WITH_TOP_LABEL.has(store.name) ? 'pos-top' : ''));
+                    container.innerHTML = `
+                    <div class="fav-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.5 3c1.373 0 2.652.55 3.585 1.516.933-.966 2.212-1.516 3.585-1.516 2.786 0 5.25 2.322 5.25 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001z"/></svg></div>
+                    <div class="glyph-container"><div class="glyph" style="background-image: url('${CATEGORY_STYLES[store.category].icon}')"></div></div>
+                    <div class="shop-label ${labelClass}">${getStoreProp(store, 'name')}</div>
+                `;
+                    container.onclick = (e) => { e.stopPropagation(); openDetailPanel(store); };
+
+                    const marker = new google.maps.marker.AdvancedMarkerElement({
+                        map, position: { lat: parseFloat(store.lat), lng: parseFloat(store.lng) }, content: container, title: store.name
+                    });
+                    markers.set(store.name, { marker, element: container, label: container.querySelector('.shop-label') });
+                });
+                updateMarkers();
+            };
+
+            const updateMarkers = () => {
+                const filteredStoreNames = getFilteredStoreNames();
+                markers.forEach((obj, name) => {
+                    const store = stores.find(s => s.name === name);
+                    const isVisible = filteredStoreNames.has(name);
+                    const isSelected = selectedStore?.name === name;
+                    const isFavorite = favorites.has(name);
+
+                    obj.element.classList.toggle('dim', !isVisible);
+                    obj.element.classList.toggle('active', isSelected);
+                    obj.element.classList.toggle('is-favorite', isFavorite);
+                    obj.label.innerText = getStoreProp(store, 'name');
+                });
+            };
+
+            const updateUserMarker = () => {
+                if (!map || !userLocation) return;
+                if (userMarker) {
+                    userMarker.setPosition(userLocation);
+                } else {
+                    userMarker = new google.maps.Marker({
+                        position: userLocation, map, title: 'Me', zIndex: 1000,
+                        icon: { path: google.maps.SymbolPath.CIRCLE, scale: 10, fillColor: '#4285F4', fillOpacity: 1, strokeColor: '#FFFFFF', strokeWeight: 3 }
+                    });
+                }
+            };
+
+            const getFilteredStoreNames = () => {
+                const query = searchQuery.toLowerCase();
+                return new Set(stores.filter(store => {
+                    if (favoritesFilter && !favorites.has(store.name)) return false;
+                    if (activeCategories.size > 0 && !activeCategories.has(store.category)) return false;
+                    if (coinFilter && store.coin !== 'o') return false;
+                    if (query) {
+                        const name = getStoreProp(store, 'name').toLowerCase();
+                        const desc = getStoreProp(store, 'shortDesc').toLowerCase();
+                        if (!name.includes(query) && !desc.includes(query) && !store.name.toLowerCase().includes(query)) return false;
+                    }
+                    return true;
+                }).map(s => s.name));
+            };
+
+            // --- UI Rendering ---
+            const renderFilters = () => {
+                const t = UI_TRANSLATIONS[currentLang];
+                const cats = ['식당', '간식', '생활형'];
+                let html = `
+                <button data-filter="coin" class="chip-btn whitespace-nowrap px-5 py-2.5 rounded-full text-[13px] font-black shadow-md transition-all border border-gray-100 ${coinFilter ? 'bg-brand-coin text-white' : 'bg-white text-gray-900'}">
+                    <img src="${CATEGORY_STYLES['엽전'].icon}" class="w-4 h-4 ${coinFilter ? 'brightness-0 invert' : ''}" />
+                    <span class="chip-label">${t.cat_coin}</span>
+                </button>`;
+
+                if (favorites.size > 0) {
+                    html += `
+                    <button data-filter="fav" class="chip-btn whitespace-nowrap px-5 py-2.5 rounded-full text-[13px] font-black shadow-md transition-all border border-gray-100 ${favoritesFilter ? 'bg-pink-500 text-white' : 'bg-white text-gray-900'}">
+                        <svg class="w-4 h-4 ${favoritesFilter ? 'text-white' : 'text-pink-500'}" fill="${favoritesFilter ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                        <span class="chip-label">${t.favoritesTitle}</span>
+                    </button>`;
+                }
+
+                cats.forEach(cat => {
+                    const isActive = activeCategories.has(cat);
+                    const style = CATEGORY_STYLES[cat];
+                    const catKey = cat === '식당' ? 'food' : cat === '간식' ? 'snack' : 'life';
+                    html += `
+                    <button data-filter-cat="${cat}" class="chip-btn whitespace-nowrap px-5 py-2.5 rounded-full text-[13px] font-black shadow-md transition-all border border-gray-100 ${isActive ? style.bg + ' text-white' : 'bg-white text-gray-900'}">
+                        <img src="${style.icon}" class="w-4 h-4 ${isActive ? 'brightness-0 invert' : ''}" />
+                        <span class="chip-label">${t['cat_' + catKey]}</span>
+                    </button>`;
+                });
+                filtersContainer.innerHTML = html;
+                filtersContainer.querySelectorAll('button').forEach(btn => {
+                    btn.onclick = () => {
+                        const cat = btn.dataset.filterCat;
+                        if (cat) {
+                            activeCategories.has(cat) ? activeCategories.delete(cat) : activeCategories.add(cat);
+                        } else if (btn.dataset.filter === 'coin') {
+                            coinFilter = !coinFilter;
+                        } else if (btn.dataset.filter === 'fav') {
+                            favoritesFilter = !favoritesFilter;
+                        }
+                        renderFilters();
+                        updateMarkers();
+                    };
+                });
+            };
+
+            const renderLangMenu = () => {
+                const langLabels = { ko: '한국어', en: 'English', zh: '中文', ja: '日本語' };
+                langMenu.innerHTML = Object.entries(langLabels).map(([code, label]) => `
+                <button data-lang="${code}" class="w-full text-left px-4 py-2.5 text-xs font-bold hover:bg-gray-50 transition-colors ${currentLang === code ? 'text-brand-ink bg-gray-50' : 'text-gray-400'}">${label}</button>
+            `).join('');
+                langMenu.querySelectorAll('button').forEach(btn => {
+                    btn.onclick = () => {
+                        currentLang = btn.dataset.lang;
+                        localStorage.setItem('tongin_lang', currentLang);
+                        langMenu.classList.add('hidden');
+                        updateUI();
+                        if (selectedStore) openDetailPanel(selectedStore);
+                        if (!favoritesPanel.classList.contains('hidden-panel-left')) renderFavoritesPanel();
+                    }
+                });
+            };
+
+            const updateFavCount = () => {
+                if (favorites.size > 0) {
+                    favCount.textContent = favorites.size;
+                    favCount.classList.remove('hidden');
+                    favTrigger.classList.add('text-pink-500', 'bg-pink-50');
+                } else {
+                    favCount.classList.add('hidden');
+                    favTrigger.classList.remove('text-pink-500', 'bg-pink-50');
+                }
+            };
+
+            const closeAllPanels = () => {
+                detailPanel.classList.add('hidden-panel-right');
+                favoritesPanel.classList.add('hidden-panel-left');
+                overlay.classList.add('hidden');
+                selectedStore = null;
+                updateMarkers();
+            };
+
+            // --- Detail Panel ---
+            const openDetailPanel = (store) => {
+                selectedStore = store;
+                renderDetailPanel();
+                detailPanel.classList.remove('hidden-panel-right');
+                overlay.classList.remove('hidden');
+                if (map) map.panTo({ lat: parseFloat(store.lat), lng: parseFloat(store.lng) });
+                updateMarkers();
+            };
+
+            const renderDetailPanel = () => {
+                if (!selectedStore) return;
+                const t = UI_TRANSLATIONS[currentLang];
+                const store = selectedStore;
+                const isFav = favorites.has(store.name);
+                const catStyle = CATEGORY_STYLES[store.category];
+                const keywords = store.name === '통인정' ? parseKeywords(store.keyword) : [];
+
+                const catKey = store.category === '식당' ? 'food' : store.category === '간식' ? 'snack' : 'life';
+                const catName = t['cat_' + catKey];
+
+                detailPanel.innerHTML = `
+                <div class="flex flex-col h-full bg-white text-brand-ink overflow-hidden">
+                    <div class="relative h-64 sm:h-72 w-full shrink-0 bg-gray-100">
+                        <img src="${normalizeImageUrl(store.repre_image)}" class="w-full h-full object-cover" onerror="this.src='${PLACEHOLDER_IMG}'" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                        <button id="detailCloseBtn" class="absolute top-5 left-5 w-10 h-10 flex items-center justify-center bg-white/20 backdrop-blur-xl rounded-full text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                        <div class="absolute top-5 right-5 flex gap-2">
+                           <button id="shareBtn" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-xl text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg></button>
+                           <button id="detailFavBtn" class="w-10 h-10 flex items-center justify-center rounded-full transition-all ${isFav ? 'bg-pink-500 text-white' : 'bg-white/20 backdrop-blur-xl text-white'}"><svg class="w-6 h-6" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></button>
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-6 space-y-6 -mt-8 relative bg-white rounded-t-3xl no-scrollbar">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="${catStyle.bg} px-3 py-1 rounded-lg text-[10px] font-black uppercase text-brand-ink">${catName}</span>
+                            ${store.coin === 'o' ? `<span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase text-yellow-800 bg-yellow-100">${t.yeopjeonBadge}</span>` : ''}
+                        </div>
+                        <h2 class="detail-store-name text-3xl font-black text-gray-900 mb-2">${getStoreProp(store, 'name')}</h2>
+                        <p class="text-base text-gray-500 leading-relaxed">${getStoreProp(store, 'shortDesc')}</p>
+                        <div class="grid grid-cols-1 gap-3">
+                            <button id="routeBtn" class="w-full py-4 bg-brand-ink text-white rounded-2xl font-bold flex items-center justify-center gap-3"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>${t.directions}</button>
+                        </div>
+                        <div class="bg-gray-50 rounded-2xl p-5 space-y-4">
+                            <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-gray-400 shrink-0 shadow-sm"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><div><p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">${t.hoursLabel}</p><p class="text-sm font-bold text-gray-800 whitespace-pre-wrap leading-relaxed">${getStoreProp(store, 'hours')}</p></div></div>
+                            <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-gray-400 shrink-0 shadow-sm"><span class="font-black text-sm">₩</span></div><div><p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">${t.priceLabel}</p><p class="text-sm font-bold text-gray-800">${getStoreProp(store, 'price')}</p></div></div>
+                            ${keywords.length ? `<div class="flex items-start gap-4"><div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-gray-400 shrink-0 shadow-sm"><span class="font-black text-sm">#</span></div><div><p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">${t.keywordsLabel}</p><div class="flex flex-wrap gap-2 pt-1">${keywords.map(k => `<span class="px-2.5 py-1 rounded-full bg-white border border-gray-200 text-gray-600 text-[11px] font-bold shadow-[0_1px_0_rgba(0,0,0,0.04)]">${k}</span>`).join('')}</div></div></div>` : ''}
+                        </div>
+                        <div class="bg-gray-50 rounded-2xl p-5 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">${t.moreLabel}</p>
+                            </div>
+                            <div class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+                                ${STORY_LINKS.map((link, idx) => `
+                                    <a href="${link}" target="_blank" rel="noopener noreferrer" class="group block shrink-0 w-36 aspect-[3/4] rounded-2xl shadow-sm overflow-hidden">
+                                        ${STORY_THUMBS[idx] ? `<img src="${STORY_THUMBS[idx]}" class="w-full h-full object-contain" alt="Instagram story thumbnail" />` : ''}
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ${store.coin === 'o' ? `<div class="pt-6 border-t border-dashed border-gray-200 pb-10"><div class="bg-brand-coin/5 border border-brand-coin/20 rounded-2xl p-4 flex items-center gap-4"><div class="w-12 h-12 bg-brand-coin rounded-full flex items-center justify-center text-white text-xl font-black">通</div><div><h4 class="font-black text-sm text-brand-coin">${t.yeopjeonTitle}</h4><p class="text-xs text-gray-500 font-medium">${t.yeopjeonDesc}</p></div></div></div>` : ''}
+                    </div>
+                </div>`;
+
+                document.getElementById('detailCloseBtn').onclick = closeAllPanels;
+                document.getElementById('detailFavBtn').onclick = () => toggleFavorite(store.name);
+                document.getElementById('routeBtn').onclick = () => handleRoute(store);
+                document.getElementById('shareBtn').onclick = () => handleShare(store);
+            };
+
+            const handleRoute = (store) => {
+                const url = `https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}&travelmode=walking`;
+                window.open(url, '_blank');
+            };
+
+            const handleShare = async (store) => {
+                const t = UI_TRANSLATIONS[currentLang];
+                const name = getStoreProp(store, 'name');
+                const desc = getStoreProp(store, 'shortDesc');
+                const url = window.location.origin + window.location.pathname;
+                const text = `[Tongin Market] ${name}\n${desc}\n#TonginMarket #Seoul #Travel`;
+
+                if (navigator.share) {
+                    try {
+                        await navigator.share({ title: `Tongin Market - ${name}`, text, url });
+                    } catch (err) { if (err.name !== 'AbortError') copyToClipboard(`${text}\n${url}`, t.copySuccess); }
+                } else {
+                    copyToClipboard(`${text}\n${url}`, t.copySuccess);
+                }
+            };
+
+            const copyToClipboard = async (text, msg) => {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    triggerToast(msg);
+                } catch (err) { alert('Failed to copy.'); }
+            };
+
+            const triggerToast = (msg) => {
+                toastEl.textContent = msg;
+                toastEl.classList.remove('hidden');
+                setTimeout(() => toastEl.classList.add('hidden'), 2000);
+            };
+
+            // --- Favorites Panel ---
+            const openFavoritesPanel = (isOpen) => {
+                if (isOpen) {
+                    renderFavoritesPanel();
+                    favoritesPanel.classList.remove('hidden-panel-left');
+                    overlay.classList.remove('hidden');
+                } else {
+                    favoritesPanel.classList.add('hidden-panel-left');
+                    if (detailPanel.classList.contains('hidden-panel-right')) {
+                        overlay.classList.add('hidden');
+                    }
+                }
+            };
+
+            const renderFavoritesPanel = () => {
+                const t = UI_TRANSLATIONS[currentLang];
+                const favStores = stores.filter(s => favorites.has(s.name));
+
+                let content;
+                if (favStores.length === 0) {
+                    content = `<div class="h-full flex flex-col items-center justify-center text-center p-8 text-gray-300 font-bold"><p>${t.emptyFavorites}</p></div>`;
+                } else {
+                    content = `<div class="grid gap-3">${favStores.map(store => `
+                    <div data-store-name="${store.name}" class="fav-item group relative flex items-center gap-4 p-3 bg-white border border-gray-100 rounded-2xl cursor-pointer hover:border-gray-200 transition-colors shadow-sm">
+                        <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0"><img src="${normalizeImageUrl(store.repre_image)}" class="w-full h-full object-cover" onerror="this.src='${PLACEHOLDER_IMG}'" /></div>
+                        <div class="flex-1 min-w-0 pr-8">
+                            <h3 class="font-bold text-gray-900 truncate">${getStoreProp(store, 'name')}</h3>
+                            <p class="text-[11px] text-gray-400 truncate">${getStoreProp(store, 'shortDesc')}</p>
+                        </div>
+                        <button data-remove-fav="${store.name}" class="absolute right-3 w-8 h-8 flex items-center justify-center text-pink-500"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.5 3c1.373 0 2.652.55 3.585 1.516.933-.966 2.212-1.516 3.585-1.516 2.786 0 5.25 2.322 5.25 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001z" /></svg></button>
+                    </div>`).join('')}</div>`;
+                }
+
+                favoritesPanel.innerHTML = `
+                <div class="p-6 flex items-center justify-between border-b border-gray-100">
+                    <h2 class="text-xl font-black text-gray-900">${t.favoritesTitle}</h2>
+                    <button id="favCloseBtn" class="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                </div>
+                <div class="flex-1 overflow-y-auto p-4 no-scrollbar">${content}</div>`;
+
+                document.getElementById('favCloseBtn').onclick = () => openFavoritesPanel(false);
+                favoritesPanel.querySelectorAll('.fav-item').forEach(item => {
+                    item.onclick = () => {
+                        const store = stores.find(s => s.name === item.dataset.storeName);
+                        if (store) openDetailPanel(store);
+                    };
+                });
+                favoritesPanel.querySelectorAll('[data-remove-fav]').forEach(btn => {
+                    btn.onclick = (e) => {
+                        e.stopPropagation();
+                        toggleFavorite(btn.dataset.removeFav);
+                    };
+                });
+            };
+
+            // --- Helper Functions ---
+            const toggleFavorite = (storeName) => {
+                favorites.has(storeName) ? favorites.delete(storeName) : favorites.add(storeName);
+                if (!favorites.has(storeName) && favorites.size === 0) favoritesFilter = false;
+
+                localStorage.setItem('tongin_favs', JSON.stringify(Array.from(favorites)));
+                updateFavCount();
+                renderFilters();
+                updateMarkers();
+                if (selectedStore?.name === storeName) renderDetailPanel();
+                if (!favoritesPanel.classList.contains('hidden-panel-left')) renderFavoritesPanel();
+            };
+
+            const normalizeImageUrl = (u) => {
+                if (!u) return PLACEHOLDER_IMG;
+                if (u.includes('drive.google.com')) {
+                    const id = u.match(/\/file\/d\/([^/]+)/)?.[1] || new URL(u).searchParams.get('id');
+                    return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w800` : u;
+                }
+                return u;
+            };
+
+            const parseKeywords = (raw) => {
+                if (!raw) return [];
+                return raw.split(/\s+/).map(k => k.trim()).filter(Boolean);
+            };
+
+            const getStoreProp = (store, prop) => {
+                if (!store) return '';
+                const langMap = { 'name': true, 'shortDesc': true, 'hours': true, 'price': true };
+                if (langMap[prop]) {
+                    const langProp = `${prop}_${currentLang}`;
+                    return store[langProp] || store[prop] || "-";
+                }
+                return store[prop] || '';
+            };
+
+            init();
+        });
+    </script>
+</body>
+
+</html>
