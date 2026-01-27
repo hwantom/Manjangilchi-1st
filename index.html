@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Tongin Market Guide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -317,10 +317,9 @@
             return (
                 <div className="min-h-screen bg-gray-50 flex justify-center">
                     <div className="w-full max-w-md bg-white min-h-screen shadow-lg flex flex-col relative">
-                        <header className="px-6 pt-6 pb-2 flex justify-between items-center bg-white z-10 relative">
-                            <div className="text-gray-500 text-sm font-medium">
+                        <header className="px-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-6 flex justify-between items-center bg-white z-10 relative">
+                            <div className="text-gray-500 text-sm font-black uppercase tracking-widest">
                                 {showProgress && step > 0 && step <= totalSteps ? `Step ${step} / ${totalSteps}` : ''}
-                                {!showProgress && title && <span className="text-lg font-bold text-gray-800">{title}</span>}
                             </div>
 
                             <div className="relative">
@@ -348,14 +347,14 @@
                             <div className="px-6 pb-6">
                                 <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-[#A68A64] transition-all duration-300 ease-out"
+                                        className={`h-full bg-[#A68A64] transition-all duration-300 ease-out`}
                                         style={{ width: `${progressPercentage}%` }}
                                     ></div>
                                 </div>
                             </div>
                         )}
 
-                        <main className="flex-1 px-6 pb-24 overflow-y-auto">
+                        <main className="flex-1 px-6 pb-32 overflow-y-auto no-scrollbar">
                             {children}
                         </main>
                     </div>
@@ -389,7 +388,7 @@
             };
 
             return (
-                <div className="fixed bottom-0 w-full max-w-md bg-white p-6 border-t border-gray-50 left-0 right-0 mx-auto">
+                <div className="fixed bottom-0 w-full max-w-md bg-white px-6 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] border-t border-gray-50 left-0 right-0 mx-auto z-20">
                     <button
                         onClick={onClick}
                         disabled={disabled}
@@ -500,94 +499,106 @@
 
             // Rendering helpers
             const renderLanding = () => (
-                <div className="h-full flex flex-col justify-between pt-8">
-                    <div>
-                        <h1 className="text-2xl font-bold mb-8">{t.title}</h1>
-                        <div className="w-full h-64 bg-gray-200 rounded-2xl overflow-hidden mb-8 relative">
-                            <img src="https://picsum.photos/800/800?grayscale" alt="Tongin Market" className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
-                                <span className="text-white font-bold text-3xl drop-shadow-md">{t.subTitle}</span>
-                            </div>
-                        </div>
-                        <h2 className="text-xl font-bold mb-2">{t.landingTitle}</h2>
-                        <p className="text-gray-500 text-sm">{t.landingDesc}</p>
+                <div className="flex flex-col py-8 space-y-10">
+                    <div className="space-y-2">
+                        <h1 className="text-3xl font-black text-gray-900 leading-tight">{t.title}</h1>
+                        <p className="text-[#A68A64] font-bold text-sm tracking-wider">{t.subTitle}</p>
                     </div>
-                    <div className="space-y-3 mt-auto mb-6">
+
+                    <div className="w-full h-auto aspect-[4/3] max-h-[300px] bg-gray-100 rounded-3xl overflow-hidden shadow-sm relative border border-gray-50">
+                        <img src="https://picsum.photos/800/600?grayscale" alt="Tongin Market" className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="space-y-4">
+                        <h2 className="text-2xl font-bold text-gray-800 whitespace-pre-wrap leading-tight">{t.landingTitle}</h2>
+                        <p className="text-gray-500 text-base leading-relaxed">{t.landingDesc}</p>
+                    </div>
+
+                    <div className="space-y-4 pt-4">
+                        <button onClick={handleNext} className="w-full py-5 bg-[#A68A64] text-white rounded-2xl font-bold text-lg shadow-lg active:scale-[0.98] transition-all">
+                            {t.btnRec}
+                        </button>
                         <button
                             onClick={() => { window.location.href = `map.html`; }}
-                            className="w-full py-4 bg-[#E6E0D4] text-gray-700 rounded-xl font-medium"
+                            className="w-full py-4 text-gray-400 font-semibold text-base hover:bg-gray-50 rounded-2xl transition-colors"
                         >
                             {t.btnMap}
                         </button>
-                        <button onClick={handleNext} className="w-full py-4 bg-[#A68A64] text-white rounded-xl font-medium">{t.btnRec}</button>
                     </div>
                 </div>
             );
 
             const renderStep1 = () => (
-                <React.Fragment>
-                    <h2 className="text-xl font-bold mb-2 whitespace-pre-wrap">{t.step1Title}</h2>
-                    <p className="text-gray-400 text-sm mb-8">{t.step1Desc}</p>
+                <div className="py-6 space-y-8">
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2 whitespace-pre-wrap leading-tight">{t.step1Title}</h2>
+                        <p className="text-gray-500 text-base">{t.step1Desc}</p>
+                    </div>
                     <div className="grid grid-cols-2 gap-4">
                         {t.step1Opts.map((item) => (
                             <SelectionButton key={item} selected={selection.purpose === item} onClick={() => updateSelection('purpose', item)}>
-                                <span className="font-medium text-lg">{item}</span>
+                                <span className="font-bold text-lg">{item}</span>
                             </SelectionButton>
                         ))}
                     </div>
                     <NextButton onClick={handleNext} disabled={!selection.purpose} label={t.next} />
-                </React.Fragment>
+                </div>
             );
 
             const renderStep2 = () => (
-                <React.Fragment>
-                    <h2 className="text-xl font-bold mb-2">{t.step2Title}</h2>
-                    <p className="text-gray-400 text-sm mb-8">{t.step2Desc}</p>
+                <div className="py-6 space-y-8">
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2 whitespace-pre-wrap leading-tight">{t.step2Title}</h2>
+                        <p className="text-gray-500 text-base">{t.step2Desc}</p>
+                    </div>
                     <div className="grid grid-cols-2 gap-4">
                         {t.step2Opts.map((item) => (
                             <SelectionButton key={item.label} selected={selection.companion === item.label} onClick={() => updateSelection('companion', item.label)}>
                                 <div className="mb-2 text-[#A68A64]">
-                                    <item.icon className="w-6 h-6" />
+                                    <item.icon className="w-6 h-6" strokeWidth={3} />
                                 </div>
-                                <span className="font-medium text-lg">{item.label}</span>
+                                <span className="font-bold text-lg">{item.label}</span>
                             </SelectionButton>
                         ))}
                     </div>
                     <NextButton onClick={handleNext} disabled={!selection.companion} label={t.next} />
-                </React.Fragment>
+                </div>
             );
 
             const renderStep3 = () => (
-                <React.Fragment>
-                    <h2 className="text-xl font-bold mb-2 whitespace-pre-wrap">{t.step3Title}</h2>
-                    <p className="text-gray-400 text-sm mb-8">{t.step3Desc}</p>
+                <div className="py-6 space-y-8">
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2 whitespace-pre-wrap leading-tight">{t.step3Title}</h2>
+                        <p className="text-gray-500 text-base">{t.step3Desc}</p>
+                    </div>
                     <div className="grid grid-cols-2 gap-4">
                         {t.step3Opts.map((item) => (
                             <SelectionButton key={item} selected={selection.interests.includes(item)} onClick={() => handleInterestToggle(item)} className="aspect-[4/3]">
-                                <span className="font-medium text-lg">{item}</span>
+                                <span className="font-bold text-lg">{item}</span>
                             </SelectionButton>
                         ))}
                     </div>
                     <NextButton onClick={handleNext} disabled={selection.interests.length === 0} label={t.next} />
-                </React.Fragment>
+                </div>
             );
 
             const renderStep4 = () => (
-                <React.Fragment>
-                    <h2 className="text-xl font-bold mb-2">{t.step4Title}</h2>
-                    <p className="text-gray-400 text-sm mb-8">{t.step4Desc}</p>
+                <div className="py-6 space-y-8">
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">{t.step4Title}</h2>
+                        <p className="text-gray-500 text-base">{t.step4Desc}</p>
+                    </div>
                     <div className="grid grid-cols-2 gap-4">
                         {t.step4Opts.map((item) => (
-                            <SelectionButton key={item.id} selected={selection.preference === item.id} onClick={() => updateSelection('preference', item.id)}>
-                                <div className={`mb-3 ${selection.preference === item.id ? 'text-[#A68A64]' : 'text-gray-300'}`}>
-                                    <item.Icon size={28} />
+                            <SelectionButton key={item.id} selected={selection.preference === item.id} onClick={() => { updateSelection('preference', item.id); fetchRecommendations(); }}>
+                                <div className="mb-2 text-[#A68A64]">
+                                    <item.Icon className="w-6 h-6" strokeWidth={3} />
                                 </div>
-                                <span className="font-medium">{item.label}</span>
+                                <span className="font-bold text-lg text-center leading-tight">{item.label}</span>
                             </SelectionButton>
                         ))}
                     </div>
-                    <NextButton onClick={fetchRecommendations} disabled={!selection.preference} label={t.next} />
-                </React.Fragment>
+                </div>
             );
 
             const renderRecommendation = () => {
@@ -644,8 +655,8 @@
                 };
 
                 return (
-                    <div className="pb-32">
-                        <h2 className="text-xl font-bold mb-8 whitespace-pre-wrap">{t.recTitle}</h2>
+                    <div className="pt-4 pb-48">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-10 whitespace-pre-wrap leading-tight">{t.recTitle}</h2>
                         <div className="space-y-4">
                             {recommendations.map((store) => (
                                 <div
@@ -663,14 +674,14 @@
                                 </div>
                             ))}
                         </div>
-                        <div className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto bg-white p-6 border-t border-gray-50 space-y-3 z-20">
+                        <div className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto bg-white px-6 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] border-t border-gray-50 space-y-3 z-20 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
                             <button
                                 onClick={handleOpenMap}
-                                className="w-full py-4 bg-[#A68A64] text-white rounded-xl font-medium"
+                                className="w-full py-4 bg-[#A68A64] text-white rounded-2xl font-bold text-lg shadow-md active:scale-[0.98] transition-all"
                             >
                                 {t.recMapBtn}
                             </button>
-                            <button onClick={handleReset} className="w-full py-4 bg-[#E6E0D4] text-gray-700 rounded-xl font-medium">{t.recResetBtn}</button>
+                            <button onClick={handleReset} className="w-full py-4 text-gray-400 font-semibold text-sm hover:text-gray-600 transition-colors uppercase tracking-widest">{t.recResetBtn}</button>
                         </div>
                     </div>
                 );
