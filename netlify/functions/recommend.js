@@ -8,7 +8,7 @@ exports.handler = async (event) => {
 
     try {
         const { prompt } = JSON.parse(event.body);
-        const API_KEY = process.env.GEMINI_API_KEY;
+        const API_KEY = "AIzaSyDZCQ_SPc8DamoXWN5798d_P1E1B9CDUo4"; // process.env.GEMINI_API_KEY;
 
         if (!API_KEY) {
             return {
