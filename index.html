@@ -44,7 +44,7 @@
       }
     }
     </script>
-    <script src="config.js?v=3"></script>
+    <script src="config.js?v=4"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -368,18 +368,19 @@
                     stack: error.stack ? error.stack.split('\n')[0] : 'N/A',
                     online: navigator.onLine,
                     model: "gemini-2.5-flash",
+                    apiKeySnippet: AppConfig.GEMINI_API_KEY ? `${AppConfig.GEMINI_API_KEY.slice(0, 8)}...${AppConfig.GEMINI_API_KEY.slice(-4)}` : 'MISSING',
                     apiKeyPresent: !!AppConfig.GEMINI_API_KEY
                 };
 
                 let errorMsg = '추천을 불러오지 못했습니다.';
-                if (error.message.includes('400')) errorMsg = '요청 오류(400). 모델명이 지원되지 않을 수 있습니다.';
+                if (error.message.includes('400')) errorMsg = '요청 오류(400). 모델명이 지원되지 않거나 키가 유효하지 않습니다.';
                 else if (error.message.includes('403')) errorMsg = '권한 오류(403). API 키를 확인해주세요.';
                 else if (error.message.includes('429')) errorMsg = '할당량 초과(429). 잠시 후 시도해주세요.';
                 else if (error.message.includes('fetch')) errorMsg = '네트워크 연결 오류입니다.';
 
                 return {
                     data: [],
-                    error: `${errorMsg}\n\n[진단정보]\n- ${diagnosticInfo.message}\n- Online: ${diagnosticInfo.online}\n- Model: ${diagnosticInfo.model}`
+                    error: `${errorMsg}\n\n[진단정보]\n- ${diagnosticInfo.message}\n- Online: ${diagnosticInfo.online}\n- Model: ${diagnosticInfo.model}\n- API Key: ${diagnosticInfo.apiKeySnippet}`
                 };
             }
         };
