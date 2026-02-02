@@ -780,8 +780,8 @@
 
                 const statusStr = getDayOperatingStatus(hoursStr, dayIdx, true);
 
-                if (statusStr === '휴무 중') {
-                    return { label: '휴무 중', color: 'closed', detail: '오늘은 쉬는 날이에요' };
+                if (statusStr === '휴무' || statusStr === '휴무 중') {
+                    return { label: '휴무', color: 'closed', detail: '오늘 정기 휴무' };
                 }
 
                 if (statusStr === '24시간 영업' || statusStr === '00:00–24:00') {
@@ -814,7 +814,7 @@
                     } else if (currentMinutes < openMinutes) {
                         return { label: '영업 종료', color: 'ended', detail: `${openStr}에 영업 시작` };
                     } else {
-                        return { label: '영업 종료', color: 'ended', detail: '오늘 영업이 끝났습니다' };
+                        return { label: '영업 종료', color: 'ended', detail: '오늘 영업 종료' };
                     }
                 }
 
@@ -834,7 +834,7 @@
                         const hDayName = nthMatch[2];
                         if (targetDayName === hDayName) {
                             const today = new Date();
-                            if (Math.ceil(today.getDate() / 7) === nth) return '휴무 중';
+                            if (Math.ceil(today.getDate() / 7) === nth) return '휴무';
                         }
                     }
                 }
@@ -888,8 +888,8 @@
                     }
                 }
 
-                if (isHoliday) return '휴무 중';
-                return resultTime || '휴무 중';
+                if (isHoliday) return '휴무';
+                return resultTime || '휴무';
             };
 
             const openDetailPanel = (store) => {
