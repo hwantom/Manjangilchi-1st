@@ -39,7 +39,7 @@
       "imports": {
         "react": "https://esm.sh/react@18.2.0",
         "react-dom/client": "https://esm.sh/react-dom@18.2.0/client?deps=react@18.2.0",
-        "@google/generative-ai": "https://esm.sh/@google/generative-ai",
+        "@google/generative-ai": "https://esm.sh/@google/generative-ai@0.21.0",
         "lucide-react": "https://esm.sh/lucide-react@0.344.0?deps=react@18.2.0"
       }
     }
@@ -256,6 +256,8 @@
             }
         };
 
+        import { GoogleGenerativeAI } from '@google/generative-ai';
+
         const getRecommendations = async (selection, storeList, lang) => {
             // 1. 프롬프트 구성
             const storeListText = storeList.map(s => `${s.name}(${s.category})`).join(',');
@@ -264,39 +266,25 @@
 위 목록에서 가장 적합한 4곳을 골라 JSON으로 답해줘. 답변 언어: ${lang}. 형식: [{ "name": "상점명", "description": "한줄추천이유" }]`;
 
             try {
-                // 2. Netlify Function (Proxy) 호출
-                const response = await fetch('/.netlify/functions/recommend', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt })
-                });
+                // 2. Client-side API Call (Direct)
+                // Note: Direct API calls from browser are generally not recommended for production due to key exposure, 
+                // but needed here as local backend proxy is missing or failing (405).
+                const genAI = new GoogleGenerativeAI(AppConfig.GEMINI_API_KEY);
+                const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-                // 응답 상태 확인
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Server error:', response.status, errorText);
-                    throw new Error(`서버 오류 (${response.status}): ${errorText.substring(0, 100)}`);
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                const text = response.text();
+
+                // 3. JSON Parsing
+                if (!text) {
+                    throw new Error('AI 응답이 비어있습니다.');
                 }
 
-                // Content-Type 확인
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    const textResponse = await response.text();
-                    console.error('Non-JSON response:', textResponse);
-                    throw new Error('서버에서 올바른 응답을 받지 못했습니다.');
-                }
+                // Clean markdown code blocks if present
+                const cleanedText = text.replace(/```json|```/g, "").trim();
+                const parsed = JSON.parse(cleanedText);
 
-                // JSON 파싱
-                const result = await response.json();
-
-                // 3. 응답 데이터 변환 (Gemini 응답 구조 처리)
-                const rawText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!rawText) {
-                    console.error('Invalid response structure:', result);
-                    throw new Error('AI 응답 형식이 올바르지 않습니다.');
-                }
-
-                const parsed = JSON.parse(rawText.replace(/```json|```/g, "").trim());
                 const items = parsed.map((item, index) => ({
                     id: `gen-${Date.now()}-${index}`,
                     name: item.name,
@@ -308,7 +296,15 @@
 
             } catch (error) {
                 console.error("Recommendation Error:", error);
-                return { data: [], error: error.message || '추천을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.' };
+
+                // Friendly error messages
+                let errorMsg = '추천을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.';
+                if (error.message.includes('400')) errorMsg = '요청이 올바르지 않습니다.';
+                else if (error.message.includes('403')) errorMsg = 'API 키 오류입니다. 설정을 확인해주세요.';
+                else if (error.message.includes('429')) errorMsg = '요청이 너무 많습니다. 잠시 후 시도해주세요.';
+                else if (error.message.includes('SAFETY')) errorMsg = '안전 정책에 의해 응답이 차단되었습니다.';
+
+                return { data: [], error: `${errorMsg} (${error.message})` };
             }
         };
 
@@ -527,7 +523,7 @@
             const renderLanding = () => (
                 <div className="flex flex-col py-8 space-y-10">
                     <div className="space-y-2">
-                        <h1 className="text-3xl font-black text-gray-900 leading-tight">{t.title}</h1>
+                        <h1 className="text-3xl font-normal text-gray-900 leading-tight">{t.title}</h1>
                         <p className="text-[#A68A64] font-bold text-sm tracking-wider">{t.subTitle}</p>
                     </div>
 
@@ -536,7 +532,7 @@
                     </div>
 
                     <div className="space-y-4">
-                        <h2 className="text-2xl font-bold text-gray-800 whitespace-pre-wrap leading-tight">{t.landingTitle}</h2>
+                        <h2 className="text-2xl font-normal text-gray-800 whitespace-pre-wrap leading-tight">{t.landingTitle}</h2>
                         <p className="text-gray-500 text-base leading-relaxed">{t.landingDesc}</p>
                     </div>
 
@@ -557,7 +553,7 @@
             const renderStep1 = () => (
                 <div className="py-6 space-y-8">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2 whitespace-pre-wrap leading-tight">{t.step1Title}</h2>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-2 whitespace-pre-wrap leading-tight">{t.step1Title}</h2>
                         <p className="text-gray-500 text-base">{t.step1Desc}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -574,7 +570,7 @@
             const renderStep2 = () => (
                 <div className="py-6 space-y-8">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2 whitespace-pre-wrap leading-tight">{t.step2Title}</h2>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-2 whitespace-pre-wrap leading-tight">{t.step2Title}</h2>
                         <p className="text-gray-500 text-base">{t.step2Desc}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -594,7 +590,7 @@
             const renderStep3 = () => (
                 <div className="py-6 space-y-8">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2 whitespace-pre-wrap leading-tight">{t.step3Title}</h2>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-2 whitespace-pre-wrap leading-tight">{t.step3Title}</h2>
                         <p className="text-gray-500 text-base">{t.step3Desc}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -611,7 +607,7 @@
             const renderStep4 = () => (
                 <div className="py-6 space-y-8">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">{t.step4Title}</h2>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-2 leading-tight">{t.step4Title}</h2>
                         <p className="text-gray-500 text-base">{t.step4Desc}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -688,7 +684,7 @@
 
                 return (
                     <div className="pt-4 pb-48">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-10 whitespace-pre-wrap leading-tight">{t.recTitle}</h2>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-10 whitespace-pre-wrap leading-tight">{t.recTitle}</h2>
                         <div className="space-y-4">
                             {recommendations.map((store) => (
                                 <div

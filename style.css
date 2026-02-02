@@ -208,7 +208,8 @@ svg {
     color: #1A1A1B;
     white-space: nowrap;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-    pointer-events: none;
+    pointer-events: auto;
+    cursor: pointer;
     transition: all 0.2s;
     border: 1px solid rgba(0, 0, 0, 0.04);
     opacity: 1;
@@ -467,4 +468,110 @@ h2 {
 
 .error-message-text {
     font-weight: 500;
+}
+
+/* Operating Hours Component (Naver/Kakao Style) */
+.hours-container {
+    padding: 0.25rem;
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+}
+
+.hours-container:hover {
+    background-color: #f8fafc;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.status-open-text {
+    color: #166534;
+}
+
+.status-closed-text {
+    color: #991b1b;
+}
+
+.status-ended-text {
+    color: #475569;
+}
+
+.status-break-text {
+    color: #9a3412;
+}
+
+.dot-open {
+    background-color: #22c55e;
+}
+
+.dot-closed {
+    background-color: #ef4444;
+}
+
+.dot-ended {
+    background-color: #94a3b8;
+}
+
+.dot-break {
+    background-color: #f97316;
+}
+
+.hours-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+}
+
+.hours-table tr {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.hours-table tr:last-child {
+    border-bottom: none;
+}
+
+.hours-table td {
+    padding: 8px 4px;
+}
+
+.hours-table tr.today {
+    font-weight: 700;
+    color: #1a1a1b;
+    background-color: #f8fafc;
+}
+
+.hours-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    margin-right: 4px;
+}
+
+.badge-break {
+    background-color: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #ffedd5;
+}
+
+.badge-last {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+#hoursToggleBtn svg {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#hoursToggleBtn.active svg {
+    transform: rotate(180deg);
 }

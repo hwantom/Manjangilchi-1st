@@ -115,6 +115,17 @@
             class="fixed top-0 right-0 h-full z-50 bg-white shadow-[-10px_0_30px_rgba(0,0,0,0.1)] panel-transition hidden-panel-right w-full sm:w-[450px]">
         </div>
         <div id="overlay" class="fixed inset-0 bg-black/20 z-40 backdrop-blur-[2px] hidden"></div>
+        <div id="imageModal"
+            class="fixed inset-0 z-[100] bg-black/90 hidden flex items-center justify-center p-4 backdrop-blur-sm transition-all duration-300 opacity-0 pointer-events-none">
+            <button id="imgModalClose"
+                class="absolute top-5 right-5 w-12 h-12 flex items-center justify-center bg-white/10 rounded-full text-white/80 hover:bg-white/20 transition-colors z-[101]">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <img id="modalImage" src=""
+                class="max-w-full max-h-full object-contain rounded-lg shadow-2xl scale-95 transition-transform duration-300" />
+        </div>
         <div id="toast"
             class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl font-bold text-sm hidden">
         </div>
@@ -151,8 +162,8 @@
             ];
             const STORES_WITH_TOP_LABEL = new Set(["푸른할인마트", "송림정육점", "청과코너", "야채코너", "송림사우나", "피노키오 옷수선", "서촌호떡", "엄마손반찬", "정금이네 모두의 분식", "명방앗간", "충남방앗간", "우리농산물유통", "서울수산물회센타", "체크인첸킨", "통인초록", "통인다방", "티각태각", "서촌의 진심", "이레해물칼국수", "BYC", "손맛김밥", "박현순미용실", "도시락카페", "도깨비한과강정", "현대식품", "알뜰옷수선전문점", "신일참기름", "소문난김구이", "효자365김밥", "반찬나라", "통인시장사진관", "점순이네반찬", "서촌주막", "다듬이", "그릇∙혼수용품도소매", "아빠김치찌개", "통인정", "나하나미용실", "보물창고", "효자청과마트", "효자지하생선"]);
             const STORES_WITH_RIGHT_LABEL = new Set(["푸른할인마트", "송림정육점", "청과코너", "야채코너", "송림사우나", "피노키오 옷수선", "서촌호떡", "엄마손반찬", "정금이네 모두의 분식", "명방앗간", "충남방앗간", "우리농산물유통", "서울수산물회센타", "체크인첸킨", "통인초록", "통인다방", "티각태각", "서촌의 진심", "이레해물칼국수", "인타코야끼", "BYC", "손맛김밥", "박현순미용실", "도시락카페", "도깨비한과강정", "현대식품", "알뜰옷수선전문점", "신일참기름", "소문난김구이", "효자365김밥", "반찬나라", "통인시장사진관", "점순이네반찬", "서촌주막", "다듬이", "그릇∙혼수용품도소매", "아빠김치찌개", "통인정", "나하나미용실", "보물창고", "효자청과마트", "효자지하생선"]);
-            const STORES_WITH_LEFT_LABEL = new Set(["자미당", "고기백화점", "서촌로또방", "용인야채가게", "삼화식당", "개화플로이죵", "우리상회", "참괜찮소", "뜻밖의 조각가", "부여떡방아간", "서촌와인상점", "싱싱과일나라", "불란집", "중앙전주반찬", "루루마켓", "설야만두", "신앙촌상회", "인왕산건강원", "코코로레시피", "효자동닭꼬치", "원조정할머니 기름떡볶이", "옛날통인감자탕", "경복궁 떡 방앗간", "반찬하우스", "우리동네", "원조할머니 기름떡볶이", "체부동잔치집", "효자떡집", "반디수블", "하림생닭토종닭", "육곳간축산물", "여주상회", "호남상회", "개성상회"]);
-            const EXCLUDED_STORE_KEYS = new Set(["점순이네반찬"]);
+            const STORES_WITH_LEFT_LABEL = new Set(["자미당", "고기백화점", "서촌로또방", "용인야채가게", "삼화식당", "개화플로이죵", "우리상회", "참괜찮소", "뜻밖의 조작가", "부여떡방아간", "서촌와인상점", "싱싱과일나라", "불란집", "중앙전주반찬", "루루마켓", "설야만두", "신앙촌상회", "인왕산건강원", "코코로레시피", "효자동닭꼬치", "원조정할머니 기름떡볶이", "옛날통인감자탕", "경복궁 떡 방앗간", "반찬하우스", "우리동네", "원조할머니 기름떡볶이", "체부동잔치집", "효자떡집", "반디수블", "하림생닭토종닭", "육곳간축산물", "여주상회", "호남상회", "개성상회"]);
+            const EXCLUDED_STORE_KEYS = new Set(["점순이네반찬", "서촌등대"]);
             const normalizeStoreKey = (name) => (name || "").replace(/\s+/g, "");
 
             // --- State Management ---
@@ -183,6 +194,40 @@
             const favCount = document.getElementById('favCount');
             const locateMeBtn = document.getElementById('locateMeBtn');
             const toastEl = document.getElementById('toast');
+
+            // Image Modal Elements
+            const imageModal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const imgModalClose = document.getElementById('imgModalClose');
+
+            // --- Modal Logic ---
+            const openImageModal = (src) => {
+                if (!src || src === PLACEHOLDER_IMG) return;
+                modalImage.src = src;
+                imageModal.classList.remove('hidden');
+                // Animation frame for transition
+                requestAnimationFrame(() => {
+                    imageModal.classList.remove('opacity-0', 'pointer-events-none');
+                    modalImage.classList.remove('scale-95');
+                    modalImage.classList.add('scale-100');
+                });
+            };
+
+            const closeImageModal = () => {
+                imageModal.classList.add('opacity-0', 'pointer-events-none');
+                modalImage.classList.remove('scale-100');
+                modalImage.classList.add('scale-95');
+                setTimeout(() => {
+                    imageModal.classList.add('hidden');
+                    modalImage.src = '';
+                }, 300);
+            };
+
+            imgModalClose.onclick = closeImageModal;
+            imageModal.onclick = (e) => {
+                // Close if clicked on background
+                if (e.target === imageModal) closeImageModal();
+            };
 
             // --- Data Service Logic ---
             const fetchStores = async () => {
@@ -256,6 +301,13 @@
                 updateUI();
                 initGeolocation();
                 checkUrlParams();
+
+                // Handle browser back button to close panels
+                window.addEventListener('popstate', (event) => {
+                    if (!event.state || !event.state.panelOpen) {
+                        closeAllPanelsInternal();
+                    }
+                });
             };
 
             const loadGoogleMaps = () => {
@@ -407,11 +459,27 @@
                     <div class="glyph-container"><div class="glyph" style="background-image: url('${CATEGORY_STYLES[store.category].icon}')"></div></div>
                     <div class="shop-label ${labelClass}">${getStoreProp(store, 'name')}</div>
                 `;
-                    container.onclick = (e) => { e.stopPropagation(); openDetailPanel(store); };
 
                     const marker = new google.maps.marker.AdvancedMarkerElement({
-                        map, position: { lat: parseFloat(store.lat), lng: parseFloat(store.lng) }, content: container, title: store.name
+                        map,
+                        position: { lat: parseFloat(store.lat), lng: parseFloat(store.lng) },
+                        content: container,
+                        title: store.name,
+                        gmpClickable: true // Explicitly enable clicks for Advanced Markers
                     });
+
+                    // Add robust click listener to the marker instance
+                    marker.addListener('click', () => {
+                        openDetailPanel(store);
+                    });
+
+                    // Explicitly handle label clicks as well for maximum reliability
+                    const shopLabel = container.querySelector('.shop-label');
+                    shopLabel.onclick = (e) => {
+                        e.stopPropagation();
+                        openDetailPanel(store);
+                    };
+
                     markers.set(store.name, { marker, element: container, label: container.querySelector('.shop-label') });
                 });
                 updateMarkers();
@@ -680,7 +748,7 @@
                 `).join('');
             };
 
-            const closeAllPanels = () => {
+            const closeAllPanelsInternal = () => {
                 detailPanel.classList.add('hidden-panel-right');
                 favoritesPanel.classList.add('hidden-panel-left');
                 overlay.classList.add('hidden');
@@ -688,8 +756,146 @@
                 updateMarkers();
             };
 
+            const closeAllPanels = () => {
+                if (window.history.state && window.history.state.panelOpen) {
+                    window.history.back();
+                } else {
+                    closeAllPanelsInternal();
+                }
+            };
+
             // --- Detail Panel ---
+            window.toggleHours = () => {
+                const table = document.getElementById('hoursTable');
+                const btn = document.getElementById('hoursToggleBtn');
+                if (table) table.classList.toggle('hidden');
+                if (btn) btn.classList.toggle('active');
+            };
+
+            const getOperatingStatus = (hoursStr) => {
+                const t = UI_TRANSLATIONS[currentLang];
+                const now = new Date();
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                const dayIdx = now.getDay();
+
+                const statusStr = getDayOperatingStatus(hoursStr, dayIdx, true);
+
+                if (statusStr === '휴무 중') {
+                    return { label: '휴무 중', color: 'closed', detail: '오늘은 쉬는 날이에요' };
+                }
+
+                if (statusStr === '24시간 영업' || statusStr === '00:00–24:00') {
+                    return { label: '영업 중', color: 'open', detail: '24시간 영업 중' };
+                }
+
+                const timeMatch = statusStr.match(/(\d{1,2}:\d{2})\s*[~-–—]\s*(\d{1,2}:\d{2})/);
+                if (timeMatch) {
+                    const [_, openStr, closeStr] = timeMatch;
+                    const [openH, openM] = openStr.split(':').map(Number);
+                    const [closeH, closeM] = closeStr.split(':').map(Number);
+                    const openMinutes = openH * 60 + openM;
+                    const closeMinutes = closeH * 60 + closeM;
+
+                    let normalizedClose = closeMinutes;
+                    if (closeMinutes <= openMinutes) normalizedClose += 1440;
+
+                    if (currentMinutes >= openMinutes && currentMinutes < normalizedClose) {
+                        // Check for break time in the raw string
+                        const breakMatch = hoursStr.match(/브레이크타임\s*(\d{1,2}:\d{2})\s*[~-–—]\s*(\d{1,2}:\d{2})/);
+                        if (breakMatch) {
+                            const [_, bo, bc] = breakMatch;
+                            const bOpen = bo.split(':').map(Number)[0] * 60 + bo.split(':').map(Number)[1];
+                            const bClose = bc.split(':').map(Number)[0] * 60 + bc.split(':').map(Number)[1];
+                            if (currentMinutes >= bOpen && currentMinutes < bClose) {
+                                return { label: '브레이크타임', color: 'break', detail: `${bc}에 영업 재개` };
+                            }
+                        }
+                        return { label: '영업 중', color: 'open', detail: `${closeStr}에 영업 종료` };
+                    } else if (currentMinutes < openMinutes) {
+                        return { label: '영업 종료', color: 'ended', detail: `${openStr}에 영업 시작` };
+                    } else {
+                        return { label: '영업 종료', color: 'ended', detail: '오늘 영업이 끝났습니다' };
+                    }
+                }
+
+                return { label: '영업 중', color: 'open', detail: '영업 시간 확인 필요' };
+            };
+
+            const getDayOperatingStatus = (hoursStr, dayIdx, checkNthHoliday = false) => {
+                if (!hoursStr) return '정보 없음';
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const targetDayName = dayNames[dayIdx];
+
+                // 1. Nth week holiday check (e.g. "매달 3번째 일요일")
+                if (checkNthHoliday) {
+                    const nthMatch = hoursStr.match(/매달\s*(\d)번째\s*([일월화수목금토])요일/);
+                    if (nthMatch) {
+                        const nth = parseInt(nthMatch[1]);
+                        const hDayName = nthMatch[2];
+                        if (targetDayName === hDayName) {
+                            const today = new Date();
+                            if (Math.ceil(today.getDate() / 7) === nth) return '휴무 중';
+                        }
+                    }
+                }
+
+                const segments = hoursStr.split('/').map(s => s.trim());
+                let resultTime = null;
+                let isHoliday = false;
+
+                for (const segment of segments) {
+                    const daysInSegment = new Set();
+
+                    // a. Extract Ranges (e.g. 월-수)
+                    const rangeRegex = /([일월화수목금토])\s*[~-–—]\s*([일월화수목금토])/g;
+                    let m;
+                    while ((m = rangeRegex.exec(segment)) !== null) {
+                        const start = dayNames.indexOf(m[1]);
+                        const end = dayNames.indexOf(m[2]);
+                        if (start <= end) {
+                            for (let i = start; i <= end; i++) daysInSegment.add(i);
+                        } else {
+                            for (let i = start; i <= 6; i++) daysInSegment.add(i);
+                            for (let i = 0; i <= end; i++) daysInSegment.add(i);
+                        }
+                    }
+
+                    // b. Extract Standalone Days (excluding those already in range)
+                    dayNames.forEach((name, idx) => {
+                        if (segment.includes(name) && !daysInSegment.has(idx)) {
+                            // Check if it's not part of a larger word or range (heuristic)
+                            const prevChar = segment[segment.indexOf(name) - 1];
+                            const nextChar = segment[segment.indexOf(name) + name.length];
+                            if (!/[~-–—]/.test(prevChar) && !/[~-–—]/.test(nextChar)) {
+                                daysInSegment.add(idx);
+                            }
+                        }
+                    });
+
+                    // If no specific days mentioned, assume it applies to all UNLESS it's a holiday note
+                    const hasDays = daysInSegment.size > 0;
+                    const appliesToToday = daysInSegment.has(dayIdx) || (!hasDays && !segment.includes('휴무'));
+
+                    if (appliesToToday) {
+                        if (segment.includes('휴무')) {
+                            isHoliday = true;
+                        } else {
+                            const timeMatch = segment.match(/(\d{1,2}:\d{2})\s*[~-–—]\s*(\d{1,2}:\d{2})/);
+                            const is24h = segment.includes('24시간');
+                            if (timeMatch) resultTime = timeMatch[0];
+                            else if (is24h) resultTime = "24시간 영업";
+                        }
+                    }
+                }
+
+                if (isHoliday) return '휴무 중';
+                return resultTime || '휴무 중';
+            };
+
             const openDetailPanel = (store) => {
+                if (!window.history.state || !window.history.state.panelOpen) {
+                    window.history.pushState({ panelOpen: true }, '');
+                }
                 selectedStore = store;
                 renderDetailPanel();
                 detailPanel.classList.remove('hidden-panel-right');
@@ -712,12 +918,12 @@
                 detailPanel.innerHTML = `
                 <div class="flex flex-col h-full bg-white text-brand-ink overflow-hidden">
                     <div class="relative h-64 sm:h-72 w-full shrink-0 bg-gray-100">
-                        <img src="${normalizeImageUrl(store.repre_image)}" class="w-full h-full object-cover" onerror="this.src='${PLACEHOLDER_IMG}'" />
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-                        <button id="detailCloseBtn" class="absolute top-5 left-5 w-10 h-10 flex items-center justify-center bg-white/20 backdrop-blur-xl rounded-full text-white"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
-                        <div class="absolute top-5 right-5 flex gap-2">
-                           <button id="shareBtn" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-xl text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg></button>
-                           <button id="detailFavBtn" class="w-10 h-10 flex items-center justify-center rounded-full transition-all ${isFav ? 'bg-pink-500 text-white' : 'bg-white/20 backdrop-blur-xl text-white'}"><svg class="w-6 h-6" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></button>
+                        <img id="detailPanelImage" src="${normalizeImageUrl(store.repre_image)}" class="w-full h-full object-cover cursor-zoom-in active:scale-105 transition-transform" onerror="this.src='${PLACEHOLDER_IMG}'" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none"></div>
+                        <button id="detailCloseBtn" class="absolute top-5 left-5 w-10 h-10 flex items-center justify-center bg-white/20 backdrop-blur-xl rounded-full text-white hover:bg-white/30 transition-colors z-10"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg></button>
+                        <div class="absolute top-5 right-5 flex gap-2 z-10">
+                           <button id="shareBtn" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 backdrop-blur-xl text-white hover:bg-white/30 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg></button>
+                           <button id="detailFavBtn" class="w-10 h-10 flex items-center justify-center rounded-full transition-all ${isFav ? 'bg-pink-500 text-white shadow-lg shadow-pink-500/30' : 'bg-white/20 backdrop-blur-xl text-white hover:bg-white/30'}"><svg class="w-6 h-6" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg></button>
                         </div>
                     </div>
                     <div class="flex-1 overflow-y-auto p-6 space-y-6 -mt-8 relative bg-white rounded-t-3xl no-scrollbar">
@@ -725,13 +931,58 @@
                             <span class="${catStyle.bg} px-3 py-1 rounded-lg text-[10px] font-black uppercase text-brand-ink">${catName}</span>
                             ${store.coin === 'o' ? `<span class="px-3 py-1 rounded-lg text-[10px] font-black uppercase text-yellow-800 bg-yellow-100">${t.yeopjeonBadge}</span>` : ''}
                         </div>
-                        <h2 class="detail-store-name text-3xl font-black text-gray-900 mb-2">${getStoreProp(store, 'name')}</h2>
+                        <h2 class="detail-store-name text-3xl font-normal text-gray-900 mb-2">${getStoreProp(store, 'name')}</h2>
                         <p class="text-base text-gray-500 leading-relaxed">${getStoreProp(store, 'shortDesc')}</p>
                         <div class="grid grid-cols-1 gap-3">
-                            <button id="routeBtn" class="w-full py-4 bg-brand-ink text-white rounded-2xl font-bold flex items-center justify-center gap-3"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>${t.directions}</button>
+                            <button id="routeBtn" class="w-full py-4 bg-brand-ink text-white rounded-2xl font-bold flex items-center justify-center gap-3 active:scale-98 transition-transform"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>${t.directions}</button>
                         </div>
+
                         <div class="bg-gray-50 rounded-2xl p-5 space-y-4">
-                            <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-gray-400 shrink-0 shadow-sm"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div><div><p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">${t.hoursLabel}</p><p class="text-sm font-bold text-gray-800 whitespace-pre-wrap leading-relaxed">${getStoreProp(store, 'hours')}</p></div></div>
+                            <!-- Operating Hours Naver Style -->
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-gray-400 shrink-0 shadow-sm">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">${t.hoursLabel}</p>
+                                        <div id="hoursToggleBtn" class="hours-container cursor-pointer -ml-1 pr-2" onclick="toggleHours()">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center text-sm">
+                                                    <span class="status-dot dot-${getOperatingStatus(getStoreProp(store, 'hours')).color}"></span>
+                                                    <span class="font-bold status-${getOperatingStatus(getStoreProp(store, 'hours')).color}-text mr-2">${getOperatingStatus(getStoreProp(store, 'hours')).label}</span>
+                                                    <span class="text-gray-400 mr-2">·</span>
+                                                    <span class="font-medium text-gray-700">${getOperatingStatus(getStoreProp(store, 'hours')).detail}</span>
+                                                </div>
+                                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="hoursTable" class="hidden pl-14 pr-2 pb-2">
+                                    <table class="hours-table text-xs">
+                                        ${['일', '월', '화', '수', '목', '금', '토'].map((dName, dIdx) => {
+                    const isToday = new Date().getDay() === dIdx;
+                    const statusText = getDayOperatingStatus(getStoreProp(store, 'hours'), dIdx);
+                    return `
+                                                <tr class="${isToday ? 'today' : 'text-gray-500'}">
+                                                    <td class="w-16">${dName}요일</td>
+                                                    <td class="text-right sm:text-left font-medium">${statusText} ${isToday ? '<span class="text-[10px] text-blue-500 ml-1">(오늘)</span>' : ''}</td>
+                                                </tr>
+                                            `;
+                }).join('')}
+                                    </table>
+                                    ${(getStoreProp(store, 'hours') && (getStoreProp(store, 'hours').includes('브레이크') || getStoreProp(store, 'hours').includes('라스트'))) ? `
+                                        <div class="mt-3 pt-3 border-t border-gray-100 space-y-1">
+                                            ${getStoreProp(store, 'hours').includes('브레이크') ? `<div class="flex items-center text-[11px] text-orange-600 font-bold"><span class="hours-badge badge-break">BREAK</span> ${getStoreProp(store, 'hours').match(/브레이크타임\s*\d{2}:\d{2}~\d{2}:\d{2}/) || '15:00 ~ 17:00'}</div>` : ''}
+                                            ${getStoreProp(store, 'hours').includes('라스트') ? `<div class="flex items-center text-[11px] text-gray-500 font-bold"><span class="hours-badge badge-last">L.O</span> ${getStoreProp(store, 'hours').match(/라스트오더\s*\d{2}:\d{2}/) || '20:30'}</div>` : ''}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+
                             <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-gray-400 shrink-0 shadow-sm"><span class="font-black text-sm">₩</span></div><div><p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">${t.priceLabel}</p><p class="text-sm font-bold text-gray-800">${getStoreProp(store, 'price')}</p></div></div>
                             ${keywords.length ? `<div class="flex items-start gap-4"><div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-gray-400 shrink-0 shadow-sm"><span class="font-black text-sm">#</span></div><div><p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">${t.keywordsLabel}</p><div class="flex flex-wrap gap-2 pt-1">${keywords.map(k => `<span class="px-2.5 py-1 rounded-full bg-white border border-gray-200 text-gray-600 text-[11px] font-bold shadow-[0_1px_0_rgba(0,0,0,0.04)]">${k}</span>`).join('')}</div></div></div>` : ''}
                         </div>
@@ -741,13 +992,13 @@
                             </div>
                             <div class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
                                 ${STORY_LINKS.map((link, idx) => `
-                                    <a href="${link}" target="_blank" rel="noopener noreferrer" class="group block shrink-0 w-36 aspect-[3/4] rounded-2xl shadow-sm overflow-hidden">
-                                        ${STORY_THUMBS[idx] ? `<img src="${STORY_THUMBS[idx]}" class="w-full h-full object-contain" alt="Instagram story thumbnail" />` : ''}
+                                    <a href="${link}" target="_blank" rel="noopener noreferrer" class="group block shrink-0 w-36 aspect-[3/4] rounded-2xl shadow-sm overflow-hidden border border-gray-100">
+                                        ${STORY_THUMBS[idx] ? `<img src="${STORY_THUMBS[idx]}" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" alt="Instagram story thumbnail" />` : ''}
                                     </a>
                                 `).join('')}
                             </div>
                         </div>
-                        ${store.coin === 'o' ? `<div class="pt-6 border-t border-dashed border-gray-200 pb-10"><div class="bg-brand-coin/5 border border-brand-coin/20 rounded-2xl p-4 flex items-center gap-4"><div class="w-12 h-12 bg-brand-coin rounded-full flex items-center justify-center text-white text-xl font-black">通</div><div><h4 class="font-black text-sm text-brand-coin">${t.yeopjeonTitle}</h4><p class="text-xs text-gray-500 font-medium">${t.yeopjeonDesc}</p></div></div></div>` : ''}
+                        ${store.coin === 'o' ? `<div class="pt-6 border-t border-dashed border-gray-200 pb-10"><div class="bg-brand-coin/5 border border-brand-coin/20 rounded-2xl p-4 flex items-center gap-4"><div class="w-12 h-12 bg-brand-coin rounded-full flex items-center justify-center text-white text-xl font-black shadow-lg shadow-brand-coin/30">通</div><div><h4 class="font-black text-sm text-brand-coin">${t.yeopjeonTitle}</h4><p class="text-xs text-gray-500 font-medium">${t.yeopjeonDesc}</p></div></div></div>` : ''}
                     </div>
                 </div>`;
 
@@ -755,6 +1006,12 @@
                 document.getElementById('detailFavBtn').onclick = () => toggleFavorite(store.name);
                 document.getElementById('routeBtn').onclick = () => handleRoute(store);
                 document.getElementById('shareBtn').onclick = () => handleShare(store);
+
+                // Attach click handler for image popup
+                const imgEl = document.getElementById('detailPanelImage');
+                if (imgEl) {
+                    imgEl.onclick = () => openImageModal(normalizeImageUrl(store.repre_image));
+                }
             };
 
             const handleRoute = (store) => {
@@ -794,6 +1051,9 @@
             // --- Favorites Panel ---
             const openFavoritesPanel = (isOpen) => {
                 if (isOpen) {
+                    if (!window.history.state || !window.history.state.panelOpen) {
+                        window.history.pushState({ panelOpen: true }, '');
+                    }
                     renderFavoritesPanel();
                     favoritesPanel.classList.remove('hidden-panel-left');
                     overlay.classList.remove('hidden');
@@ -834,7 +1094,7 @@
 
                 favoritesPanel.innerHTML = `
                 <div class="p-6 flex items-center justify-between border-b border-gray-100">
-                    <h2 class="text-xl font-black text-gray-900">${t.favoritesTitle}</h2>
+                    <h2 class="text-xl font-normal text-gray-900">${t.favoritesTitle}</h2>
                     <button id="favCloseBtn" class="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" /></svg></button>
                 </div>
                 <div class="flex-1 overflow-y-auto p-4 no-scrollbar">${content}</div>`;
