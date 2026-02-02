@@ -14,7 +14,20 @@
     <!-- End Google Tag Manager -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Tongin Market Guide</title>
+    <title>Manjangilchi | Tongin Market Guide</title>
+    <meta name="description"
+        content="Discover the hidden gems of Seoul's historic Tongin Market. Easy guide to food, life, and culture." />
+
+    <!-- OpenGraph Tags -->
+    <meta property="og:title" content="Manjangilchi - Tongin Market Guide" />
+    <meta property="og:description"
+        content="Meet the real Seoul at Tongin Market. Check operating hours, locations, and coin experiences." />
+    <meta property="og:image" content="https://hwantom.github.io/Manjangilchi-1st/assets/mjlogo.png" />
+    <meta property="og:url" content="https://hwantom.github.io/Manjangilchi-1st/" />
+    <meta property="og:type" content="website" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/mjlogo.png" />
     <!-- External Resources -->
     <script src="config.js"></script>
     <link href="style.css" rel="stylesheet">
@@ -49,6 +62,17 @@
             style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay"
+        class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative w-24 h-24 mb-4">
+            <div class="absolute inset-0 border-4 border-gray-100 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-t-pink-500 rounded-full animate-spin"></div>
+            <img src="assets/mjlogo.png" class="absolute inset-0 m-auto w-12 h-12 object-contain" alt="Loading..." />
+        </div>
+        <p class="text-xs font-black text-gray-400 uppercase tracking-widest animate-pulse">Checking Ingredients...</p>
+    </div>
+
     <div id="app" class="relative w-full h-screen overflow-hidden">
 
         <!-- Header & Filters -->
@@ -64,6 +88,13 @@
                 </div>
                 <input id="searchInput" type="search" placeholder="상점이나 메뉴를 검색하세요"
                     class="flex-1 min-w-0 w-full bg-transparent border-none outline-none text-brand-ink placeholder-gray-400 font-bold px-2 text-sm truncate appearance-none" />
+                <button id="clearSearchBtn"
+                    class="hidden w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
 
                 <div class="relative shrink-0 overflow-visible z-[9999]">
                     <button id="langBtn"
@@ -95,6 +126,21 @@
 
         <!-- Map -->
         <div id="map" class="w-full h-full bg-[#f1f3f4]"></div>
+
+        <!-- No Results Feedback -->
+        <div id="noResults"
+            class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[25] bg-white/90 backdrop-blur-md px-8 py-6 rounded-3xl shadow-2xl border border-white/50 text-center flex flex-col items-center gap-3">
+            <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-300">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                </svg>
+            </div>
+            <p id="noResultsText" class="text-sm font-bold text-gray-900">검색 결과가 없습니다</p>
+            <button onclick="clearAllFilters()"
+                class="text-xs font-black text-pink-500 uppercase tracking-widest border-b-2 border-pink-500/20 pb-0.5">전체
+                보기</button>
+        </div>
 
         <!-- Locate Me Button -->
         <button id="locateMeBtn"
@@ -144,10 +190,34 @@
                 '엽전': { bg: 'bg-brand-coin', icon: 'https://img.icons8.com/?size=100&id=vIMsgn8yO0Jk&format=png&color=000000' }
             };
             const UI_TRANSLATIONS = {
-                ko: { searchPlaceholder: "상점이나 메뉴를 검색하세요", directions: "현재 위치에서 길찾기", naverReview: "네이버 리뷰", kakaoReview: "카카오 리뷰", menuDetail: "메뉴 상세보기", hoursLabel: "영업 시간", priceLabel: "평균 가격", keywordsLabel: "키워드", moreLabel: "더보기", yeopjeonBadge: "엽전 가맹점", yeopjeonTitle: "엽전 도시락 가맹점", yeopjeonDesc: "통인시장 엽전으로 결제가 가능합니다.", favoritesTitle: "즐겨찾기", emptyFavorites: "목록이 비어있습니다.", copySuccess: "링크가 복사되었습니다! 🔗", cat_food: "식당", cat_snack: "간식", cat_life: "생활형", cat_coin: "엽전", legendTitle: "범례", homeTooltip: "홈으로 이동" },
-                en: { searchPlaceholder: "Search shops or menus", directions: "Get Directions", naverReview: "Naver Review", kakaoReview: "Kakao Review", menuDetail: "View Menu", hoursLabel: "Business Hours", priceLabel: "Average Price", keywordsLabel: "Keywords", moreLabel: "More", yeopjeonBadge: "Yeopjeon Member", yeopjeonTitle: "Yeopjeon Member Store", yeopjeonDesc: "You can pay with Tongin Market brass coins.", favoritesTitle: "Favorites", emptyFavorites: "Your list is empty.", copySuccess: "Link copied to clipboard! 🔗", cat_food: "Restaurant", cat_snack: "Snacks", cat_life: "Lifestyle", cat_coin: "Yeopjeon", legendTitle: "Legend", homeTooltip: "Go to Home" },
-                zh: { searchPlaceholder: "搜索店铺或菜单", directions: "获取路线", naverReview: "Naver 评论", kakaoReview: "Kakao 评论", menuDetail: "查看菜单", hoursLabel: "营业时间", priceLabel: "人均消费", keywordsLabel: "关键词", moreLabel: "更多", yeopjeonBadge: "铜钱加盟店", yeopjeonTitle: "通仁市场铜钱加盟店", yeopjeonDesc: "可以使用通仁市场铜钱支付。", favoritesTitle: "我的收藏", emptyFavorites: "列表为空。", copySuccess: "链接已复制！ 🔗", cat_food: "美食店", cat_snack: "零食点心", cat_life: "生活用品", cat_coin: "铜钱", legendTitle: "图例", homeTooltip: "返回主页" },
-                ja: { searchPlaceholder: "店舗やメニューを検索", directions: "道案内を開始", naverReview: "Naver レビュー", kakaoReview: "Kakao レビュー", menuDetail: "メニューを見る", hoursLabel: "営業時間", priceLabel: "平均価格", keywordsLabel: "キーワード", moreLabel: "もっと見る", yeopjeonBadge: "ヨプジョン加盟店", yeopjeonTitle: "通仁市場ヨプジョン加盟店", yeopjeonDesc: "通仁市場のヨプジョン（真鍮貨）で決済可能です。", favoritesTitle: "お気に入り", emptyFavorites: "リストが空です。", copySuccess: "リンクをコピーしました！ 🔗", cat_food: "食堂", cat_snack: "軽食・カフェ", cat_life: "生活・雑貨", cat_coin: "ヨプジョン", legendTitle: "凡例", homeTooltip: "ホーム" }
+                ko: {
+                    searchPlaceholder: "상점이나 메뉴를 검색하세요", directions: "현재 위치에서 길찾기", naverReview: "네이버 리뷰", kakaoReview: "카카오 리뷰", menuDetail: "메뉴 상세보기",
+                    hoursLabel: "영업 시간", priceLabel: "평균 가격", keywordsLabel: "키워드", moreLabel: "더보기", yeopjeonBadge: "엽전 가맹점", yeopjeonTitle: "엽전 도시락 가맹점",
+                    yeopjeonDesc: "통인시장 엽전으로 결제가 가능합니다.", favoritesTitle: "즐겨찾기", emptyFavorites: "목록이 비어있습니다.", copySuccess: "링크가 복사되었습니다! 🔗",
+                    cat_food: "식당", cat_snack: "간식", cat_life: "생활형", cat_coin: "엽전", legendTitle: "범례", homeTooltip: "홈으로 이동",
+                    noResults: "검색 결과가 없습니다"
+                },
+                en: {
+                    searchPlaceholder: "Search shops or menus", directions: "Get Directions", naverReview: "Naver Review", kakaoReview: "Kakao Review", menuDetail: "View Menu",
+                    hoursLabel: "Business Hours", priceLabel: "Average Price", keywordsLabel: "Keywords", moreLabel: "More", yeopjeonBadge: "Yeopjeon Member", yeopjeonTitle: "Yeopjeon Member Store",
+                    yeopjeonDesc: "You can pay with Tongin Market brass coins.", favoritesTitle: "Favorites", emptyFavorites: "Your list is empty.", copySuccess: "Link copied to clipboard! 🔗",
+                    cat_food: "Restaurant", cat_snack: "Snacks", cat_life: "Lifestyle", cat_coin: "Yeopjeon", legendTitle: "Legend", homeTooltip: "Go to Home",
+                    noResults: "No results found"
+                },
+                zh: {
+                    searchPlaceholder: "搜索店铺或菜单", directions: "获取路线", naverReview: "Naver 评论", kakaoReview: "Kakao 评论", menuDetail: "查看菜单",
+                    hoursLabel: "营业时间", priceLabel: "人均消费", keywordsLabel: "关键词", moreLabel: "更多", yeopjeonBadge: "铜钱加盟店", yeopjeonTitle: "通仁市场铜钱加盟店",
+                    yeopjeonDesc: "可以使用通仁市场铜钱支付。", favoritesTitle: "我的收藏", emptyFavorites: "列表为空。", copySuccess: "链接已复制！ 🔗",
+                    cat_food: "美食店", cat_snack: "零食点心", cat_life: "生活用品", cat_coin: "铜钱", legendTitle: "图例", homeTooltip: "返回主页",
+                    noResults: "未找到相关结果"
+                },
+                ja: {
+                    searchPlaceholder: "店舗やメニューを検索", directions: "道案内を開始", naverReview: "Naver レビュー", kakaoReview: "Kakao レビュー", menuDetail: "メニューを見る",
+                    hoursLabel: "営業時間", priceLabel: "価格とメニュー", keywordsLabel: "キーワード", moreLabel: "もっと見る", yeopjeonBadge: "ヨプジョン加盟店", yeopjeonTitle: "通仁市場ヨプジョン加盟店",
+                    yeopjeonDesc: "通仁市場のヨプジョン（真鍮貨）で決済可能です。", favoritesTitle: "お気に入り", emptyFavorites: "リストが空です。", copySuccess: "リンクをコピーしました！ 🔗",
+                    cat_food: "食堂", cat_snack: "軽食・カフェ", cat_life: "生活・雑貨", cat_coin: "ヨプジョン", legendTitle: "凡例", homeTooltip: "ホーム",
+                    noResults: "検索結果がありません"
+                }
             };
             const PLACEHOLDER_IMG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 360'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop offset='0%25' stop-color='%23f3f4f7'/%3E%3Cstop offset='100%25' stop-color='%23e7eaf0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='360' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='22' fill='%2313203B'%3ENo Image%3C/text%3E%3C/svg%3E";
             const STORY_LINKS = [
@@ -194,6 +264,9 @@
             const favCount = document.getElementById('favCount');
             const locateMeBtn = document.getElementById('locateMeBtn');
             const toastEl = document.getElementById('toast');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            const noResults = document.getElementById('noResults');
+            const loadingOverlay = document.getElementById('loadingOverlay');
 
             // Image Modal Elements
             const imageModal = document.getElementById('imageModal');
@@ -302,6 +375,12 @@
                 initGeolocation();
                 checkUrlParams();
 
+                // Hide loading overlay with a slight delay for smooth feel
+                setTimeout(() => {
+                    loadingOverlay.classList.add('opacity-0', 'pointer-events-none');
+                    setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
+                }, 800);
+
                 // Handle browser back button to close panels
                 window.addEventListener('popstate', (event) => {
                     if (!event.state || !event.state.panelOpen) {
@@ -378,8 +457,15 @@
             const setupEventListeners = () => {
                 searchInput.addEventListener('input', (e) => {
                     searchQuery = e.target.value;
+                    clearSearchBtn.classList.toggle('hidden', !searchQuery);
                     updateMarkers();
                 });
+                clearSearchBtn.onclick = () => {
+                    searchInput.value = '';
+                    searchQuery = '';
+                    clearSearchBtn.classList.add('hidden');
+                    updateMarkers();
+                };
                 langBtn.addEventListener('click', () => langMenu.classList.toggle('hidden'));
                 favTrigger.addEventListener('click', () => openFavoritesPanel(true));
                 overlay.addEventListener('click', closeAllPanels);
@@ -598,17 +684,37 @@
 
             const updateMarkers = () => {
                 const filteredStoreNames = getFilteredStoreNames();
+
+                // Show/Hide markers
                 markers.forEach((obj, name) => {
                     const store = stores.find(s => s.name === name);
                     const isVisible = filteredStoreNames.has(name);
                     const isSelected = selectedStore?.name === name;
                     const isFavorite = favorites.has(name);
 
-                    obj.element.classList.toggle('dim', !isVisible);
+                    obj.marker.map = isVisible ? map : null; // Set map to null to hide marker
                     obj.element.classList.toggle('active', isSelected);
                     obj.element.classList.toggle('is-favorite', isFavorite);
                     obj.label.innerText = getStoreProp(store, 'name');
                 });
+
+                // Show/Hide no results feedback
+                if (noResults) {
+                    noResults.classList.toggle('hidden', filteredStoreNames.size > 0);
+                    const t = UI_TRANSLATIONS[currentLang];
+                    document.getElementById('noResultsText').textContent = t.noResults || '검색 결과가 없습니다';
+                }
+            };
+
+            window.clearAllFilters = () => {
+                searchQuery = '';
+                searchInput.value = '';
+                clearSearchBtn.classList.add('hidden');
+                activeCategories.clear();
+                coinFilter = false;
+                favoritesFilter = false;
+                renderFilters();
+                updateMarkers();
             };
 
             const updateUserMarker = () => {
