@@ -742,7 +742,8 @@
                     if (query) {
                         const name = getStoreProp(store, 'name').toLowerCase();
                         const desc = getStoreProp(store, 'shortDesc').toLowerCase();
-                        if (!name.includes(query) && !desc.includes(query) && !store.name.toLowerCase().includes(query)) return false;
+                        const keyword = (store.keyword || '').toLowerCase();
+                        if (!name.includes(query) && !desc.includes(query) && !keyword.includes(query) && !store.name.toLowerCase().includes(query)) return false;
                     }
                     return true;
                 }).map(s => s.name));
