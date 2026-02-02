@@ -422,41 +422,78 @@
                 const heading = (map.getHeading() || 0);
                 const h = heading < 0 ? heading + 360 : heading;
 
-                // Hysteresis Logic to prevent flickering
-                // Side Mode Targets: 180, 270. Core Zone: [145, 305]
-                // Vertical Mode Targets: 0, 90. Core Zone: [0, 125] U [325, 360]
+                // 4-Way Hysteresis Logic
+                // We want to detect which quadrant we are primarily in:
+                // West (270) [Initial]: 225-315.
+                // East (90): 45-135.
+                // South (180): 135-225.
+                // North (0/360): 315-45.
+
+                // Using a buffer of +/- 10 degrees at the transitions (45, 135, 225, 315)
+                // Stable Zones:
+                // North: [325, 360] U [0, 35]
+                // East: [55, 125]
+                // South: [145, 215]
+                // West: [235, 305]
 
                 let newMode = currentLabelMode;
 
-                if ((h >= 0 && h <= 125) || (h >= 325 && h <= 360)) {
-                    newMode = 'vertical';
-                } else if (h >= 145 && h <= 305) {
-                    newMode = 'side';
-                } else if (currentLabelMode === null) {
-                    // Fallback for initial state if in buffer zone (unlikely)
-                    newMode = 'side';
+                if ((h >= 325 && h <= 360) || (h >= 0 && h <= 35)) {
+                    newMode = 'north';
+                } else if (h >= 55 && h <= 125) {
+                    newMode = 'east';
+                } else if (h >= 145 && h <= 215) {
+                    newMode = 'south';
+                } else if (h >= 235 && h <= 305) {
+                    newMode = 'west';
                 }
+                // Else: in buffer zone, keep current mode.
+                // Initial fallback
+                if (!currentLabelMode && !newMode) newMode = 'west';
 
                 if (newMode === currentLabelMode) return;
                 currentLabelMode = newMode;
 
-                const isVerticalMode = (newMode === 'vertical');
+                // Mapping Logic
+                // Default (West): Left->Left, Right->Right, Top->Top
+                // East (180 rotation): Swap Left/Right. Top->Top.
+                // South: Left (South) -> Top. Right (North) -> Bottom.
+                // North: Left (South) -> Bottom. Right (North) -> Top.
 
                 markers.forEach(obj => {
                     const defaultClass = obj.element.getAttribute('data-default-class');
                     const labelEl = obj.label;
 
-                    // Reset classes
+                    // Reset classes (keep base layout, remove positioning)
                     labelEl.classList.remove('pos-left', 'pos-right', 'pos-top');
 
-                    if (isVerticalMode) {
-                        // Vertical Mode: Map Left/Right to Top/Bottom
-                        if (defaultClass === 'pos-left') labelEl.classList.add('pos-top');
+                    // If no default class, we can't really orient it (it's center/bottom by default)
+                    // But if it had one, we map it.
+                    if (!defaultClass) return;
+
+                    if (newMode === 'west') {
+                        // Normal operations
+                        labelEl.classList.add(defaultClass);
+                    }
+                    else if (newMode === 'east') {
+                        // Invert Left/Right
+                        if (defaultClass === 'pos-left') labelEl.classList.add('pos-right');
+                        else if (defaultClass === 'pos-right') labelEl.classList.add('pos-left');
                         else if (defaultClass === 'pos-top') labelEl.classList.add('pos-top');
-                        // pos-right becomes default (bottom)
-                    } else {
-                        // Side Mode: Restore defaults
-                        if (defaultClass) labelEl.classList.add(defaultClass);
+                    }
+                    else if (newMode === 'south') {
+                        // South Up -> Street Horizontal
+                        // Left Stores (South) are Top. Right Stores (North) are Bottom.
+                        if (defaultClass === 'pos-left') labelEl.classList.add('pos-top');
+                        else if (defaultClass === 'pos-right') { /* Default is bottom */ }
+                        else if (defaultClass === 'pos-top') labelEl.classList.add('pos-top'); // Keep top or force side? Stick to top.
+                    }
+                    else if (newMode === 'north') {
+                        // North Up -> Street Horizontal
+                        // Left Stores (South) are Bottom. Right Stores (North) are Top.
+                        if (defaultClass === 'pos-left') { /* Default is bottom */ }
+                        else if (defaultClass === 'pos-right') labelEl.classList.add('pos-top');
+                        else if (defaultClass === 'pos-top') labelEl.classList.add('pos-top');
                     }
                 });
             };
