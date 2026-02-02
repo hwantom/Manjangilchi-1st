@@ -377,6 +377,13 @@
                     const zoomLevel = map.getZoom();
                     updateMarkerSizes(zoomLevel);
                 });
+
+                // Add heading change listener for dynamic label orientation
+                map.addListener('heading_changed', () => {
+                    updateLabelOrientation();
+                });
+                // Initial call
+                updateLabelOrientation();
             };
 
             const createStoreMarkers = () => {
@@ -384,11 +391,16 @@
                     const container = document.createElement('div');
                     container.className = 'nmap-marker';
                     container.setAttribute('data-cat', store.category);
+
+                    // Determine default label orientation (optimized for -90 heading)
                     const labelClass = STORES_WITH_LEFT_LABEL.has(store.name)
                         ? 'pos-left'
                         : (STORES_WITH_RIGHT_LABEL.has(store.name)
                             ? 'pos-right'
                             : (STORES_WITH_TOP_LABEL.has(store.name) ? 'pos-top' : ''));
+
+                    container.setAttribute('data-default-class', labelClass);
+
                     container.innerHTML = `
                     <div class="fav-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.5 3c1.373 0 2.652.55 3.585 1.516.933-.966 2.212-1.516 3.585-1.516 2.786 0 5.25 2.322 5.25 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001z"/></svg></div>
                     <div class="glyph-container"><div class="glyph" style="background-image: url('${CATEGORY_STYLES[store.category].icon}')"></div></div>
@@ -402,6 +414,40 @@
                     markers.set(store.name, { marker, element: container, label: container.querySelector('.shop-label') });
                 });
                 updateMarkers();
+            };
+
+            const updateLabelOrientation = () => {
+                if (!map) return;
+                const heading = (map.getHeading() || 0 + 360) % 360;
+
+                // Mode definitions based on normalized heading (0-360)
+                // -90 is 270. -180 is 180.
+                // Ranges:
+                // Side Mode: [135, 315] (Covers 180 and 270)
+                // Vertical Mode: [315, 360] U [0, 135] (Covers 0 and 90)
+
+                const isVerticalMode = heading < 135 || heading > 315;
+
+                markers.forEach(obj => {
+                    const defaultClass = obj.element.getAttribute('data-default-class');
+                    const labelEl = obj.label;
+
+                    // Reset classes
+                    labelEl.classList.remove('pos-left', 'pos-right', 'pos-top');
+
+                    if (isVerticalMode) {
+                        // Vertical Mode: Map Left/Right to Top/Bottom
+                        // Left -> Top
+                        // Right -> Bottom (default, no class)
+                        // Top -> Top
+                        if (defaultClass === 'pos-left') labelEl.classList.add('pos-top');
+                        else if (defaultClass === 'pos-top') labelEl.classList.add('pos-top');
+                        // pos-right becomes default (bottom)
+                    } else {
+                        // Side Mode: Restore defaults
+                        if (defaultClass) labelEl.classList.add(defaultClass);
+                    }
+                });
             };
 
             const updateMarkerSizes = (zoomLevel) => {
