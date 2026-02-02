@@ -421,6 +421,46 @@
             );
         };
 
+        const LandingCarousel = () => {
+            const images = ['assets/slide1.jpg', 'assets/slide2.jpg', 'assets/slide3.jpg', 'assets/slide4.jpg'];
+            const [currentIndex, setCurrentIndex] = useState(0);
+
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setCurrentIndex((prev) => (prev + 1) % images.length);
+                }, 4000);
+                return () => clearInterval(interval);
+            }, [images.length]);
+
+            return (
+                <div className="w-full h-auto aspect-[4/3] max-h-[300px] bg-gray-100 rounded-3xl overflow-hidden shadow-sm relative border border-gray-50">
+                    <div
+                        className="flex h-full transition-transform duration-1000 ease-in-out"
+                        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                    >
+                        {images.map((src, idx) => (
+                            <img
+                                key={idx}
+                                src={src}
+                                className="w-full h-full object-cover shrink-0"
+                                alt={`Slide ${idx + 1}`}
+                                onerror={`this.src='https://picsum.photos/800/600?grayscale&sig=${idx}'`}
+                            />
+                        ))}
+                    </div>
+                    {/* Indicators */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                        {images.map((_, idx) => (
+                            <div
+                                key={idx}
+                                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/50'}`}
+                            ></div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
         // --- Main App Logic ---
 
         const App = () => {
@@ -527,9 +567,7 @@
                         <p className="text-[#A68A64] font-bold text-sm tracking-wider">{t.subTitle}</p>
                     </div>
 
-                    <div className="w-full h-auto aspect-[4/3] max-h-[300px] bg-gray-100 rounded-3xl overflow-hidden shadow-sm relative border border-gray-50">
-                        <img src="https://picsum.photos/800/600?grayscale" alt="Tongin Market" className="w-full h-full object-cover" />
-                    </div>
+                    <LandingCarousel />
 
                     <div className="space-y-4">
                         <h2 className="text-2xl font-normal text-gray-800 whitespace-pre-wrap leading-tight">{t.landingTitle}</h2>
