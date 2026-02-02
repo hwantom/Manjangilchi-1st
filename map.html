@@ -1166,9 +1166,13 @@
                         const bounds = result.routes[0].bounds;
                         map.fitBounds(bounds);
                     } else {
-                        triggerToast("길찾기에 실패했습니다. 구글 지도로 이동합니다.");
+                        let errorMsg = "길찾기에 실패했습니다. 구글 지도로 이동합니다.";
+                        if (status === 'ZERO_RESULTS') {
+                            errorMsg = "현재 위치가 너무 멉니다. (도보 경로 없음) 구글 지도로 이동합니다.";
+                        }
+                        triggerToast(errorMsg);
                         const url = `https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}&travelmode=walking`;
-                        window.open(url, '_blank');
+                        setTimeout(() => { window.open(url, '_blank'); }, 1300);
                     }
                 });
             };
