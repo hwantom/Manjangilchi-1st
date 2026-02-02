@@ -168,6 +168,7 @@
             let favorites = new Set();
             let userLocation = null;
             let currentLang = 'ko';
+            let currentLabelMode = null; // 'side' or 'vertical'
 
             // --- DOM Elements ---
             const searchInput = document.getElementById('searchInput');
@@ -418,15 +419,28 @@
 
             const updateLabelOrientation = () => {
                 if (!map) return;
-                const heading = (map.getHeading() || 0 + 360) % 360;
+                const heading = (map.getHeading() || 0);
+                const h = heading < 0 ? heading + 360 : heading;
 
-                // Mode definitions based on normalized heading (0-360)
-                // -90 is 270. -180 is 180.
-                // Ranges:
-                // Side Mode: [135, 315] (Covers 180 and 270)
-                // Vertical Mode: [315, 360] U [0, 135] (Covers 0 and 90)
+                // Hysteresis Logic to prevent flickering
+                // Side Mode Targets: 180, 270. Core Zone: [145, 305]
+                // Vertical Mode Targets: 0, 90. Core Zone: [0, 125] U [325, 360]
 
-                const isVerticalMode = heading < 135 || heading > 315;
+                let newMode = currentLabelMode;
+
+                if ((h >= 0 && h <= 125) || (h >= 325 && h <= 360)) {
+                    newMode = 'vertical';
+                } else if (h >= 145 && h <= 305) {
+                    newMode = 'side';
+                } else if (currentLabelMode === null) {
+                    // Fallback for initial state if in buffer zone (unlikely)
+                    newMode = 'side';
+                }
+
+                if (newMode === currentLabelMode) return;
+                currentLabelMode = newMode;
+
+                const isVerticalMode = (newMode === 'vertical');
 
                 markers.forEach(obj => {
                     const defaultClass = obj.element.getAttribute('data-default-class');
@@ -437,9 +451,6 @@
 
                     if (isVerticalMode) {
                         // Vertical Mode: Map Left/Right to Top/Bottom
-                        // Left -> Top
-                        // Right -> Bottom (default, no class)
-                        // Top -> Top
                         if (defaultClass === 'pos-left') labelEl.classList.add('pos-top');
                         else if (defaultClass === 'pos-top') labelEl.classList.add('pos-top');
                         // pos-right becomes default (bottom)
