@@ -145,7 +145,7 @@ svg {
     right: -6px;
     width: 18px;
     height: 18px;
-    background: #ec4899;
+    background: #A68A64;
     border-radius: 50%;
     border: 2px solid white;
     display: flex;
@@ -542,8 +542,8 @@ h2 {
 
 .hours-table tr.today {
     font-weight: 700;
-    color: #1a1a1b;
-    background-color: #f8fafc;
+    color: #A68A64;
+    background-color: #FDFBF7;
 }
 
 .hours-badge {
