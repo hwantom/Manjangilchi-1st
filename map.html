@@ -250,6 +250,9 @@
             let userLocation = null;
             let currentLang = 'ko';
             let currentLabelMode = null; // 'side' or 'vertical'
+            let directionsService = null;
+            let directionsRenderer = null;
+            let activeRoute = false;
 
             // --- DOM Elements ---
             const searchInput = document.getElementById('searchInput');
@@ -1121,8 +1124,80 @@
             };
 
             const handleRoute = (store) => {
-                const url = `https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}&travelmode=walking`;
-                window.open(url, '_blank');
+                const t = UI_TRANSLATIONS[currentLang];
+
+                if (!userLocation) {
+                    triggerToast("내 위치를 찾을 수 없습니다. GPS를 켜주세요.");
+                    initGeolocation();
+                    return;
+                }
+
+                if (!directionsService) directionsService = new google.maps.DirectionsService();
+                if (!directionsRenderer) {
+                    directionsRenderer = new google.maps.DirectionsRenderer({
+                        map: map,
+                        suppressMarkers: false,
+                        polylineOptions: {
+                            strokeColor: '#3B82F6',
+                            strokeWeight: 6,
+                            strokeOpacity: 0.8
+                        }
+                    });
+                }
+
+                const request = {
+                    origin: userLocation,
+                    destination: { lat: parseFloat(store.lat), lng: parseFloat(store.lng) },
+                    travelMode: 'WALKING'
+                };
+
+                directionsService.route(request, (result, status) => {
+                    if (status === 'OK') {
+                        directionsRenderer.setDirections(result);
+                        activeRoute = true;
+                        closeAllPanels();
+
+                        // Show "Stop Navigation" button
+                        showStopNavBtn(true);
+
+                        triggerToast("우리 앱 안에서 길안내를 시작합니다.");
+
+                        // Panel fits the route
+                        const bounds = result.routes[0].bounds;
+                        map.fitBounds(bounds);
+                    } else {
+                        triggerToast("길찾기에 실패했습니다. 구글 지도로 이동합니다.");
+                        const url = `https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}&travelmode=walking`;
+                        window.open(url, '_blank');
+                    }
+                });
+            };
+
+            const showStopNavBtn = (show) => {
+                let btn = document.getElementById('stopNavBtn');
+                if (!btn) {
+                    btn = document.createElement('button');
+                    btn.id = 'stopNavBtn';
+                    btn.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 z-30 bg-gray-900/90 backdrop-blur-md text-white px-6 py-3 rounded-2xl shadow-2xl font-black text-sm flex items-center gap-3 active:scale-95 transition-all border border-white/10';
+                    btn.innerHTML = `
+                        <svg class="w-5 h-5 text-pink-500" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
+                        <span>길안내 종료</span>
+                    `;
+                    btn.onclick = clearRoute;
+                    document.body.appendChild(btn);
+                }
+                btn.classList.toggle('hidden', !show);
+            };
+
+            const clearRoute = () => {
+                if (directionsRenderer) directionsRenderer.setMap(null);
+                directionsRenderer = null;
+                activeRoute = false;
+                showStopNavBtn(false);
+                if (map) {
+                    map.setZoom(19);
+                    if (userLocation) map.panTo(userLocation);
+                }
             };
 
             const handleShare = async (store) => {
