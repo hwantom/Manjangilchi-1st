@@ -88,7 +88,7 @@
                 step2Opts: [
                     { label: '혼자', Icon: User },
                     { label: '친구', Icon: Users },
-                    { label: '연인', Icon: Heart },
+                    { label: '연인', Icon: Heart, color: 'text-pink-500' },
                     { label: '가족', Icon: Users }
                 ],
                 step3Title: "지금 시장에서 가장 하고 싶은것은\n무엇인가요?",
@@ -134,7 +134,7 @@
                 step2Opts: [
                     { label: 'Solo', Icon: User },
                     { label: 'Friends', Icon: Users },
-                    { label: 'Couple', Icon: Heart },
+                    { label: 'Couple', Icon: Heart, color: 'text-pink-500' },
                     { label: 'Family', Icon: Users }
                 ],
                 step3Title: "What do you want to do\nmost right now?",
@@ -180,7 +180,7 @@
                 step2Opts: [
                     { label: '独自', Icon: User },
                     { label: '朋友', Icon: Users },
-                    { label: '情侣', Icon: Heart },
+                    { label: '情侣', Icon: Heart, color: 'text-pink-500' },
                     { label: '家人', Icon: Users }
                 ],
                 step3Title: "您现在最想做什么？",
@@ -226,7 +226,7 @@
                 step2Opts: [
                     { label: '一人', Icon: User },
                     { label: '友達', Icon: Users },
-                    { label: '恋人', Icon: Heart },
+                    { label: '恋人', Icon: Heart, color: 'text-pink-500' },
                     { label: '家族', Icon: Users }
                 ],
                 step3Title: "今、一番したいことは\n何ですか？",
@@ -702,7 +702,7 @@
                     <div className="grid grid-cols-2 gap-4">
                         {t.step2Opts.map((item) => (
                             <SelectionButton key={item.label} selected={selection.companion === item.label} onClick={() => updateSelection('companion', item.label)}>
-                                <div className="mb-2 text-[#A68A64]">
+                                <div className={`mb-2 ${item.color || 'text-[#A68A64]'}`}>
                                     <item.Icon className="w-6 h-6" strokeWidth={3} />
                                 </div>
                                 <span className="font-bold text-lg">{item.label}</span>
