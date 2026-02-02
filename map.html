@@ -1097,7 +1097,7 @@
                             <div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-gray-400 shrink-0 shadow-sm"><span class="font-black text-sm">₩</span></div><div><p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">${t.priceLabel}</p><p class="text-sm font-bold text-gray-800">${getStoreProp(store, 'price')}</p></div></div>
                             ${keywords.length ? `
                             <div class="flex items-start gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-brand-main shrink-0 shadow-sm">
+                                <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-gray-400 shrink-0 shadow-sm">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
                                     </svg>
@@ -1106,8 +1106,8 @@
                                     <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1.5">${t.keywordsLabel}</p>
                                     <div class="flex flex-wrap gap-2">
                                         ${keywords.map(k => `
-                                            <span class="px-3 py-1.5 rounded-xl bg-[#FDFBF7] border border-[#A68A64]/10 text-brand-main text-[11px] font-bold shadow-sm flex items-center gap-1">
-                                                <span class="text-[9px] opacity-60">#</span>${k}
+                                            <span class="px-3 py-1.5 rounded-xl bg-white border border-gray-100 text-gray-600 text-[11px] font-bold shadow-sm flex items-center gap-1">
+                                                <span class="text-[9px] opacity-40">#</span>${k}
                                             </span>
                                         `).join('')}
                                     </div>
