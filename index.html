@@ -53,7 +53,7 @@
     <script type="text/babel" data-presets="react" data-type="module">
         import React, { useState, useCallback, useEffect } from 'react';
         import ReactDOM from 'react-dom/client';
-        import { MapPin, Users, Utensils, Zap, Search, Globe, User, Heart } from 'lucide-react';
+        import { MapPin, Users, Utensils, Zap, Search, Globe, User, Heart, Gift, Compass, Sparkles, ChefHat, Coffee, ShoppingBag, UtensilsCrossed } from 'lucide-react';
 
         // --- Types & Constants ---
         const API_KEY = AppConfig.GEMINI_API_KEY;
@@ -77,13 +77,28 @@
                 btnRec: "점포 추천 받기",
                 step1Title: "오늘 통인시장을 찾은 이유는\n무엇인가요?",
                 step1Desc: "방문 목적을 선택해주세요",
-                step1Opts: ['🍱 먹거리', '🏮 시장 구경', '🎁 체험 • 선물', '✨ 추천받기'],
+                step1Opts: [
+                    { label: '먹거리', Icon: Utensils },
+                    { label: '시장 구경', Icon: Compass },
+                    { label: '체험 • 선물', Icon: Gift },
+                    { label: '추천받기', Icon: Sparkles }
+                ],
                 step2Title: "누구와 함께 오셨나요?",
                 step2Desc: "동행 형태를 선택해주세요",
-                step2Opts: [{ label: '혼자', icon: User }, { label: '친구', icon: Users }, { label: '연인', icon: Heart }, { label: '가족', icon: Users }],
+                step2Opts: [
+                    { label: '혼자', Icon: User },
+                    { label: '친구', Icon: Users },
+                    { label: '연인', Icon: Heart },
+                    { label: '가족', Icon: Users }
+                ],
                 step3Title: "지금 시장에서 가장 하고 싶은것은\n무엇인가요?",
                 step3Desc: "복수 선택 가능 (최대 3개까지)",
-                step3Opts: ['🍚 식사', '🍰 간식 • 디저트', '🍢 전통 먹거리', '🛍️ 구경 • 소품'],
+                step3Opts: [
+                    { label: '식사', Icon: ChefHat },
+                    { label: '간식 • 디저트', Icon: Coffee },
+                    { label: '전통 먹거리', Icon: UtensilsCrossed },
+                    { label: '구경 • 소품', Icon: ShoppingBag }
+                ],
                 step4Title: "어떤 방식으로 추천해드릴까요?",
                 step4Desc: "원하는 추천 방식을 선택해주세요",
                 step4Opts: [
@@ -108,13 +123,28 @@
                 btnRec: "Get Recommendations",
                 step1Title: "What brings you to\nTongin Market today?",
                 step1Desc: "Select your purpose",
-                step1Opts: ['🍱 Food', '🏮 Market Tour', '🎁 Experience/Gift', '✨ Recommendation'],
+                step1Opts: [
+                    { label: 'Food', Icon: Utensils },
+                    { label: 'Market Tour', Icon: Compass },
+                    { label: 'Experience/Gift', Icon: Gift },
+                    { label: 'Recommendation', Icon: Sparkles }
+                ],
                 step2Title: "Who are you with?",
                 step2Desc: "Select your companion",
-                step2Opts: [{ label: 'Solo', icon: User }, { label: 'Friends', icon: Users }, { label: 'Couple', icon: Heart }, { label: 'Family', icon: Users }],
+                step2Opts: [
+                    { label: 'Solo', Icon: User },
+                    { label: 'Friends', Icon: Users },
+                    { label: 'Couple', Icon: Heart },
+                    { label: 'Family', Icon: Users }
+                ],
                 step3Title: "What do you want to do\nmost right now?",
                 step3Desc: "Multiple selections allowed (Max 3)",
-                step3Opts: ['🍚 Meal', '🍰 Snack/Dessert', '🍢 Traditional Food', '🛍️ Sightseeing/Goods'],
+                step3Opts: [
+                    { label: 'Meal', Icon: ChefHat },
+                    { label: 'Snack/Dessert', Icon: Coffee },
+                    { label: 'Traditional Food', Icon: UtensilsCrossed },
+                    { label: 'Sightseeing/Goods', Icon: ShoppingBag }
+                ],
                 step4Title: "How should we recommend?",
                 step4Desc: "Select your recommendation style",
                 step4Opts: [
@@ -139,13 +169,28 @@
                 btnRec: "获取店铺推荐",
                 step1Title: "您今天来通仁市场的\n理由是什么？",
                 step1Desc: "请选择访问目的",
-                step1Opts: ['🍱 美食', '🏮 逛市场', '🎁 体验 • 礼物', '✨ 求推荐'],
+                step1Opts: [
+                    { label: '美食', Icon: Utensils },
+                    { label: '逛市场', Icon: Compass },
+                    { label: '体验 • 礼物', Icon: Gift },
+                    { label: '求推荐', Icon: Sparkles }
+                ],
                 step2Title: "您和谁一起来的？",
                 step2Desc: "请选择同行人员",
-                step2Opts: [{ label: '独自', icon: User }, { label: '朋友', icon: Users }, { label: '情侣', icon: Heart }, { label: '家人', icon: Users }],
+                step2Opts: [
+                    { label: '独自', Icon: User },
+                    { label: '朋友', Icon: Users },
+                    { label: '情侣', Icon: Heart },
+                    { label: '家人', Icon: Users }
+                ],
                 step3Title: "您现在最想做什么？",
                 step3Desc: "可多选（最多3个）",
-                step3Opts: ['🍚 正餐', '🍰 零食 • 甜点', '🍢 传统小吃', '🛍️ 参观 • 纪念品'],
+                step3Opts: [
+                    { label: '正餐', Icon: ChefHat },
+                    { label: '零食 • 甜点', Icon: Coffee },
+                    { label: '传统小吃', Icon: UtensilsCrossed },
+                    { label: '参观 • 纪念品', Icon: ShoppingBag }
+                ],
                 step4Title: "希望如何为您推荐？",
                 step4Desc: "请选择推荐方式",
                 step4Opts: [
@@ -170,13 +215,28 @@
                 btnRec: "店舗のおすすめ",
                 step1Title: "今日、通仁市場に来た\n理由は何ですか？",
                 step1Desc: "訪問目的を選んでください",
-                step1Opts: ['🍱 グルメ', '🏮 市場巡り', '🎁 体験・ギフト', '✨ おすすめ'],
+                step1Opts: [
+                    { label: 'グルメ', Icon: Utensils },
+                    { label: '市場巡り', Icon: Compass },
+                    { label: '体験・ギフト', Icon: Gift },
+                    { label: 'おすすめ', Icon: Sparkles }
+                ],
                 step2Title: "どなたと一緒に来ましたか？",
                 step2Desc: "同行者を選んでください",
-                step2Opts: [{ label: '一人', icon: User }, { label: '友達', icon: Users }, { label: '恋人', icon: Heart }, { label: '家族', icon: Users }],
+                step2Opts: [
+                    { label: '一人', Icon: User },
+                    { label: '友達', Icon: Users },
+                    { label: '恋人', Icon: Heart },
+                    { label: '家族', Icon: Users }
+                ],
                 step3Title: "今、一番したいことは\n何ですか？",
                 step3Desc: "複数選択可能（最大3つ）",
-                step3Opts: ['🍚 食事', '🍰 軽食・デザート', '🍢 伝統料理', '🛍️ 観光・雑貨'],
+                step3Opts: [
+                    { label: '食事', Icon: ChefHat },
+                    { label: '軽食・デザート', Icon: Coffee },
+                    { label: '伝統料理', Icon: UtensilsCrossed },
+                    { label: '観光・雑貨', Icon: ShoppingBag }
+                ],
                 step4Title: "どのようにおすすめしましょうか？",
                 step4Desc: "おすすめのスタイルを選んでください",
                 step4Opts: [
@@ -621,8 +681,11 @@
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         {t.step1Opts.map((item) => (
-                            <SelectionButton key={item} selected={selection.purpose === item} onClick={() => updateSelection('purpose', item)}>
-                                <span className="font-bold text-lg">{item}</span>
+                            <SelectionButton key={item.label} selected={selection.purpose === item.label} onClick={() => updateSelection('purpose', item.label)}>
+                                <div className="mb-2 text-[#A68A64]">
+                                    <item.Icon className="w-6 h-6" strokeWidth={3} />
+                                </div>
+                                <span className="font-bold text-lg">{item.label}</span>
                             </SelectionButton>
                         ))}
                     </div>
@@ -640,7 +703,7 @@
                         {t.step2Opts.map((item) => (
                             <SelectionButton key={item.label} selected={selection.companion === item.label} onClick={() => updateSelection('companion', item.label)}>
                                 <div className="mb-2 text-[#A68A64]">
-                                    <item.icon className="w-6 h-6" strokeWidth={3} />
+                                    <item.Icon className="w-6 h-6" strokeWidth={3} />
                                 </div>
                                 <span className="font-bold text-lg">{item.label}</span>
                             </SelectionButton>
@@ -658,8 +721,11 @@
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         {t.step3Opts.map((item) => (
-                            <SelectionButton key={item} selected={selection.interests.includes(item)} onClick={() => handleInterestToggle(item)} className="aspect-[4/3]">
-                                <span className="font-bold text-lg">{item}</span>
+                            <SelectionButton key={item.label} selected={selection.interests.includes(item.label)} onClick={() => handleInterestToggle(item.label)} className="aspect-[4/3]">
+                                <div className="mb-2 text-[#A68A64]">
+                                    <item.Icon className="w-6 h-6" strokeWidth={3} />
+                                </div>
+                                <span className="font-bold text-lg">{item.label}</span>
                             </SelectionButton>
                         ))}
                     </div>
