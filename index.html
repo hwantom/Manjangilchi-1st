@@ -2,6 +2,15 @@
 <html lang="ko">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3LZQJXZLXQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-3LZQJXZLXQ');
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Tongin Market Guide</title>
@@ -58,7 +67,10 @@
         // --- Types & Constants ---
         const API_KEY = AppConfig.GEMINI_API_KEY;
         const SHEET_ID = AppConfig.SHEET_ID;
-        const CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv`;
+        const isPubId = SHEET_ID && SHEET_ID.startsWith('2PACX');
+        const CSV_URL = isPubId
+            ? `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv`
+            : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
 
         const LOADING_MESSAGES = {
             ko: ["만장일치가 딱 맞는 점포를 찾고 있어요..", "그거 아시나요? 통인시장은 엽전으로 구매할 수 있어요!", "통인시장의 기름떡볶이는 정말 유명해요!", "취향 분석 중...", "잠시만 기다려주세요..."],

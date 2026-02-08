@@ -2,16 +2,16 @@
 <html lang="ko">
 
 <head>
-    <!-- Google Tag Manager -->
-    <script>(function (w, d, s, l, i) {
-            w[l] = w[l] || []; w[l].push({
-                'gtm.start':
-                    new Date().getTime(), event: 'gtm.js'
-            }); var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
-                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-5FGH5DW2');</script>
-    <!-- End Google Tag Manager -->
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3LZQJXZLXQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-3LZQJXZLXQ');
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Manjangilchi | Tongin Market Guide</title>
@@ -58,10 +58,7 @@
 </head>
 
 <body class="bg-brand-bg text-brand-ink h-full overflow-hidden font-sans">
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5FGH5DW2" height="0" width="0"
-            style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+
 
     <!-- Loading Overlay -->
     <div id="loadingOverlay"
@@ -182,7 +179,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             // --- From constants.ts ---
             const SHEET_ID = AppConfig.SHEET_ID;
-            const CSV_URL = `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv`;
+            const isPubId = SHEET_ID && SHEET_ID.startsWith('2PACX');
+            const CSV_URL = isPubId
+                ? `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv`
+                : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
             const MAP_CENTER = { lat: 37.58069307821511, lng: 126.96977251335169 };
             const CATEGORY_STYLES = {
                 '식당': { bg: 'bg-brand-food', icon: 'https://img.icons8.com/?size=100&id=59873&format=png&color=000000' },
@@ -365,6 +365,9 @@
                     lat: getVal(r, ['lat', '위도']), lng: getVal(r, ['lng', '경도']),
                     menuLink: getVal(r, ['menuLink']),
                     keyword: getVal(r, ['keyword', '키워드']),
+                    keyword_en: getVal(r, ['keyword_eng', 'keyword_en']),
+                    keyword_zh: getVal(r, ['keyword_cn', 'keyword_zh']),
+                    keyword_ja: getVal(r, ['keyword_jp', 'keyword_ja']),
                 };
             };
 
@@ -1021,7 +1024,7 @@
                 const store = selectedStore;
                 const isFav = favorites.has(store.name);
                 const catStyle = CATEGORY_STYLES[store.category];
-                const keywords = parseKeywords(store.keyword);
+                const keywords = parseKeywords(getStoreProp(store, 'keyword'));
 
                 const catKey = store.category === '식당' ? 'food' : store.category === '간식' ? 'snack' : 'life';
                 const catName = t['cat_' + catKey];
@@ -1365,7 +1368,7 @@
 
             const getStoreProp = (store, prop) => {
                 if (!store) return '';
-                const langMap = { 'name': true, 'shortDesc': true, 'hours': true, 'price': true };
+                const langMap = { 'name': true, 'shortDesc': true, 'hours': true, 'price': true, 'keyword': true };
                 if (langMap[prop]) {
                     const langProp = `${prop}_${currentLang}`;
                     return store[langProp] || store[prop] || "-";
