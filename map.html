@@ -1492,8 +1492,12 @@
                     map.panTo(storeLatLng);
 
                     if (stage === 'HALF') {
-                        setTimeout(() => map.panBy(0, h * 0.2), 50);
+                        // Sheet covers bottom 60%. Visible map is top 40%.
+                        // Center of visible map is at 20% from top.
+                        // Map center is at 50%. Move map down by 30% of height.
+                        setTimeout(() => map.panBy(0, h * 0.3), 50);
                     } else if (stage === 'EXPANDED') {
+                        // Sheet covers 100%. User might not see it, but center it at the very top.
                         setTimeout(() => map.panBy(0, h * 0.4), 50);
                     }
                 }
