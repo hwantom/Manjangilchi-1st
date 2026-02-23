@@ -1492,8 +1492,13 @@
                     map.panTo(storeLatLng);
 
                     if (stage === 'HALF') {
-                        // Reduce the upward shift so the marker isn't too close to the top edge
-                        setTimeout(() => map.panBy(0, h * 0.15), 50);
+                        // The visible map area is the top 40% of the screen.
+                        // We want the marker to be at the center of this area (i.e. 20% from the top).
+                        // Since `map.panTo()` centers the marker at 50% from the top,
+                        // we need to move the map center down by 30% (50% - 20%).
+                        // However, user feedback suggests the previous 0.3 offset was too high, and 0.15 too low.
+                        // Let's set it to 0.2 (20% of the screen height) for a visually pleasing center.
+                        setTimeout(() => map.panBy(0, h * 0.2), 50);
                     } else if (stage === 'EXPANDED') {
                         // Sheet covers 100%. User might not see it, but center it at the very top.
                         setTimeout(() => map.panBy(0, h * 0.4), 50);
