@@ -255,6 +255,13 @@
             let directionsRenderer = null;
             let activeRoute = false;
 
+            // --- Bottom Sheet State ---
+            let sheetStage = 'HALF'; // 'COLLAPSED', 'HALF', 'EXPANDED'
+            let startY = 0;
+            let currentY = 0;
+            let isDragging = false;
+            let panelScrollTopAtStart = 0;
+
             // --- DOM Elements ---
             const searchInput = document.getElementById('searchInput');
             const filtersContainer = document.getElementById('filtersContainer');
@@ -660,31 +667,39 @@
             };
 
             const updateMarkerSizes = (zoomLevel) => {
-                markers.forEach((obj) => {
-                    // Scale markers based on zoom level
-                    // Start small at initial zoom (19) to prevent overlap
-                    // Grow larger when zooming in for better visibility
-                    // zoom 21+: scale 1.4 (maximum zoom - very large)
-                    // zoom 20: scale 1.2 (high zoom - large)
-                    // zoom 19: scale 0.9 (INITIAL - smaller to avoid overlap)
-                    // zoom 18: scale 0.8 (zoomed out - smaller)
-                    // zoom 17: scale 0.7 (more zoomed out - very small)
-                    // zoom 16-: scale 0.6 (far zoom - smallest)
-                    let scale = 1.0;
-                    if (zoomLevel >= 21) scale = 1.4;
-                    else if (zoomLevel >= 20) scale = 1.2;
-                    else if (zoomLevel >= 19) scale = 0.9;
-                    else if (zoomLevel >= 18) scale = 0.8;
-                    else if (zoomLevel >= 17) scale = 0.7;
-                    else scale = 0.6;
+                const isFilterActive = activeCategories.size > 0 || coinFilter || favoritesFilter || searchQuery.trim().length > 0;
 
-                    obj.element.style.transform = `scale(${scale})`;
+                markers.forEach((obj, name) => {
+                    const isSelected = selectedStore?.name === name;
+                    const isFavorite = favorites.has(name);
 
-                    // Hide labels at lower zoom levels
-                    if (zoomLevel < 17) {
-                        obj.label.style.opacity = '0';
-                    } else {
+                    const forceDetailed = isSelected || isFavorite || isFilterActive;
+
+                    let mode = 'DETAILED';
+                    if (!forceDetailed) {
+                        if (zoomLevel >= 19) mode = 'DETAILED';
+                        else if (zoomLevel >= 17) mode = 'SIMPLE';
+                        else mode = 'DOT';
+                    }
+
+                    if (mode === 'DETAILED') {
+                        obj.element.classList.remove('dot-mode');
+                        let scale = 0.8;
+                        if (zoomLevel >= 21) scale = 0.95;
+                        else if (zoomLevel >= 20) scale = 0.85;
+                        else if (zoomLevel >= 19) scale = 0.75;
+                        else scale = 0.75;
+
+                        obj.element.style.transform = `scale(${scale})`;
                         obj.label.style.opacity = '1';
+                    } else if (mode === 'SIMPLE') {
+                        obj.element.classList.remove('dot-mode');
+                        obj.element.style.transform = `scale(0.5)`;
+                        obj.label.style.opacity = '0';
+                    } else if (mode === 'DOT') {
+                        obj.element.classList.add('dot-mode');
+                        obj.element.style.transform = `scale(0.8)`;
+                        obj.label.style.opacity = '0';
                     }
                 });
             };
@@ -704,6 +719,10 @@
                     obj.element.classList.toggle('is-favorite', isFavorite);
                     obj.label.innerText = getStoreProp(store, 'name');
                 });
+
+                if (map) {
+                    updateMarkerSizes(map.getZoom() || 19);
+                }
 
                 // Show/Hide no results feedback
                 if (noResults) {
@@ -868,6 +887,12 @@
                 overlay.classList.add('hidden');
                 selectedStore = null;
                 updateMarkers();
+
+                // Reset bottom sheet styles for mobile
+                if (window.innerWidth < 640) {
+                    detailPanel.style.transform = '';
+                    detailPanel.style.transition = '';
+                }
             };
 
             const closeAllPanels = () => {
@@ -1013,8 +1038,40 @@
                 selectedStore = store;
                 renderDetailPanel();
                 detailPanel.classList.remove('hidden-panel-right');
-                overlay.classList.remove('hidden');
-                if (map) map.panTo({ lat: parseFloat(store.lat), lng: parseFloat(store.lng) });
+
+                const storeLatLng = { lat: parseFloat(store.lat), lng: parseFloat(store.lng) };
+
+                if (window.innerWidth < 640) {
+                    // Mobile Bottom Sheet Reset
+                    sheetStage = 'HALF';
+                    const targetY = window.innerHeight * 0.4; // 60vh visible
+                    detailPanel.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                    detailPanel.style.transform = `translateY(${targetY}px)`;
+
+                    // Overlay is hidden on 30/60 states for mobile
+                    overlay.classList.add('hidden');
+
+                    // Map Offset: Center marker in the top 40% of the screen
+                    if (map) {
+                        const projection = map.getProjection();
+                        if (projection) {
+                            // Temporary pan to get map bounds right
+                            map.panTo(storeLatLng);
+                            // We need a slight delay for panTo to settle before doing an offset pan
+                            setTimeout(() => {
+                                map.panBy(0, window.innerHeight * 0.2); // Shift map down by 20% of screen height
+                            }, 50);
+                        } else {
+                            map.panTo(storeLatLng);
+                        }
+                    }
+                } else {
+                    // PC behavior
+                    detailPanel.style.transform = '';
+                    overlay.classList.remove('hidden');
+                    if (map) map.panTo(storeLatLng);
+                }
+
                 updateMarkers();
             };
 
@@ -1030,7 +1087,8 @@
                 const catName = t['cat_' + catKey];
 
                 detailPanel.innerHTML = `
-                <div class="flex flex-col h-full bg-white text-brand-ink overflow-hidden">
+                <div class="flex flex-col h-full bg-white text-brand-ink overflow-hidden pb-safe">
+                    <div class="sheet-handle-bar sm:hidden mx-auto mt-3 mb-1 w-12 h-1.5 bg-gray-300 rounded-full shrink-0"></div>
                     <div class="relative h-64 sm:h-72 w-full shrink-0 bg-gray-100">
                         <img id="detailPanelImage" src="${normalizeImageUrl(store.repre_image)}" class="w-full h-full object-cover cursor-zoom-in active:scale-105 transition-transform" onerror="this.src='${PLACEHOLDER_IMG}'" />
                         <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none"></div>
@@ -1144,7 +1202,142 @@
                 if (imgEl) {
                     imgEl.onclick = () => openImageModal(normalizeImageUrl(store.repre_image));
                 }
+
+                // Add Touch Event Listeners for Bottom Sheet (Mobile Only)
+                setupBottomSheetEvents();
             };
+
+            const setupBottomSheetEvents = () => {
+                const scrollContainer = detailPanel.querySelector('.overflow-y-auto');
+
+                detailPanel.addEventListener('touchstart', (e) => {
+                    if (window.innerWidth >= 640) return;
+                    startY = e.touches[0].clientY;
+                    currentY = startY;
+                    isDragging = true;
+                    panelScrollTopAtStart = scrollContainer ? scrollContainer.scrollTop : 0;
+                    detailPanel.style.transition = 'none'; // Disable transition during drag
+                }, { passive: true });
+
+                detailPanel.addEventListener('touchmove', (e) => {
+                    if (!isDragging || window.innerWidth >= 640) return;
+
+                    const y = e.touches[0].clientY;
+                    const deltaY = y - startY;
+
+                    // If scrolling inside content, only allow drag if at top and swiping down
+                    if (panelScrollTopAtStart > 0 && deltaY < 0) {
+                        return; // Let native scroll handle it
+                    }
+                    if (scrollContainer && scrollContainer.scrollTop > 0) {
+                        panelScrollTopAtStart = scrollContainer.scrollTop; // Update just in case
+                        return;
+                    }
+
+                    currentY = y;
+
+                    // Prevent default to stop pull-to-refresh or unwanted scrolling while dragging sheet
+                    if (deltaY > 0 || sheetStage !== 'EXPANDED') {
+                        if (e.cancelable) e.preventDefault();
+                    }
+
+                    // Calculate current transform based on stage
+                    let baseTranslateY = 0;
+                    const h = window.innerHeight;
+                    if (sheetStage === 'COLLAPSED') baseTranslateY = h * 0.7; // 30vh visible
+                    else if (sheetStage === 'HALF') baseTranslateY = h * 0.4;  // 60vh visible
+                    else if (sheetStage === 'EXPANDED') baseTranslateY = 0; // 100vh visible
+
+                    let newTranslateY = baseTranslateY + deltaY;
+
+                    // Cap expanding over top
+                    if (newTranslateY < 0) {
+                        newTranslateY = 0;
+                    }
+
+                    // Dynamically toggle overlay based on dragging progress towards expanded
+                    if (newTranslateY < h * 0.2) {
+                        overlay.classList.remove('hidden');
+                    } else {
+                        overlay.classList.add('hidden');
+                    }
+
+                    detailPanel.style.transform = `translateY(${newTranslateY}px)`;
+                }, { passive: false });
+
+                detailPanel.addEventListener('touchend', (e) => {
+                    if (!isDragging || window.innerWidth >= 640) return;
+                    isDragging = false;
+
+                    const deltaY = currentY - startY;
+                    const absDeltaY = Math.abs(deltaY);
+
+                    // If basically a click or tiny drag, do nothing to stage
+                    if (absDeltaY < 20) {
+                        snapToStage(sheetStage);
+                        return;
+                    }
+
+                    // Determine new stage based on velocity and direction
+                    if (deltaY > 0) {
+                        // Swiping down
+                        if (sheetStage === 'EXPANDED') {
+                            sheetStage = 'HALF';
+                        } else if (sheetStage === 'HALF') {
+                            sheetStage = 'COLLAPSED';
+                        } else if (sheetStage === 'COLLAPSED') {
+                            // Close entirely? Or stay collapsed? Let's say it stays collapsed unless they click close.
+                            // To make it close on pull down:
+                            if (absDeltaY > 50) {
+                                closeAllPanels();
+                                return;
+                            }
+                        }
+                    } else {
+                        // Swiping up
+                        if (sheetStage === 'COLLAPSED') {
+                            sheetStage = 'HALF';
+                        } else if (sheetStage === 'HALF') {
+                            sheetStage = 'EXPANDED';
+                        }
+                    }
+
+                    snapToStage(sheetStage);
+                });
+            };
+
+            const snapToStage = (stage) => {
+                if (window.innerWidth >= 640) return;
+                const h = window.innerHeight;
+                let targetY = 0;
+
+                if (stage === 'COLLAPSED') {
+                    targetY = h * 0.7;
+                    overlay.classList.add('hidden');
+                } else if (stage === 'HALF') {
+                    targetY = h * 0.4;
+                    overlay.classList.add('hidden');
+                } else if (stage === 'EXPANDED') {
+                    targetY = 0;
+                    overlay.classList.remove('hidden');
+                }
+
+                detailPanel.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+                detailPanel.style.transform = `translateY(${targetY}px)`;
+
+                // Adjust map offset dynamically
+                if (map && selectedStore) {
+                    const storeLatLng = { lat: parseFloat(selectedStore.lat), lng: parseFloat(selectedStore.lng) };
+                    map.panTo(storeLatLng);
+
+                    if (stage === 'HALF') {
+                        setTimeout(() => map.panBy(0, h * 0.2), 50);
+                    } else if (stage === 'EXPANDED') {
+                        setTimeout(() => map.panBy(0, h * 0.4), 50); // Shift further when fully expanded
+                    }
+                }
+            };
+
 
             const handleRoute = (store) => {
                 const t = UI_TRANSLATIONS[currentLang];
