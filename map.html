@@ -1363,18 +1363,21 @@
                     const y = e.touches[0].clientY;
                     const deltaY = y - startY;
 
-                    // If scrolling inside content body, only allow sheet drag if at top and swiping down
-                    if (panelScrollTopAtStart > 0 && deltaY < 0) {
-                        return; // Let native scroll handle it
-                    }
-                    if (scrollContainer && scrollContainer.scrollTop > 0) {
-                        panelScrollTopAtStart = scrollContainer.scrollTop; // Update just in case
-                        return;
+                    const isDraggingHeader = e.target.closest('#sheetSummaryHeader');
+
+                    if (!isDraggingHeader) {
+                        // If scrolling inside content body, only allow sheet drag if at top and swiping down
+                        if (panelScrollTopAtStart > 0 && deltaY < 0) {
+                            return; // Let native scroll handle it
+                        }
+                        if (scrollContainer && scrollContainer.scrollTop > 0) {
+                            panelScrollTopAtStart = scrollContainer.scrollTop; // Update just in case
+                            return;
+                        }
                     }
 
                     // Prevent default to stop pull-to-refresh or unwanted scrolling while dragging sheet
                     // ONLY prevent default if we are dragging the sheet, to avoid breaking scrollable body
-                    const isDraggingHeader = e.target.closest('#sheetSummaryHeader');
                     if (deltaY > 0 || isDraggingHeader || sheetStage !== 'EXPANDED') {
                         if (e.cancelable) e.preventDefault();
                     }
@@ -1458,15 +1461,25 @@
                 if (stage === 'COLLAPSED') {
                     targetY = h - headerHeight;
                     overlay.classList.add('hidden');
-                    if (scrollContainer) scrollContainer.style.opacity = '0';
+                    if (scrollContainer) {
+                        scrollContainer.style.opacity = '0';
+                        scrollContainer.style.overflowY = 'hidden';
+                    }
                 } else if (stage === 'HALF') {
                     targetY = h * 0.4;
                     overlay.classList.add('hidden');
-                    if (scrollContainer) scrollContainer.style.opacity = '1';
+                    if (scrollContainer) {
+                        scrollContainer.style.opacity = '1';
+                        scrollContainer.style.overflowY = 'hidden';
+                        scrollContainer.scrollTop = 0; // Reset scroll so it doesn't block future drags
+                    }
                 } else if (stage === 'EXPANDED') {
                     targetY = 0;
                     overlay.classList.remove('hidden');
-                    if (scrollContainer) scrollContainer.style.opacity = '1';
+                    if (scrollContainer) {
+                        scrollContainer.style.opacity = '1';
+                        scrollContainer.style.overflowY = 'auto'; // Only scrollable when fully expanded
+                    }
                 }
 
                 // Smooth cubic-bezier transition like modern map apps
