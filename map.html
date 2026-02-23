@@ -1163,21 +1163,6 @@
 
                     // Overlay is hidden on 30/60 states for mobile
                     overlay.classList.add('hidden');
-
-                    // Map Offset: Center marker in the top 40% of the screen
-                    if (map) {
-                        const projection = map.getProjection();
-                        if (projection) {
-                            // Temporary pan to get map bounds right
-                            map.panTo(storeLatLng);
-                            // We need a slight delay for panTo to settle before doing an offset pan
-                            setTimeout(() => {
-                                map.panBy(0, window.innerHeight * 0.2); // Shift map down by 20% of screen height
-                            }, 50);
-                        } else {
-                            map.panTo(storeLatLng);
-                        }
-                    }
                 } else {
                     // PC behavior
                     detailPanel.style.transform = '';
@@ -1493,12 +1478,9 @@
 
                     if (stage === 'HALF') {
                         // The visible map area is the top 40% of the screen.
-                        // We want the marker to be at the center of this area (i.e. 20% from the top).
-                        // Since `map.panTo()` centers the marker at 50% from the top,
-                        // we need to move the map center down by 30% (50% - 20%).
-                        // However, user feedback suggests the previous 0.3 offset was too high, and 0.15 too low.
-                        // Let's set it to 0.2 (20% of the screen height) for a visually pleasing center.
-                        setTimeout(() => map.panBy(0, h * 0.2), 50);
+                        // Setting panBy to 0.25h (25% down) places the marker perfectly
+                        // between the top search bar and the top of the bottom sheet.
+                        setTimeout(() => map.panBy(0, h * 0.25), 100);
                     } else if (stage === 'EXPANDED') {
                         // Sheet covers 100%. User might not see it, but center it at the very top.
                         setTimeout(() => map.panBy(0, h * 0.4), 50);
