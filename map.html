@@ -597,7 +597,7 @@
             const initMap = () => {
                 if (!window.google) { setTimeout(initMap, 100); return; }
                 map = new google.maps.Map(mapEl, {
-                    center: MAP_CENTER, zoom: 19, mapId: '8fbca58624e4405a846adbea', heading: 0, tilt: 0,
+                    center: MAP_CENTER, zoom: 19, mapId: '8fbca58624e4405a846adbea', heading: -90, tilt: 0,
                     disableDefaultUI: true, clickableIcons: false, gestureHandling: 'greedy'
                 });
 
