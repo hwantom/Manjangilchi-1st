@@ -1346,13 +1346,14 @@
                 const scrollContainer = detailPanel.querySelector('#sheetDetailBody');
                 const header = detailPanel.querySelector('#sheetSummaryHeader');
                 let animationFrameId = null;
+                let isNativeScrolling = false;
 
                 detailPanel.addEventListener('touchstart', (e) => {
                     if (window.innerWidth >= 640) return;
                     startY = e.touches[0].clientY;
                     currentY = startY;
                     isDragging = true;
-                    panelScrollTopAtStart = scrollContainer ? scrollContainer.scrollTop : 0;
+                    isNativeScrolling = (sheetStage === 'EXPANDED' && scrollContainer && scrollContainer.scrollTop > 0);
                     detailPanel.style.transition = 'none'; // Disable transition during drag
                     if (animationFrameId) cancelAnimationFrame(animationFrameId);
                 }, { passive: true });
@@ -1365,22 +1366,20 @@
 
                     const isDraggingHeader = e.target.closest('#sheetSummaryHeader');
 
-                    if (!isDraggingHeader) {
-                        // If scrolling inside content body, only allow sheet drag if at top and swiping down
-                        if (panelScrollTopAtStart > 0 && deltaY < 0) {
-                            return; // Let native scroll handle it
+                    if (!isDraggingHeader && sheetStage === 'EXPANDED') {
+                        // If started at top, but swiping up (deltaY < 0) to scroll content down
+                        if (!isNativeScrolling && scrollContainer && scrollContainer.scrollTop === 0 && deltaY < 0) {
+                            isNativeScrolling = true;
                         }
-                        if (scrollContainer && scrollContainer.scrollTop > 0) {
-                            panelScrollTopAtStart = scrollContainer.scrollTop; // Update just in case
+
+                        if (isNativeScrolling) {
+                            // Let native scroll handle this entire gesture, even if they hit the top
                             return;
                         }
                     }
 
                     // Prevent default to stop pull-to-refresh or unwanted scrolling while dragging sheet
-                    // ONLY prevent default if we are dragging the sheet, to avoid breaking scrollable body
-                    if (deltaY > 0 || isDraggingHeader || sheetStage !== 'EXPANDED') {
-                        if (e.cancelable) e.preventDefault();
-                    }
+                    if (e.cancelable) e.preventDefault();
 
                     currentY = y;
 
@@ -1420,6 +1419,7 @@
                 detailPanel.addEventListener('touchend', (e) => {
                     if (!isDragging || window.innerWidth >= 640) return;
                     isDragging = false;
+                    isNativeScrolling = false;
 
                     const deltaY = currentY - startY;
                     const absDeltaY = Math.abs(deltaY);
