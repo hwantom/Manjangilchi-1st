@@ -601,14 +601,18 @@
 
                 let heading = 0;
                 // iOS uses webkitCompassHeading, Android uses alpha
-                if (event.webkitCompassHeading) {
+                if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
                     heading = event.webkitCompassHeading;
-                } else {
+                } else if (event.alpha !== null) {
                     heading = 360 - event.alpha; // alpha is counter-clockwise
                 }
 
                 deviceHeading = heading;
-                updateUserMarker(); // Update marker rotation instead of rotating the whole map for a stable UI
+
+                // Rotate the map to match the phone's heading — Google Maps style
+                if (map) map.setHeading(heading);
+
+                updateUserMarker();
             };
 
             // --- Map Logic ---
