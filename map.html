@@ -531,8 +531,25 @@
                 }
             };
 
+            let locateClickTimeout = null;
+
             const handleLocateMe = async () => {
-                trackingMode = (trackingMode + 1) % 3;
+                // Implement rapid double-click detection for intentional compass mode
+                if (locateClickTimeout) {
+                    // Second click within 300ms! Force compass mode
+                    clearTimeout(locateClickTimeout);
+                    locateClickTimeout = null;
+                    trackingMode = 2; // Force to compass directly
+                } else {
+                    // First click: cycle modes, but wait 300ms to see if they click again
+                    if (trackingMode === 2) trackingMode = 0;
+                    else trackingMode = 1;
+
+                    locateClickTimeout = setTimeout(() => {
+                        locateClickTimeout = null;
+                    }, 300);
+                }
+
                 updateLocateBtnIcon();
 
                 if (trackingMode === 0) {
@@ -573,6 +590,7 @@
                         window.addEventListener('deviceorientation', handleOrientation);
                     }
                 }
+                updateUserMarker();
             };
 
             const handleOrientation = (event) => {
@@ -831,36 +849,68 @@
             const updateUserMarker = () => {
                 if (!map || !userLocation) return;
 
-                let iconObj = {
-                    path: google.maps.SymbolPath.CIRCLE,
-                    scale: 8,
-                    fillColor: '#2563EB',
-                    fillOpacity: 1,
-                    strokeColor: '#FFFFFF',
-                    strokeWeight: 3
-                };
+                if (!userMarker) {
+                    const container = document.createElement('div');
+                    container.style.position = 'relative';
+                    container.style.width = '120px';
+                    container.style.height = '120px';
+                    container.style.display = 'flex';
+                    container.style.alignItems = 'center';
+                    container.style.justifyContent = 'center';
+                    container.style.pointerEvents = 'none';
+                    container.style.transform = 'translateY(50%)'; // Anchor to center
 
-                // Add a directional cone/arrow if tracking mode is Compass
-                if (trackingMode === 2) {
-                    iconObj = {
-                        path: 'M -4,6 L 0,-8 L 4,6 z', // Triangle arrow pointing up
-                        fillColor: '#2563EB',
-                        fillOpacity: 1,
-                        strokeColor: '#FFFFFF',
-                        strokeWeight: 2,
-                        scale: 2,
-                        rotation: deviceHeading // Rotate based on compass
-                    };
+                    // Radar Cone (rotates based on device heading)
+                    const radar = document.createElement('div');
+                    radar.id = 'user-radar-cone';
+                    radar.style.position = 'absolute';
+                    radar.style.width = '100%';
+                    radar.style.height = '100%';
+                    radar.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                    // A slice from top-left to top-right, fading outwards
+                    radar.innerHTML = `
+                        <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <radialGradient id="radarGrad" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" stop-color="#2563EB" stop-opacity="0.6"/>
+                                    <stop offset="60%" stop-color="#2563EB" stop-opacity="0.15"/>
+                                    <stop offset="100%" stop-color="#2563EB" stop-opacity="0"/>
+                                </radialGradient>
+                            </defs>
+                            <path d="M 60 60 L 17.5 17.5 A 60 60 0 0 1 102.5 17.5 Z" fill="url(#radarGrad)" />
+                        </svg>
+                    `;
+                    container.appendChild(radar);
+
+                    // Center Blue Dot
+                    const dot = document.createElement('div');
+                    dot.style.position = 'relative';
+                    dot.style.width = '18px';
+                    dot.style.height = '18px';
+                    dot.style.backgroundColor = '#2563EB';
+                    dot.style.border = '3px solid white';
+                    dot.style.borderRadius = '50%';
+                    dot.style.boxShadow = '0 0 8px rgba(0,0,0,0.4)';
+                    dot.style.zIndex = '2';
+                    container.appendChild(dot);
+
+                    userMarker = new google.maps.marker.AdvancedMarkerElement({
+                        position: userLocation,
+                        map: map,
+                        title: 'Me',
+                        zIndex: 1000,
+                        content: container
+                    });
+                } else {
+                    userMarker.position = userLocation;
                 }
 
-                if (userMarker) {
-                    userMarker.setPosition(userLocation);
-                    userMarker.setIcon(iconObj);
+                const radar = userMarker.content.querySelector('#user-radar-cone');
+                if (trackingMode === 2) {
+                    radar.style.display = 'block';
+                    radar.style.transform = `rotate(${deviceHeading}deg)`;
                 } else {
-                    userMarker = new google.maps.Marker({
-                        position: userLocation, map, title: 'Me', zIndex: 1000,
-                        icon: iconObj
-                    });
+                    radar.style.display = 'none';
                 }
             };
 
