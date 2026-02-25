@@ -827,6 +827,10 @@
                         obj.marker.map = map;
                         obj.element.classList.remove('marker-hide');
                         obj.element.classList.add('marker-show');
+                        // Remove animation class after it ends so the inline scale from updateMarkerSizes takes over
+                        obj.element.addEventListener('animationend', () => {
+                            obj.element.classList.remove('marker-show');
+                        }, { once: true });
                     } else if (!isVisible && wasVisible) {
                         // Disappearing: sink-out then remove from map
                         obj.element.classList.remove('marker-show');
