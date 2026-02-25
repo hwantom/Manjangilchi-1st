@@ -814,14 +814,33 @@
             const updateMarkers = () => {
                 const filteredStoreNames = getFilteredStoreNames();
 
-                // Show/Hide markers
+                // Show/Hide markers with animation
                 markers.forEach((obj, name) => {
                     const store = stores.find(s => s.name === name);
                     const isVisible = filteredStoreNames.has(name);
                     const isSelected = selectedStore?.name === name;
                     const isFavorite = favorites.has(name);
+                    const wasVisible = obj.marker.map !== null;
 
-                    obj.marker.map = isVisible ? map : null; // Set map to null to hide marker
+                    if (isVisible && !wasVisible) {
+                        // Appearing: add to map then pop-in
+                        obj.marker.map = map;
+                        obj.element.classList.remove('marker-hide');
+                        obj.element.classList.add('marker-show');
+                    } else if (!isVisible && wasVisible) {
+                        // Disappearing: sink-out then remove from map
+                        obj.element.classList.remove('marker-show');
+                        obj.element.classList.add('marker-hide');
+                        const el = obj.element;
+                        const marker = obj.marker;
+                        const onEnd = () => {
+                            marker.map = null;
+                            el.classList.remove('marker-hide');
+                            el.removeEventListener('animationend', onEnd);
+                        };
+                        obj.element.addEventListener('animationend', onEnd, { once: true });
+                    }
+
                     obj.element.classList.toggle('active', isSelected);
                     obj.element.classList.toggle('is-favorite', isFavorite);
                     obj.label.innerText = getStoreProp(store, 'name');
@@ -886,6 +905,13 @@
                     `;
                     container.appendChild(radar);
 
+                    // Radar ripple waves (3-wave stagger, shown only in compass mode)
+                    for (let i = 0; i < 3; i++) {
+                        const ripple = document.createElement('div');
+                        ripple.className = 'user-radar-ripple';
+                        container.appendChild(ripple);
+                    }
+
                     // Center Blue Dot
                     const dot = document.createElement('div');
                     dot.style.position = 'relative';
@@ -910,11 +936,14 @@
                 }
 
                 const radar = userMarker.content.querySelector('#user-radar-cone');
+                const ripples = userMarker.content.querySelectorAll('.user-radar-ripple');
                 if (trackingMode === 2) {
                     radar.style.display = 'block';
                     radar.style.transform = `rotate(${deviceHeading}deg)`;
+                    ripples.forEach(r => r.style.display = 'block');
                 } else {
                     radar.style.display = 'none';
+                    ripples.forEach(r => r.style.display = 'none');
                 }
             };
 
