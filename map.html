@@ -1720,7 +1720,10 @@
                 favoritesPanel.querySelectorAll('.fav-item').forEach(item => {
                     item.onclick = () => {
                         const store = stores.find(s => s.name === item.dataset.storeName);
-                        if (store) openDetailPanel(store);
+                        if (store) {
+                            openFavoritesPanel(false);
+                            openDetailPanel(store);
+                        }
                     };
                 });
                 favoritesPanel.querySelectorAll('[data-remove-fav]').forEach(btn => {
