@@ -791,11 +791,11 @@
 
                     if (mode === 'DETAILED') {
                         obj.element.classList.remove('dot-mode');
-                        let scale = 0.8;
-                        if (zoomLevel >= 21) scale = 0.95;
-                        else if (zoomLevel >= 20) scale = 0.85;
-                        else if (zoomLevel >= 19) scale = 0.75;
-                        else scale = 0.75;
+                        let scale = 0.6;
+                        if (zoomLevel >= 21) scale = 0.75;
+                        else if (zoomLevel >= 20) scale = 0.68;
+                        else if (zoomLevel >= 19) scale = 0.60;
+                        else scale = 0.60;
 
                         obj.element.style.transform = `scale(${scale})`;
                         obj.label.style.opacity = '1';
