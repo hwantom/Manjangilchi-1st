@@ -804,10 +804,8 @@
                         // Selected/Favorite: always show
                         if (isFilterActive || isSelected || isFavorite) {
                             obj.label.style.opacity = '1';
-                        } else if (zoomLevel >= 21) {
-                            obj.label.style.opacity = '1';
                         } else if (zoomLevel >= 20) {
-                            obj.label.style.opacity = '0.7';
+                            obj.label.style.opacity = '1';
                         } else {
                             // Zoom 19 and below: hide labels — too crowded
                             obj.label.style.opacity = '0';
