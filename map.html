@@ -591,7 +591,11 @@
                         }
                     } else {
                         // Non iOS 13+ devices
-                        window.addEventListener('deviceorientation', handleOrientation);
+                        if ('ondeviceorientationabsolute' in window) {
+                            window.addEventListener('deviceorientationabsolute', handleOrientation);
+                        } else {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        }
                     }
                 }
                 updateUserMarker();
@@ -600,6 +604,7 @@
             const handleOrientation = (event) => {
                 if (trackingMode !== 2) {
                     window.removeEventListener('deviceorientation', handleOrientation);
+                    window.removeEventListener('deviceorientationabsolute', handleOrientation);
                     return;
                 }
 
@@ -610,6 +615,16 @@
                 } else if (event.alpha !== null) {
                     heading = 360 - event.alpha; // alpha is counter-clockwise
                 }
+
+                // Apply screen orientation offset (landscape mode correction)
+                let screenOrientation = 0;
+                if (screen && screen.orientation && screen.orientation.angle !== undefined) {
+                    screenOrientation = screen.orientation.angle;
+                } else if (window.orientation !== undefined) {
+                    screenOrientation = window.orientation || 0;
+                }
+
+                heading = (heading + screenOrientation) % 360;
 
                 deviceHeading = heading;
 
