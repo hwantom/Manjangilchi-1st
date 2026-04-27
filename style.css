@@ -648,21 +648,14 @@ h2 {
     }
 }
 
-/* Sink-Out: gently sinks down while fading */
-@keyframes markerSinkOut {
+/* Fade-Out: smoothly fade out */
+@keyframes markerFadeOut {
     0% {
         opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-
-    60% {
-        opacity: 0.3;
-        transform: scale(0.85) translateY(6px);
     }
 
     100% {
         opacity: 0;
-        transform: scale(0.6) translateY(14px);
     }
 }
 
@@ -671,7 +664,7 @@ h2 {
 }
 
 .nmap-marker.marker-hide {
-    animation: markerSinkOut 0.3s ease-in both;
+    animation: markerFadeOut 0.2s ease-out both;
     pointer-events: none;
 }
 

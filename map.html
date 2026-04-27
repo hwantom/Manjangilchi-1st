@@ -178,7 +178,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- From constants.ts ---
-            const CSV_URL = './stores_data.csv';
+            const SHEET_ID = AppConfig.SHEET_ID;
+            const isPubId = SHEET_ID && SHEET_ID.startsWith('2PACX');
+            const CSV_URL = isPubId
+                ? `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv`
+                : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
             const MAP_CENTER = { lat: 37.58069307821511, lng: 126.96977251335169 };
             const CATEGORY_STYLES = {
                 '식당': { bg: 'bg-brand-food', icon: 'https://img.icons8.com/?size=100&id=59873&format=png&color=000000' },
@@ -227,10 +231,10 @@
                 "assets/story-thumb-2.jpg",
                 "assets/story-thumb-3.jpg"
             ];
-            const STORES_WITH_TOP_LABEL = new Set(["푸른할인마트", "송림정육점", "청과코너", "야채코너", "송림사우나", "피노키오 옷수선", "서촌호떡", "엄마손반찬", "정금이네 모두의 분식", "명방앗간", "충남방앗간", "우리농산물유통", "서울수산물회센타", "체크인첸킨", "통인초록", "통인다방", "티각태각", "서촌의 진심", "이레해물칼국수", "BYC", "손맛김밥", "박현순미용실", "도시락카페", "도깨비한과강정", "현대식품", "알뜰옷수선전문점", "신일참기름", "소문난김구이", "효자365김밥", "반찬나라", "통인시장사진관", "점순이네반찬", "서촌주막", "다듬이", "그릇∙혼수용품도소매", "아빠김치찌개", "통인정", "나하나미용실", "보물창고", "효자청과마트", "효자지하생선"]);
-            const STORES_WITH_RIGHT_LABEL = new Set(["푸른할인마트", "송림정육점", "청과코너", "야채코너", "송림사우나", "피노키오 옷수선", "서촌호떡", "엄마손반찬", "정금이네 모두의 분식", "명방앗간", "충남방앗간", "우리농산물유통", "서울수산물회센타", "체크인첸킨", "통인초록", "통인다방", "티각태각", "서촌의 진심", "이레해물칼국수", "인타코야끼", "BYC", "손맛김밥", "박현순미용실", "도시락카페", "도깨비한과강정", "현대식품", "알뜰옷수선전문점", "신일참기름", "소문난김구이", "효자365김밥", "반찬나라", "통인시장사진관", "점순이네반찬", "서촌주막", "다듬이", "그릇∙혼수용품도소매", "아빠김치찌개", "통인정", "나하나미용실", "보물창고", "효자청과마트", "효자지하생선"]);
-            const STORES_WITH_LEFT_LABEL = new Set(["자미당", "고기백화점", "서촌로또방", "용인야채가게", "삼화식당", "개화플로이죵", "우리상회", "참괜찮소", "뜻밖의 조작가", "부여떡방아간", "서촌와인상점", "싱싱과일나라", "불란집", "중앙전주반찬", "루루마켓", "설야만두", "신앙촌상회", "인왕산건강원", "코코로레시피", "효자동닭꼬치", "원조정할머니 기름떡볶이", "옛날통인감자탕", "경복궁 떡 방앗간", "반찬하우스", "우리동네", "원조할머니 기름떡볶이", "체부동잔치집", "효자떡집", "반디수블", "하림생닭토종닭", "육곳간축산물", "여주상회", "호남상회", "개성상회"]);
-            const EXCLUDED_STORE_KEYS = new Set(["점순이네반찬", "서촌등대", "반찬나라"]);
+            const STORES_WITH_TOP_LABEL = new Set(["푸른할인마트", "송림정육점", "청과코너", "푸른마트 청과코너", "야채코너", "푸른마트 야채코너", "송림사우나", "피노키오 옷수선", "서촌호떡", "엄마손반찬", "정금이네 모두의 분식", "명방앗간", "충남방앗간", "우리농산물유통", "서울수산물회센타", "체크인첸킨", "통인초록", "통인다방", "티각태각", "서촌의 진심", "이레해물칼국수", "BYC", "손맛김밥", "박현순미용실", "도시락카페", "도깨비한과강정", "현대식품", "알뜰옷수선전문점", "신일참기름", "소문난김구이", "효자365김밥", "반찬나라", "통인시장사진관", "통인시장흑백사진관", "점순이네반찬", "서촌주막", "다듬이", "그릇∙혼수용품도소매", "아빠김치찌개", "통인정", "나하나미용실", "보물창고", "효자청과마트", "효자지하생선", "통인포차"]);
+            const STORES_WITH_RIGHT_LABEL = new Set(["푸른할인마트", "송림정육점", "청과코너", "푸른마트 청과코너", "야채코너", "푸른마트 야채코너", "송림사우나", "피노키오 옷수선", "서촌호떡", "엄마손반찬", "정금이네 모두의 분식", "명방앗간", "충남방앗간", "우리농산물유통", "서울수산물회센타", "체크인첸킨", "통인초록", "통인다방", "티각태각", "서촌의 진심", "이레해물칼국수", "인타코야끼", "인타코타코야끼", "인타코 타코야끼", "BYC", "손맛김밥", "박현순미용실", "도시락카페", "도깨비한과강정", "현대식품", "알뜰옷수선전문점", "신일참기름", "소문난김구이", "효자365김밥", "반찬나라", "통인시장사진관", "통인시장흑백사진관", "점순이네반찬", "서촌주막", "다듬이", "그릇∙혼수용품도소매", "아빠김치찌개", "통인정", "나하나미용실", "보물창고", "효자청과마트", "효자지하생선", "통인포차"]);
+            const STORES_WITH_LEFT_LABEL = new Set(["자미당", "고기백화점", "서촌로또방", "용인야채가게", "삼화식당", "개화플로이죵", "우리상회", "참괜찮소", "참괜찬소", "뜻밖의 조작가", "부여떡방아간", "부여떡방앗간", "서촌와인상점", "싱싱과일나라", "불란집", "중앙전주반찬", "루루마켓", "설야만두", "신앙촌상회", "인왕산건강원", "코코로레시피", "효자동닭꼬치", "원조정할머니 기름떡볶이", "옛날통인감자탕", "경복궁 떡 방앗간", "반찬하우스", "우리동네", "원조할머니 기름떡볶이", "체부동잔치집", "효자떡집", "반디수블", "하림생닭토종닭", "육곳간축산물", "여주상회", "호남상회", "개성상회", "곰손카페", "CHU CHU", "현대정육점"]);
+            const EXCLUDED_STORE_KEYS = new Set(["점순이네반찬", "서촌등대", "반찬나라", "코코레레시피2", "코코로레시피2"]);
             const normalizeStoreKey = (name) => (name || "").replace(/\s+/g, "");
 
             // --- State Management ---
@@ -773,10 +777,16 @@
                 });
             };
 
-            const updateMarkerSizes = (zoomLevel) => {
+            const updateMarkerSizes = (zoomLevel, currentFilteredNames = null) => {
                 const isFilterActive = activeCategories.size > 0 || coinFilter || favoritesFilter || searchQuery.trim().length > 0;
 
+                if (!currentFilteredNames) {
+                    currentFilteredNames = getFilteredStoreNames();
+                }
+
                 markers.forEach((obj, name) => {
+                    if (!currentFilteredNames.has(name)) return;
+
                     const isSelected = selectedStore?.name === name;
                     const isFavorite = favorites.has(name);
 
@@ -862,7 +872,7 @@
                 });
 
                 if (map) {
-                    updateMarkerSizes(map.getZoom() || 19);
+                    updateMarkerSizes(map.getZoom() || 19, filteredStoreNames);
                 }
 
                 // Show/Hide no results feedback
@@ -1238,7 +1248,12 @@
                 return resultTime || '휴무';
             };
 
+            let lastPanelOpenTime = 0;
             const openDetailPanel = (store) => {
+                const now = Date.now();
+                if (selectedStore && selectedStore.name === store.name && (now - lastPanelOpenTime) < 200) return;
+                lastPanelOpenTime = now;
+
                 if (!window.history.state || !window.history.state.panelOpen) {
                     window.history.pushState({ panelOpen: true }, '');
                 }
@@ -1295,7 +1310,7 @@
                                     <span class="${catStyle.bg} px-2.5 py-0.5 rounded text-[10px] font-black uppercase text-brand-ink">${catName}</span>
                                     ${store.coin === 'o' ? `<span class="px-2.5 py-0.5 rounded text-[10px] font-black uppercase text-yellow-800 bg-yellow-100">${t.yeopjeonBadge}</span>` : ''}
                                 </div>
-                                <h2 class="text-2xl font-bold text-gray-900 leading-tight">${getStoreProp(store, 'name')}</h2>
+                                <h2 class="text-2xl font-normal text-gray-900 leading-tight">${getStoreProp(store, 'name')}</h2>
                                 <p class="text-sm text-gray-500 mt-1 truncate">${getStoreProp(store, 'shortDesc')}</p>
                             </div>
                             
@@ -1574,14 +1589,16 @@
                     const storeLatLng = { lat: parseFloat(selectedStore.lat), lng: parseFloat(selectedStore.lng) };
                     map.panTo(storeLatLng);
 
+                    if (window.__mapPanTimeout) clearTimeout(window.__mapPanTimeout);
+
                     if (stage === 'HALF') {
                         // The visible map area is the top 40% of the screen.
                         // Setting panBy to 0.25h (25% down) places the marker perfectly
                         // between the top search bar and the top of the bottom sheet.
-                        setTimeout(() => map.panBy(0, h * 0.25), 100);
+                        window.__mapPanTimeout = setTimeout(() => map.panBy(0, h * 0.25), 100);
                     } else if (stage === 'EXPANDED') {
                         // Sheet covers 100%. User might not see it, but center it at the very top.
-                        setTimeout(() => map.panBy(0, h * 0.4), 50);
+                        window.__mapPanTimeout = setTimeout(() => map.panBy(0, h * 0.4), 50);
                     }
                 }
             };
