@@ -536,6 +536,43 @@
             };
 
             let locateClickTimeout = null;
+            let orientationActive = false;
+            let currentHeading = 0; 
+            let targetHeading = 0;
+            let headingAnimFrame = null;
+
+            const lerpAngle = (start, end, factor) => {
+                let difference = end - start;
+                while (difference < -180) difference += 360;
+                while (difference > 180) difference -= 360;
+                return start + factor * difference;
+            };
+
+            const animateHeading = () => {
+                if (trackingMode !== 2) return;
+                
+                currentHeading = lerpAngle(currentHeading, targetHeading, 0.1);
+                
+                if (map) {
+                    let mapHeading = currentHeading;
+                    while (mapHeading < 0) mapHeading += 360;
+                    map.setHeading(mapHeading % 360);
+                }
+                
+                headingAnimFrame = requestAnimationFrame(animateHeading);
+            };
+
+            const stopDeviceOrientation = () => {
+                if (orientationActive) {
+                    window.removeEventListener('deviceorientation', handleOrientation);
+                    window.removeEventListener('deviceorientationabsolute', handleOrientation);
+                    orientationActive = false;
+                }
+                if (headingAnimFrame) {
+                    cancelAnimationFrame(headingAnimFrame);
+                    headingAnimFrame = null;
+                }
+            };
 
             const handleLocateMe = async () => {
                 // Implement rapid double-click detection for intentional compass mode
@@ -559,9 +596,11 @@
                 if (trackingMode === 0) {
                     // Stopped tracking
                     if (map) map.setHeading(0); // Reset map rotation if it was rotated
+                    stopDeviceOrientation();
                 } else if (trackingMode === 1) {
                     // Follow mode
                     if (map) map.setHeading(0); // Ensure map is pointing North
+                    stopDeviceOrientation();
                     if (!watchId) initGeolocation();
                     if (userLocation && map) {
                         map.panTo(userLocation);
@@ -575,26 +614,35 @@
                         map.setZoom(19);
                     }
 
-                    // Request device orientation if iOS 13+
-                    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                        try {
-                            const permissionState = await DeviceOrientationEvent.requestPermission();
-                            if (permissionState === 'granted') {
-                                window.addEventListener('deviceorientation', handleOrientation);
-                            } else {
-                                triggerToast("나침반 권한이 거부되었습니다.");
-                                trackingMode = 1; // Fallback to follow mode
-                                updateLocateBtnIcon();
+                    if (!orientationActive) {
+                        currentHeading = map ? (map.getHeading() || 0) : 0;
+                        targetHeading = currentHeading;
+                        headingAnimFrame = requestAnimationFrame(animateHeading);
+
+                        // Request device orientation if iOS 13+
+                        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                            try {
+                                const permissionState = await DeviceOrientationEvent.requestPermission();
+                                if (permissionState === 'granted') {
+                                    orientationActive = true;
+                                    window.addEventListener('deviceorientation', handleOrientation);
+                                } else {
+                                    triggerToast("나침반 권한이 거부되었습니다.");
+                                    trackingMode = 1; // Fallback to follow mode
+                                    stopDeviceOrientation();
+                                    updateLocateBtnIcon();
+                                }
+                            } catch (error) {
+                                console.error(error);
                             }
-                        } catch (error) {
-                            console.error(error);
-                        }
-                    } else {
-                        // Non iOS 13+ devices
-                        if ('ondeviceorientationabsolute' in window) {
-                            window.addEventListener('deviceorientationabsolute', handleOrientation);
                         } else {
-                            window.addEventListener('deviceorientation', handleOrientation);
+                            // Non iOS 13+ devices
+                            orientationActive = true;
+                            if ('ondeviceorientationabsolute' in window) {
+                                window.addEventListener('deviceorientationabsolute', handleOrientation);
+                            } else {
+                                window.addEventListener('deviceorientation', handleOrientation);
+                            }
                         }
                     }
                 }
@@ -603,33 +651,35 @@
 
             const handleOrientation = (event) => {
                 if (trackingMode !== 2) {
-                    window.removeEventListener('deviceorientation', handleOrientation);
-                    window.removeEventListener('deviceorientationabsolute', handleOrientation);
+                    stopDeviceOrientation();
                     return;
                 }
 
                 let heading = 0;
+                let isIOS = false;
+
                 // iOS uses webkitCompassHeading, Android uses alpha
                 if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
                     heading = event.webkitCompassHeading;
+                    isIOS = true;
                 } else if (event.alpha !== null) {
                     heading = 360 - event.alpha; // alpha is counter-clockwise
                 }
 
-                // Apply screen orientation offset (landscape mode correction)
-                let screenOrientation = 0;
-                if (screen && screen.orientation && screen.orientation.angle !== undefined) {
-                    screenOrientation = screen.orientation.angle;
-                } else if (window.orientation !== undefined) {
-                    screenOrientation = window.orientation || 0;
+                // Apply screen orientation offset (landscape mode correction) only on Android
+                // iOS webkitCompassHeading is already aligned to the device orientation
+                if (!isIOS) {
+                    let screenOrientation = 0;
+                    if (screen && screen.orientation && screen.orientation.angle !== undefined) {
+                        screenOrientation = screen.orientation.angle;
+                    } else if (window.orientation !== undefined) {
+                        screenOrientation = window.orientation || 0;
+                    }
+                    heading = (heading + screenOrientation) % 360;
                 }
 
-                heading = (heading + screenOrientation) % 360;
-
                 deviceHeading = heading;
-
-                // Rotate the map to match the phone's heading — Google Maps style
-                if (map) map.setHeading(heading);
+                targetHeading = heading;
 
                 updateUserMarker();
             };
@@ -646,6 +696,7 @@
                 map.addListener('dragstart', () => {
                     if (trackingMode > 0) {
                         trackingMode = 0;
+                        if (typeof stopDeviceOrientation === 'function') stopDeviceOrientation();
                         updateLocateBtnIcon();
                     }
                 });
