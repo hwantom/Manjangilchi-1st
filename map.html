@@ -548,15 +548,27 @@
                 return start + factor * difference;
             };
 
+            let lastRenderedHeading = -1;
+
             const animateHeading = () => {
                 if (trackingMode !== 2) return;
                 
-                currentHeading = lerpAngle(currentHeading, targetHeading, 0.1);
+                currentHeading = lerpAngle(currentHeading, targetHeading, 0.15);
+                
+                let diff = Math.abs(currentHeading - targetHeading);
+                if (diff > 180) diff = 360 - diff;
+                if (diff < 0.5) currentHeading = targetHeading;
                 
                 if (map) {
-                    let mapHeading = currentHeading;
+                    let mapHeading = Math.round(currentHeading);
                     while (mapHeading < 0) mapHeading += 360;
-                    map.setHeading(mapHeading % 360);
+                    mapHeading = mapHeading % 360;
+                    
+                    // Only update map heading if integer changed to avoid heavy vector re-renders and jitter
+                    if (lastRenderedHeading !== mapHeading) {
+                        map.setHeading(mapHeading);
+                        lastRenderedHeading = mapHeading;
+                    }
                 }
                 
                 headingAnimFrame = requestAnimationFrame(animateHeading);
@@ -583,8 +595,8 @@
                     trackingMode = 2; // Force to compass directly
                 } else {
                     // First click: cycle modes, but wait 300ms to see if they click again
-                    if (trackingMode === 2) trackingMode = 0;
-                    else trackingMode = 1;
+                    if (trackingMode === 0) trackingMode = 1;
+                    else trackingMode = 0;
 
                     locateClickTimeout = setTimeout(() => {
                         locateClickTimeout = null;
@@ -617,6 +629,7 @@
                     if (!orientationActive) {
                         currentHeading = map ? (map.getHeading() || 0) : 0;
                         targetHeading = currentHeading;
+                        lastRenderedHeading = -1;
                         headingAnimFrame = requestAnimationFrame(animateHeading);
 
                         // Request device orientation if iOS 13+
@@ -664,10 +677,11 @@
                     isIOS = true;
                 } else if (event.alpha !== null) {
                     heading = 360 - event.alpha; // alpha is counter-clockwise
+                } else {
+                    return; // Ignore if no valid data
                 }
 
                 // Apply screen orientation offset (landscape mode correction) only on Android
-                // iOS webkitCompassHeading is already aligned to the device orientation
                 if (!isIOS) {
                     let screenOrientation = 0;
                     if (screen && screen.orientation && screen.orientation.angle !== undefined) {
@@ -678,10 +692,8 @@
                     heading = (heading + screenOrientation) % 360;
                 }
 
-                deviceHeading = heading;
                 targetHeading = heading;
-
-                updateUserMarker();
+                // DO NOT call updateUserMarker() here to avoid DOM layout thrashing 60 times a second
             };
 
             // --- Map Logic ---
@@ -1030,7 +1042,8 @@
                 const ripples = userMarker.content.querySelectorAll('.user-radar-ripple');
                 if (trackingMode === 2) {
                     radar.style.display = 'block';
-                    radar.style.transform = `rotate(${deviceHeading}deg)`;
+                    // The map itself is rotated to face the heading, so the cone must point straight UP (0deg) relative to the screen.
+                    radar.style.transform = `rotate(0deg)`;
                     ripples.forEach(r => r.style.display = 'block');
                 } else {
                     radar.style.display = 'none';
