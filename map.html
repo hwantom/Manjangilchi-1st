@@ -12,6 +12,7 @@
 
         gtag('config', 'G-3LZQJXZLXQ');
     </script>
+    <script src="analytics.js?v=1"></script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Manjangilchi | Tongin Market Guide</title>
@@ -474,10 +475,22 @@
             };
 
             const setupEventListeners = () => {
+                let searchTrackTimer = null;
                 searchInput.addEventListener('input', (e) => {
                     searchQuery = e.target.value;
                     clearSearchBtn.classList.toggle('hidden', !searchQuery);
                     updateMarkers();
+
+                    clearTimeout(searchTrackTimer);
+                    const term = searchQuery.trim();
+                    if (term.length >= 2) {
+                        searchTrackTimer = setTimeout(() => {
+                            window.mjTrack?.('search', {
+                                search_term: term,
+                                result_count: getFilteredStoreNames().size
+                            });
+                        }, 700);
+                    }
                 });
                 clearSearchBtn.onclick = () => {
                     searchInput.value = '';
@@ -488,7 +501,12 @@
                 langBtn.addEventListener('click', () => langMenu.classList.toggle('hidden'));
                 favTrigger.addEventListener('click', () => openFavoritesPanel(true));
                 overlay.addEventListener('click', closeAllPanels);
-                locateMeBtn.addEventListener('click', handleLocateMe);
+                locateMeBtn.addEventListener('click', () => {
+                    window.mjTrack?.('locate_click', {
+                        tracking_mode_before: trackingMode
+                    });
+                    handleLocateMe();
+                });
             };
 
             const updateUI = () => {
@@ -714,6 +732,16 @@
                 });
                 createStoreMarkers();
 
+                const params = new URLSearchParams(window.location.search);
+                window.mjTrack?.('map_loaded', {
+                    entry_source: params.has('open')
+                        ? 'recommendation_open'
+                        : params.has('highlight')
+                            ? 'recommendation_highlight'
+                            : 'direct',
+                    store_count: stores.length
+                });
+
                 // Add zoom change listener for dynamic scaling
                 map.addListener('zoom_changed', () => {
                     const zoomLevel = map.getZoom();
@@ -759,6 +787,13 @@
 
                     // Add robust click listener to the marker instance
                     marker.addListener('click', () => {
+                        window.mjTrack?.('select_content', {
+                            content_type: 'store',
+                            content_id: store.name,
+                            store_name: store.name,
+                            store_category: store.category,
+                            source: 'marker'
+                        });
                         openDetailPanel(store);
                     });
 
@@ -766,6 +801,13 @@
                     const shopLabel = container.querySelector('.shop-label');
                     shopLabel.onclick = (e) => {
                         e.stopPropagation();
+                        window.mjTrack?.('select_content', {
+                            content_type: 'store',
+                            content_id: store.name,
+                            store_name: store.name,
+                            store_category: store.category,
+                            source: 'label'
+                        });
                         openDetailPanel(store);
                     };
 

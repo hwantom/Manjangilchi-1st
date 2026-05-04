@@ -11,6 +11,7 @@
 
         gtag('config', 'G-3LZQJXZLXQ');
     </script>
+    <script src="analytics.js?v=1"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Tongin Market Guide</title>
@@ -749,6 +750,10 @@
                 preference: ''
             });
 
+            const track = (eventName, params = {}) => {
+                window.mjTrack?.(eventName, params);
+            };
+
             const handleNext = () => setStep(prev => prev + 1);
             const handleBack = () => setStep(prev => Math.max(prev - 1, Step.LANDING));
             const handleReset = () => {
@@ -758,6 +763,10 @@
             };
 
             const updateSelection = (field, value) => {
+                track('recommendation_option_select', {
+                    step_name: field,
+                    option_value: Array.isArray(value) ? value.join('|') : value
+                });
                 setSelection(prev => ({ ...prev, [field]: value }));
             };
 
@@ -808,12 +817,30 @@
                 setLoading(true);
                 setErrorMessage('');
                 setStep(Step.RECOMMENDATION);
+
+                track('recommendation_start', {
+                    purpose: selection.purpose,
+                    companion: selection.companion,
+                    interests: selection.interests.join('|'),
+                    preference: selection.preference
+                });
+
                 const result = await getRecommendations(selection, storeList, lang);
                 if (result.error) {
                     setRecommendations([]);
                     setErrorMessage(result.error);
+                    track('recommendation_error', {
+                        error_message: String(result.error).slice(0, 100)
+                    });
                 } else {
                     setRecommendations(result.data);
+                    track('recommendation_complete', {
+                        result_count: result.data.length,
+                        purpose: selection.purpose,
+                        companion: selection.companion,
+                        interests: selection.interests.join('|'),
+                        preference: selection.preference
+                    });
                 }
                 setLoading(false);
             }, [selection, storeList, lang]);
@@ -842,13 +869,25 @@
 
                     <div className="flex gap-4">
                         <button
-                            onClick={() => { window.location.href = `map.html`; }}
+                            onClick={() => {
+                                track('landing_cta_click', {
+                                    cta_name: 'map',
+                                    entry_type: 'direct_map'
+                                });
+                                window.location.href = `map.html`;
+                            }}
                             className="flex-1 py-4 bg-[#EBE5DB] text-[#7A6A58] font-bold text-[17px] rounded-2xl active:scale-[0.98] transition-all relative overflow-hidden"
                         >
                             {t.btnMap}
                         </button>
                         <button 
-                            onClick={handleNext} 
+                            onClick={() => {
+                                track('landing_cta_click', {
+                                    cta_name: 'recommendation',
+                                    entry_type: 'recommendation_flow'
+                                });
+                                handleNext();
+                            }} 
                             className="flex-1 py-4 bg-[#b5926b] text-white font-bold text-[17px] rounded-2xl shadow-sm active:scale-[0.98] transition-all relative overflow-hidden"
                         >
                             {t.btnRec}
@@ -984,6 +1023,13 @@
 
                 const handleOpenMap = () => {
                     const selectedStores = recommendations.filter((store) => store.checked);
+                    const target = recommendations[0]?.name;
+
+                    track('recommendation_map_open', {
+                        selected_count: selectedStores?.length || 0,
+                        recommended_count: recommendations?.length || 0,
+                        target_store: target || ''
+                    });
 
                     // Auto-Favorites Logic
                     try {
