@@ -53,7 +53,7 @@
       }
     }
     </script>
-    <script src="config.js?v=6"></script>
+    <script src="config.js?v=7"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -343,21 +343,37 @@
 
             try {
                 // 2. Diagnostics
-                console.log("Starting GEMINI call with model: gemini-2.5-flash");
                 if (!AppConfig.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing in AppConfig");
 
                 const genAI = new GoogleGenerativeAI(AppConfig.GEMINI_API_KEY);
-                const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-                const result = await model.generateContent(prompt);
-                const response = await result.response;
-                const text = response.text();
+                // 모델 우선순위: gemini-2.5-flash → gemini-1.5-flash (폴백)
+                const MODELS = ["gemini-2.5-flash-preview-05-20", "gemini-2.5-flash", "gemini-1.5-flash"];
+                let text = null;
+                let lastError = null;
 
-                // 3. JSON Parsing
-                if (!text) {
-                    throw new Error('AI 응답이 비어있습니다.');
+                for (const modelName of MODELS) {
+                    try {
+                        console.log("Trying GEMINI model:", modelName);
+                        const model = genAI.getGenerativeModel({ model: modelName });
+                        const result = await model.generateContent(prompt);
+                        const response = await result.response;
+                        text = response.text();
+                        if (text) {
+                            console.log("Success with model:", modelName);
+                            break;
+                        }
+                    } catch (modelErr) {
+                        console.warn(`Model ${modelName} failed:`, modelErr.message);
+                        lastError = modelErr;
+                    }
                 }
 
+                if (!text) {
+                    throw lastError || new Error('모든 모델에서 응답을 받지 못했습니다.');
+                }
+
+                // 3. JSON Parsing
                 const cleanedText = text.replace(/```json|```/g, "").trim();
                 const parsed = JSON.parse(cleanedText);
 
@@ -373,13 +389,10 @@
             } catch (error) {
                 console.error("Detailed Recommendation Error:", error);
 
-                // Construct a very detailed error message for mobile debugging
                 const diagnosticInfo = {
                     message: error.message,
                     name: error.name,
-                    stack: error.stack ? error.stack.split('\n')[0] : 'N/A',
                     online: navigator.onLine,
-                    model: "gemini-2.5-flash",
                     apiKeySnippet: AppConfig.GEMINI_API_KEY ? `${AppConfig.GEMINI_API_KEY.slice(0, 8)}...${AppConfig.GEMINI_API_KEY.slice(-4)}` : 'MISSING',
                     apiKeyPresent: !!AppConfig.GEMINI_API_KEY
                 };
@@ -392,7 +405,7 @@
 
                 return {
                     data: [],
-                    error: `${errorMsg}\n\n[진단정보]\n- ${diagnosticInfo.message}\n- Online: ${diagnosticInfo.online}\n- Model: ${diagnosticInfo.model}\n- API Key: ${diagnosticInfo.apiKeySnippet}`
+                    error: `${errorMsg}\n\n[진단정보]\n- ${diagnosticInfo.message}\n- Online: ${diagnosticInfo.online}\n- API Key: ${diagnosticInfo.apiKeySnippet}`
                 };
             }
         };
