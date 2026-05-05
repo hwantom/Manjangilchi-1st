@@ -2,6 +2,11 @@
 <html lang="ko">
 
 <head>
+    <script>
+        const base = document.createElement('base');
+        base.href = window.location.hostname.includes('github.io') ? '/Manjangilchi-1st/' : '/';
+        document.head.prepend(base);
+    </script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-3LZQJXZLXQ"></script>
     <script>
@@ -324,7 +329,8 @@
                 const stores = rawData.map(row => ({
                     name: getVal(row, ['name', '점포명']),
                     description: getVal(row, ['description', 'shortDesc', '설명']),
-                    category: getVal(row, ['category', '분류'])
+                    category: getVal(row, ['category', '분류']),
+                    slug: getVal(row, ['slug', '슬러그'])
                 })).filter(s => s.name);
                 return stores;
             } catch (error) {
@@ -378,12 +384,16 @@
                 const cleanedText = text.replace(/```json|```/g, "").trim();
                 const parsed = JSON.parse(cleanedText);
 
-                const items = parsed.map((item, index) => ({
-                    id: `gen-${Date.now()}-${index}`,
-                    name: item.name,
-                    description: item.description,
-                    checked: false
-                }));
+                const items = parsed.map((item, index) => {
+                    const matchedStore = storeList.find(s => s.name === item.name);
+                    return {
+                        id: `gen-${Date.now()}-${index}`,
+                        name: item.name,
+                        description: item.description,
+                        slug: matchedStore ? matchedStore.slug : null,
+                        checked: false
+                    };
+                });
 
                 return { data: items, error: "" };
 
@@ -1023,12 +1033,12 @@
 
                 const handleOpenMap = () => {
                     const selectedStores = recommendations.filter((store) => store.checked);
-                    const target = recommendations[0]?.name;
+                    const firstRec = recommendations[0];
 
                     track('recommendation_map_open', {
                         selected_count: selectedStores?.length || 0,
                         recommended_count: recommendations?.length || 0,
-                        target_store: target || ''
+                        target_store: firstRec?.name || ''
                     });
 
                     // Auto-Favorites Logic
@@ -1040,12 +1050,15 @@
 
                     if (selectedStores.length === 0) {
                         // No selection - show first recommendation
-                        const target = recommendations[0]?.name;
-                        window.location.href = target ? `map.html?open=${encodeURIComponent(target)}` : 'map.html';
-                        return;
+                        if (!firstRec) {
+                            window.location.href = 'map.html';
+                            return;
+                        }
+                        window.location.href = firstRec.slug ? `shop/${encodeURIComponent(firstRec.slug)}` : `map.html?open=${encodeURIComponent(firstRec.name)}`;
                     } else if (selectedStores.length === 1) {
                         // Single selection - open detail panel
-                        window.location.href = `map.html?open=${encodeURIComponent(selectedStores[0].name)}`;
+                        const selected = selectedStores[0];
+                        window.location.href = selected.slug ? `shop/${encodeURIComponent(selected.slug)}` : `map.html?open=${encodeURIComponent(selected.name)}`;
                     } else {
                         // Multiple selections - show all on map
                         const names = selectedStores.map(s => s.name).join(',');

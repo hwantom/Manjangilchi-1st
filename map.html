@@ -2,6 +2,11 @@
 <html lang="ko">
 
 <head>
+    <script>
+        const base = document.createElement('base');
+        base.href = window.location.hostname.includes('github.io') ? '/Manjangilchi-1st/' : '/';
+        document.head.prepend(base);
+    </script>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-3LZQJXZLXQ"></script>
@@ -368,6 +373,7 @@
 
                 return {
                     name: getVal(r, ['name', '점포명']), name_en: getVal(r, ['name_eng', 'name_en']), name_zh: getVal(r, ['name_zh', 'name_cn']), name_ja: getVal(r, ['name_ja', 'name_jp']),
+                    slug: getVal(r, ['slug', '슬러그']),
                     category: cat,
                     shortDesc: getVal(r, ['shortDesc', '설명']), shortDesc_en: getVal(r, ['shortDesc_en']), shortDesc_zh: getVal(r, ['shortDesc_zh']), shortDesc_ja: getVal(r, ['shortDesc_ja']),
                     reviewLink_Naver: getVal(r, ['reviewLink_Naver', '네이버']), reviewLink_Kakao: getVal(r, ['reviewLink_Kakao', '카카오']),
@@ -426,8 +432,27 @@
                 const params = new URLSearchParams(window.location.search);
                 const openName = params.get('open');
                 const highlightNames = params.get('highlight');
+                const pathname = window.location.pathname;
+                const shopMatch = pathname.match(/\/shop\/([^/]+)/);
 
-                if (openName) {
+                if (shopMatch) {
+                    const slug = decodeURIComponent(shopMatch[1]);
+                    const store = stores.find(s => s.slug === slug);
+                    if (store) {
+                        window.mjTrack?.('shop_slug_open', {
+                            store_name: store.name,
+                            store_slug: store.slug,
+                            store_category: store.category,
+                            source: 'direct_slug_url'
+                        });
+                        openDetailPanel(store);
+                    } else {
+                        window.mjTrack?.('shop_slug_not_found', {
+                            requested_slug: slug,
+                            source: 'direct_slug_url'
+                        });
+                    }
+                } else if (openName) {
                     const store = stores.find(s => s.name === openName);
                     if (store) openDetailPanel(store);
                 } else if (highlightNames) {
@@ -794,7 +819,23 @@
                             store_category: store.category,
                             source: 'marker'
                         });
+                        window.mjTrack?.('shop_slug_open', {
+                            store_name: store.name,
+                            store_slug: store.slug,
+                            store_category: store.category,
+                            source: 'marker_click'
+                        });
                         openDetailPanel(store);
+                        if (store.slug) {
+                            window.mjPageView?.({
+                                page_title: `${store.name} | 만장일치 통인시장`,
+                                page_path: `/shop/${encodeURIComponent(store.slug)}`,
+                                page_location: window.location.href,
+                                store_name: store.name,
+                                store_slug: store.slug,
+                                store_category: store.category
+                            });
+                        }
                     });
 
                     // Explicitly handle label clicks as well for maximum reliability
@@ -808,7 +849,23 @@
                             store_category: store.category,
                             source: 'label'
                         });
+                        window.mjTrack?.('shop_slug_open', {
+                            store_name: store.name,
+                            store_slug: store.slug,
+                            store_category: store.category,
+                            source: 'label_click'
+                        });
                         openDetailPanel(store);
+                        if (store.slug) {
+                            window.mjPageView?.({
+                                page_title: `${store.name} | 만장일치 통인시장`,
+                                page_path: `/shop/${encodeURIComponent(store.slug)}`,
+                                page_location: window.location.href,
+                                store_name: store.name,
+                                store_slug: store.slug,
+                                store_category: store.category
+                            });
+                        }
                     };
 
                     markers.set(store.name, { marker, element: container, label: container.querySelector('.shop-label') });
@@ -1220,11 +1277,25 @@
             };
 
             const closeAllPanelsInternal = () => {
+                if (selectedStore) {
+                    window.mjTrack?.('shop_panel_close', {
+                        store_name: selectedStore.name || '',
+                        store_slug: selectedStore.slug || '',
+                        store_category: selectedStore.category || '',
+                        source: window.location.pathname.startsWith('/shop/') ? 'slug_url' : 'map'
+                    });
+                }
+
                 detailPanel.classList.add('hidden-panel-right');
                 favoritesPanel.classList.add('hidden-panel-left');
                 overlay.classList.add('hidden');
                 selectedStore = null;
                 updateMarkers();
+
+                if (window.location.pathname.includes('/shop/')) {
+                    const baseHref = window.location.hostname.includes('github.io') ? '/Manjangilchi-1st/' : '/';
+                    window.history.replaceState(null, '', baseHref + 'map.html');
+                }
 
                 // Reset bottom sheet styles for mobile
                 if (window.innerWidth < 640) {
@@ -1375,8 +1446,12 @@
                 if (selectedStore && selectedStore.name === store.name && (now - lastPanelOpenTime) < 200) return;
                 lastPanelOpenTime = now;
 
+                const url = store.slug ? `shop/${encodeURIComponent(store.slug)}` : '';
+                
                 if (!window.history.state || !window.history.state.panelOpen) {
-                    window.history.pushState({ panelOpen: true }, '');
+                    window.history.pushState({ panelOpen: true }, '', url || window.location.pathname);
+                } else if (url) {
+                    window.history.replaceState({ panelOpen: true }, '', url);
                 }
                 selectedStore = store;
                 renderDetailPanel();
