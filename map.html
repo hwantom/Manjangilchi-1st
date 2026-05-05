@@ -141,7 +141,7 @@
                 </svg>
             </div>
             <p id="noResultsText" class="text-sm font-bold text-gray-900">검색 결과가 없습니다</p>
-            <button onclick="clearAllFilters()"
+            <button id="clearAllFiltersBtn" onclick="clearAllFilters()"
                 class="text-xs font-black text-pink-500 uppercase tracking-widest border-b-2 border-pink-500/20 pb-0.5">전체
                 보기</button>
         </div>
@@ -202,28 +202,28 @@
                     hoursLabel: "영업 시간", priceLabel: "평균 가격", keywordsLabel: "키워드", moreLabel: "더보기", yeopjeonBadge: "엽전 가맹점", yeopjeonTitle: "엽전 도시락 가맹점",
                     yeopjeonDesc: "통인시장 엽전으로 결제가 가능합니다.", favoritesTitle: "즐겨찾기", emptyFavorites: "목록이 비어있습니다.", copySuccess: "링크가 복사되었습니다! 🔗",
                     cat_food: "식당", cat_snack: "간식", cat_life: "생활형", cat_coin: "엽전", legendTitle: "범례", homeTooltip: "홈으로 이동",
-                    noResults: "검색 결과가 없습니다"
+                    noResults: "검색 결과가 없습니다", clearAllFilters: "전체 보기"
                 },
                 en: {
                     searchPlaceholder: "Search shops or menus", directions: "Get Directions", naverReview: "Naver Review", kakaoReview: "Kakao Review", menuDetail: "View Menu",
                     hoursLabel: "Business Hours", priceLabel: "Average Price", keywordsLabel: "Keywords", moreLabel: "More", yeopjeonBadge: "Yeopjeon Member", yeopjeonTitle: "Yeopjeon Member Store",
                     yeopjeonDesc: "You can pay with Tongin Market brass coins.", favoritesTitle: "Favorites", emptyFavorites: "Your list is empty.", copySuccess: "Link copied to clipboard! 🔗",
                     cat_food: "Restaurant", cat_snack: "Snacks", cat_life: "Lifestyle", cat_coin: "Yeopjeon", legendTitle: "Legend", homeTooltip: "Go to Home",
-                    noResults: "No results found"
+                    noResults: "No results found", clearAllFilters: "View All"
                 },
                 zh: {
                     searchPlaceholder: "搜索店铺或菜单", directions: "获取路线", naverReview: "Naver 评论", kakaoReview: "Kakao 评论", menuDetail: "查看菜单",
                     hoursLabel: "营业时间", priceLabel: "人均消费", keywordsLabel: "关键词", moreLabel: "更多", yeopjeonBadge: "铜钱加盟店", yeopjeonTitle: "通仁市场铜钱加盟店",
                     yeopjeonDesc: "可以使用通仁市场铜钱支付。", favoritesTitle: "我的收藏", emptyFavorites: "列表为空。", copySuccess: "链接已复制！ 🔗",
                     cat_food: "美食店", cat_snack: "零食点心", cat_life: "生活用品", cat_coin: "铜钱", legendTitle: "图例", homeTooltip: "返回主页",
-                    noResults: "未找到相关结果"
+                    noResults: "未找到相关结果", clearAllFilters: "查看全部"
                 },
                 ja: {
                     searchPlaceholder: "店舗やメニューを検索", directions: "道案内を開始", naverReview: "Naver レビュー", kakaoReview: "Kakao レビュー", menuDetail: "メニューを見る",
                     hoursLabel: "営業時間", priceLabel: "価格とメニュー", keywordsLabel: "キーワード", moreLabel: "もっと見る", yeopjeonBadge: "ヨプジョン加盟店", yeopjeonTitle: "通仁市場ヨプジョン加盟店",
                     yeopjeonDesc: "通仁市場のヨプジョン（真鍮貨）で決済可能です。", favoritesTitle: "お気に入り", emptyFavorites: "リストが空です。", copySuccess: "リンクをコピーしました！ 🔗",
                     cat_food: "食堂", cat_snack: "軽食・カフェ", cat_life: "生活・雑貨", cat_coin: "ヨプジョン", legendTitle: "凡例", homeTooltip: "ホーム",
-                    noResults: "検索結果がありません"
+                    noResults: "検索結果がありません", clearAllFilters: "すべて表示"
                 }
             };
             const PLACEHOLDER_IMG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 360'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop offset='0%25' stop-color='%23f3f4f7'/%3E%3Cstop offset='100%25' stop-color='%23e7eaf0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='600' height='360' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='22' fill='%2313203B'%3ENo Image%3C/text%3E%3C/svg%3E";
@@ -381,11 +381,11 @@
                     name: getVal(r, ['name', '점포명']), name_en: getVal(r, ['name_eng', 'name_en']), name_zh: getVal(r, ['name_zh', 'name_cn']), name_ja: getVal(r, ['name_ja', 'name_jp']),
                     slug: getVal(r, ['slug', '슬러그']),
                     category: cat,
-                    shortDesc: getVal(r, ['shortDesc', '설명']), shortDesc_en: getVal(r, ['shortDesc_en']), shortDesc_zh: getVal(r, ['shortDesc_zh']), shortDesc_ja: getVal(r, ['shortDesc_ja']),
+                    shortDesc: getVal(r, ['shortDesc', '설명']), shortDesc_en: getVal(r, ['shortDesc_eng', 'shortDesc_en']), shortDesc_zh: getVal(r, ['shortDesc_cn', 'shortDesc_zh']), shortDesc_ja: getVal(r, ['shortDesc_jp', 'shortDesc_ja']),
                     reviewLink_Naver: getVal(r, ['reviewLink_Naver', '네이버']), reviewLink_Kakao: getVal(r, ['reviewLink_Kakao', '카카오']),
-                    hours: getVal(r, ['hours', '영업시간']), hours_en: getVal(r, ['hours_en']), hours_zh: getVal(r, ['hours_zh']), hours_ja: getVal(r, ['hours_ja']),
+                    hours: getVal(r, ['hours', '영업시간']), hours_en: getVal(r, ['hours_eng', 'hours_en']), hours_zh: getVal(r, ['hours_cn', 'hours_zh']), hours_ja: getVal(r, ['hours_jp', 'hours_ja']),
                     repre_image: getVal(r, ['repre_image', 'image']),
-                    price: getVal(r, ['price', '가격']), price_en: getVal(r, ['price_en']), price_zh: getVal(r, ['price_zh']), price_ja: getVal(r, ['price_ja']),
+                    price: getVal(r, ['price', '가격']), price_en: getVal(r, ['price_eng', 'price_en']), price_zh: getVal(r, ['price_cn', 'price_zh']), price_ja: getVal(r, ['price_jp', 'price_ja']),
                     coin: getVal(r, ['coin', '엽전']).toLowerCase() === 'o' ? 'o' : '',
                     lat: getVal(r, ['lat', '위도']), lng: getVal(r, ['lng', '경도']),
                     menuLink: getVal(r, ['menuLink']),
@@ -546,6 +546,8 @@
                 updateMarkers();
                 updateFavCount();
                 searchInput.placeholder = UI_TRANSLATIONS[currentLang].searchPlaceholder;
+                const clearAllBtn = document.getElementById('clearAllFiltersBtn');
+                if(clearAllBtn) clearAllBtn.innerText = UI_TRANSLATIONS[currentLang].clearAllFilters;
             };
 
             const updateLocateBtnIcon = () => {
