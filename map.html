@@ -2155,7 +2155,15 @@
                 const langMap = { 'name': true, 'shortDesc': true, 'hours': true, 'price': true, 'keyword': true };
                 if (langMap[prop]) {
                     const langProp = `${prop}_${currentLang}`;
-                    return store[langProp] || store[prop] || "-";
+                    if (store[langProp]) return store[langProp];
+                    
+                    let fallbackStr = store[prop] || "-";
+                    if (prop === 'price' && currentLang !== 'ko' && fallbackStr !== "-") {
+                        if (currentLang === 'en') fallbackStr = fallbackStr.replace(/원/g, ' KRW').replace(/엽전/g, ' coins');
+                        if (currentLang === 'zh') fallbackStr = fallbackStr.replace(/원/g, ' 韩元').replace(/엽전/g, ' 铜钱');
+                        if (currentLang === 'ja') fallbackStr = fallbackStr.replace(/원/g, ' ウォン').replace(/엽전/g, ' ヨプジョン');
+                    }
+                    return fallbackStr;
                 }
                 return store[prop] || '';
             };
