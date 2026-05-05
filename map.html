@@ -330,10 +330,16 @@
                     const res = await fetch(CSV_URL);
                     const text = await res.text();
                     const rawData = parseCSV(text);
+                    const seen = new Set();
                     stores = rawData
                         .map(normalizeRow)
                         .filter(s => s.name && s.lat && s.lng)
-                        .filter(s => !EXCLUDED_STORE_KEYS.has(normalizeStoreKey(s.name)));
+                        .filter(s => !EXCLUDED_STORE_KEYS.has(normalizeStoreKey(s.name)))
+                        .filter(s => {
+                            if (seen.has(s.name)) return false;
+                            seen.add(s.name);
+                            return true;
+                        });
                 } catch (error) { console.error("Data fetch failed", error); }
             };
             const parseCSV = (text) => {
@@ -867,6 +873,36 @@
                             });
                         }
                     };
+
+                    const glyphContainer = container.querySelector('.glyph-container');
+                    glyphContainer.onclick = (e) => {
+                        e.stopPropagation();
+                        window.mjTrack?.('select_content', {
+                            content_type: 'store',
+                            content_id: store.name,
+                            store_name: store.name,
+                            store_category: store.category,
+                            source: 'icon'
+                        });
+                        window.mjTrack?.('shop_slug_open', {
+                            store_name: store.name,
+                            store_slug: store.slug,
+                            store_category: store.category,
+                            source: 'icon_click'
+                        });
+                        openDetailPanel(store);
+                        if (store.slug) {
+                            window.mjPageView?.({
+                                page_title: `${store.name} | 만장일치 통인시장`,
+                                page_path: `/shop/${encodeURIComponent(store.slug)}`,
+                                page_location: window.location.href,
+                                store_name: store.name,
+                                store_slug: store.slug,
+                                store_category: store.category
+                            });
+                        }
+                    };
+
 
                     markers.set(store.name, { marker, element: container, label: container.querySelector('.shop-label') });
                 });
@@ -1446,7 +1482,8 @@
                 if (selectedStore && selectedStore.name === store.name && (now - lastPanelOpenTime) < 200) return;
                 lastPanelOpenTime = now;
 
-                const url = store.slug ? `shop/${encodeURIComponent(store.slug)}` : '';
+                const baseHref = window.location.hostname.includes('github.io') ? '/Manjangilchi-1st/' : '/';
+                const url = store.slug ? `${baseHref}shop/${encodeURIComponent(store.slug)}` : '';
                 
                 if (!window.history.state || !window.history.state.panelOpen) {
                     window.history.pushState({ panelOpen: true }, '', url || window.location.pathname);
