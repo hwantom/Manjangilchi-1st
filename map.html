@@ -154,7 +154,7 @@
             class="fixed top-0 left-0 h-full z-50 bg-white shadow-[10px_0_30px_rgba(0,0,0,0.1)] panel-transition hidden-panel-left w-full sm:w-[380px] flex flex-col">
         </div>
         <div id="detailPanel"
-            class="fixed top-0 right-0 h-full z-50 bg-white shadow-[-10px_0_30px_rgba(0,0,0,0.1)] panel-transition hidden-panel-right w-full sm:w-[450px]">
+            class="fixed top-0 right-0 h-full z-50 bg-white shadow-[0_-10px_40px_rgba(0,0,0,0.12)] sm:shadow-[-10px_0_30px_rgba(0,0,0,0.1)] rounded-t-3xl sm:rounded-t-none panel-transition hidden-panel-right w-full sm:w-[450px]">
         </div>
         <div id="overlay" class="fixed inset-0 bg-black/20 z-40 hidden"></div>
         <div id="imageModal"
@@ -1658,8 +1658,7 @@
                     : "tab-btn text-gray-400 pb-2.5 border-b-2 border-transparent hover:text-gray-600 transition-colors";
 
                 detailPanel.innerHTML = `
-                <div class="flex flex-col h-full w-full bg-transparent overflow-hidden pb-safe relative pointer-events-none">
-                    <div id="sheetMainContainer" class="flex flex-col h-full w-full bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.12)] pointer-events-auto mt-auto">
+                <div class="flex flex-col h-full w-full bg-white text-brand-ink overflow-hidden pb-safe">
                         
                         <div class="sheet-handle-bar sm:hidden mx-auto mt-4 mb-3 w-12 h-1.5 bg-gray-300 rounded-full shrink-0"></div>
                         
@@ -1755,7 +1754,6 @@
                                 <span>현재 위치에서 길 찾기</span>
                             </button>
                         </div>
-                    </div>
                 </div>`;
 
                 // Event Bindings
@@ -2134,7 +2132,6 @@
 
             const setupBottomSheetEvents = () => {
                 const scrollContainer = detailPanel.querySelector('#sheetDetailBody');
-                const mainContainer = detailPanel.querySelector('#sheetMainContainer');
                 const header = detailPanel.querySelector('#sheetSummaryHeader');
                 let animationFrameId = null;
                 let isNativeScrolling = false;
@@ -2149,10 +2146,8 @@
                     isDragging = true;
                     isNativeScrolling = (sheetStage === 'EXPANDED' && scrollContainer && scrollContainer.scrollTop > 0);
                     
-                    if (mainContainer) {
-                        mainContainer.style.transition = 'none';
-                        startMainHeight = mainContainer.getBoundingClientRect().height;
-                    }
+                    detailPanel.style.transition = 'none';
+                    startMainHeight = detailPanel.getBoundingClientRect().height;
                     if (animationFrameId) cancelAnimationFrame(animationFrameId);
                 }, { passive: true });
 
@@ -2183,7 +2178,9 @@
                         // Determine base translation for the container
                         let baseTranslateY = 0;
                         if (sheetStage === 'COLLAPSED') {
-                            baseTranslateY = h - startMainHeight; 
+                            const headerHeight = header ? header.offsetHeight : 100;
+                            const handleHeight = 32;
+                            baseTranslateY = h - headerHeight - handleHeight; 
                         } else if (sheetStage === 'HALF') {
                             baseTranslateY = h * 0.45;
                         } else if (sheetStage === 'EXPANDED') {
@@ -2193,9 +2190,7 @@
                         let newTranslateY = baseTranslateY + deltaY;
                         if (newTranslateY < 0) newTranslateY = 0;
 
-                        if (mainContainer) {
-                            mainContainer.style.transform = `translateY(${newTranslateY}px)`;
-                        }
+                        detailPanel.style.transform = `translateY(${newTranslateY}px)`;
                         
                         // Toggle overlay
                         if (newTranslateY < h * 0.3) overlay.classList.remove('hidden');
@@ -2237,7 +2232,6 @@
             const snapToStage = (stage) => {
                 if (window.innerWidth >= 640) return;
                 const h = window.innerHeight;
-                const mainContainer = detailPanel.querySelector('#sheetMainContainer');
                 const scrollContainer = detailPanel.querySelector('#sheetDetailBody');
                 const imageArea = detailPanel.querySelector('#sheetImageArea');
                 const extendedArea = detailPanel.querySelector('#sheetExtendedArea');
@@ -2246,12 +2240,10 @@
                 const tagsContainer = detailPanel.querySelector('#sheetTagsContainer');
                 const bottomBar = detailPanel.querySelector('#sheetBottomBar');
                 
-                if (!mainContainer) return;
-
                 let targetY = 0;
                 
                 // Set transition for everything
-                mainContainer.style.transition = 'transform 0.4s cubic-bezier(0.3, 0, 0.2, 1)';
+                detailPanel.style.transition = 'transform 0.4s cubic-bezier(0.3, 0, 0.2, 1)';
                 
                 if (stage === 'COLLAPSED') {
                     // In collapsed, hide image, hide extended, show only header
@@ -2271,7 +2263,6 @@
                     }
                     
                     // We need to know the height of the handle + header to calculate targetY
-                    // We can estimate it or measure it dynamically.
                     const headerHeight = header ? header.offsetHeight : 100;
                     const handleHeight = 32; // mt-4 + h-1.5 + mb-3 is about 32px
                     targetY = h - headerHeight - handleHeight;
@@ -2302,7 +2293,6 @@
                     if (extendedArea) extendedArea.classList.remove('hidden');
                     if (closeBtn) closeBtn.classList.remove('hidden');
                     if (bottomBar) bottomBar.classList.remove('hidden');
-                    // Hide tags in header if preferred, but for now we keep it based on design
                     
                     targetY = 0;
                     overlay.classList.remove('hidden');
@@ -2311,7 +2301,7 @@
                     }
                 }
 
-                mainContainer.style.transform = `translateY(${targetY}px)`;
+                detailPanel.style.transform = `translateY(${targetY}px)`;
 
                 // Adjust map offset dynamically
                 if (map && selectedStore) {

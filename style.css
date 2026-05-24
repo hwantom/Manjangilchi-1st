@@ -555,10 +555,6 @@
 .opacity-80 {
   opacity: 80%;
 }
-.shadow-\[-10px_0_30px_rgba\(0\,0\,0\,0\.1\)\] {
-  --tw-shadow: -10px 0 30px var(--tw-shadow-color, rgba(0,0,0,0.1));
-  box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-}
 .shadow-\[0_-10px_30px_rgba\(0\,0\,0\,0\.03\)\] {
   --tw-shadow: 0 -10px 30px var(--tw-shadow-color, rgba(0,0,0,0.03));
   box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -840,10 +836,10 @@
   }
   .nmap-marker.active::before {
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-    border: 5px solid #1A1A1B;
+    border: 5px solid #FFFFFF;
   }
   .nmap-marker.active::after {
-    border-top-color: #1A1A1B;
+    border-top-color: #FFFFFF;
     bottom: -7px;
   }
   .fav-badge {

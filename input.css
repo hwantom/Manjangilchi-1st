@@ -168,11 +168,11 @@
 
     .nmap-marker.active::before {
         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-        border: 5px solid #1A1A1B;
+        border: 5px solid #FFFFFF;
     }
 
     .nmap-marker.active::after {
-        border-top-color: #1A1A1B;
+        border-top-color: #FFFFFF;
         bottom: -7px;
     }
 
