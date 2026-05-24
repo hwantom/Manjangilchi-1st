@@ -390,8 +390,49 @@
         import { GoogleGenerativeAI } from '@google/generative-ai';
 
         const getRecommendations = async (selection, storeList, lang) => {
-            // 1. 프롬프트 구성
-            const storeListText = storeList.map(s => `${s.name}(${s.category})`).join(',');
+            // 1. 클라이언트 측에서 관심사에 맞춰 1차 필터링 (프롬프트 토큰 단축 및 AI 오추천 방지)
+            let filteredStores = storeList;
+            
+            if (selection.interests && selection.interests.length > 0) {
+                filteredStores = storeList.filter(s => {
+                    return selection.interests.some(interest => {
+                        const name = s.name || '';
+                        const desc = s.description || '';
+                        const cat = s.category || '';
+                        
+                        // 식사 필터
+                        if (interest === '식사' || interest === 'Meal' || interest === '正餐' || interest === '食事') {
+                            return cat === '식당';
+                        }
+                        // 간식 필터
+                        if (interest === '간식 • 디저트' || interest === 'Snack/Dessert' || interest === '零食 • 甜点' || interest === '軽食・デザート') {
+                            return cat === '간식';
+                        }
+                        // 전통 먹거리 필터 (식당 및 간식 카테고리에 분포됨)
+                        if (interest === '전통 먹거리' || interest === 'Traditional Food' || interest === '传统小吃' || interest === '伝統料理') {
+                            return cat === '간식' || cat === '식당';
+                        }
+                        // 구경 • 소품 필터
+                        if (interest === '구경 • 소품' || interest === 'Sightseeing/Goods' || interest === '参观 • 纪念品' || interest === '観光・雑貨') {
+                            return cat === '잡화' || 
+                                   (cat === '생활형 점포' && (
+                                       desc.includes('소품') || desc.includes('잡화') || desc.includes('기념품') || 
+                                       desc.includes('의류') || desc.includes('와인') || desc.includes('공방') || 
+                                       desc.includes('갤러리') || desc.includes('꽃') || name.includes('마켓') || 
+                                       name.includes('상점') || name.includes('작가') || name.includes('공방')
+                                   ));
+                        }
+                        return true;
+                    });
+                });
+            }
+
+            // 필터링 결과가 너무 적은 경우 안전장치: 생활형 점포를 제외한 모든 상점으로 대체
+            if (filteredStores.length < 8) {
+                filteredStores = storeList.filter(s => s.category !== '생활형 점포');
+            }
+
+            const storeListText = filteredStores.map(s => `${s.name}(${s.category})`).join(',');
             const prompt = `통인시장 상점목록: ${storeListText}
 사용자: 목적-${selection.purpose}, 동행-${selection.companion}, 관심-${selection.interests.join(',')}, 선호-${selection.preference}
 위 목록에서 가장 적합한 4곳을 골라 JSON으로 답해줘. 답변 언어: ${lang}. 형식: [{ "name": "상점명", "description": "한줄추천이유" }]`;
@@ -402,8 +443,8 @@
 
                 const genAI = new GoogleGenerativeAI(AppConfig.GEMINI_API_KEY);
 
-                // 모델 우선순위: gemini-2.5-flash → gemini-1.5-flash (폴백)
-                const MODELS = ["gemini-2.5-flash-preview-05-20", "gemini-2.5-flash", "gemini-1.5-flash"];
+                // 모델 우선순위: gemini-3.1-flash-lite (극도로 빠름) -> gemini-2.5-flash -> gemini-3.5-flash (폴백)
+                const MODELS = ["gemini-3.1-flash-lite", "gemini-2.5-flash", "gemini-3.5-flash"];
                 let text = null;
                 let lastError = null;
 
@@ -863,10 +904,10 @@
                 const progressInterval = setInterval(() => {
                     setProgress(prev => {
                         if (prev >= 90) return prev;
-                        const diff = Math.random() * 10;
+                        const diff = Math.random() * 5 + 7;
                         return Math.min(prev + diff, 90);
                     });
-                }, 500);
+                }, 200);
 
                 const messageInterval = setInterval(() => {
                     setCurrentMessageIndex(prev => (prev + 1) % LOADING_MESSAGES[lang].length);

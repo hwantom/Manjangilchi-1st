@@ -60,6 +60,8 @@ exports.handler = async (event) => {
 
         const pickModel = (models) => {
             const preferred = [
+                'models/gemini-2.5-flash',
+                'models/gemini-3.5-flash',
                 'models/gemini-1.5-flash-8b',
                 'models/gemini-1.5-flash',
                 'models/gemini-1.5-flash-001',
