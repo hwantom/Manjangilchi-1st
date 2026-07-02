@@ -23,7 +23,8 @@
 
 | Key | Value (값) | 용도 |
 | :--- | :--- | :--- |
-| `GEMINI_API_KEY` | (Gemini API 키 입력) | 서버(Functions)에서 API 호출 시 사용 |
+| `OPENAI_API_KEY` | (OpenAI API 키 입력) | 서버(Functions)에서 AI 추천 이유 생성 시 사용 |
+| `OPENAI_MODEL` | `gpt-5.5` | AI 추천 이유 생성 모델 |
 | `GOOGLE_MAPS_API_KEY` | (Google Maps API 키 입력) | 지도 표시용 (config.js 생성용) |
 | `MAP_ID` | `8fbca58624e4405a846adbea` | 지도 스타일 ID |
 | `SHEET_ID` | (Google Sheet ID 입력) | 구글 시트 데이터 연동 |
@@ -38,5 +39,5 @@
 ---
 
 ### ⚠️ 주의사항
-*   **Gemini API 보안**: 이제 API 키가 서버 사이드에서만 관리되므로 훨씬 안전합니다. 
+*   **OpenAI API 보안**: 이제 API 키가 서버 사이드에서만 관리되므로 훨씬 안전합니다. 
 *   **Google Maps API 키 보안**: Google Cloud Console에서 **'HTTP 리퍼러 제한'**을 꼭 설정하세요. Netlify 주소(예: `*.netlify.app`)만 허용하도록 지정하면 키 도용을 막을 수 있습니다.
