@@ -4,7 +4,14 @@
 <head>
     <script>
         const base = document.createElement('base');
-        base.href = window.location.hostname.includes('github.io') ? '/Manjangilchi-1st/' : '/';
+        if (window.location.hostname.includes('github.io')) {
+            base.href = '/Manjangilchi-1st/';
+        } else if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
+            // VS Code Live Server 등 로컬 환경을 위한 동적 경로 설정
+            base.href = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        } else {
+            base.href = '/';
+        }
         document.head.prepend(base);
     </script>
 
@@ -22,17 +29,19 @@
                             bg: '#FAFBFC',
                             ink: '#1A1A1B',
                         }
+                    },
+                    fontFamily: {
+                        sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
-        rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
     <style>
         body {
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
             background-color: #f5f5f5;
         }
 
@@ -63,7 +72,6 @@
         import { MapPin, Users, Utensils, Zap, Search, Globe, User, Heart, Gift, Compass, Sparkles, ChefHat, Coffee, ShoppingBag, UtensilsCrossed } from 'lucide-react';
 
         // --- Types & Constants ---
-        const API_KEY = AppConfig.GEMINI_API_KEY;
         const SHEET_ID = AppConfig.SHEET_ID;
         const isPubId = SHEET_ID && SHEET_ID.startsWith('2PACX');
         const CSV_URL = isPubId
@@ -355,9 +363,29 @@
             });
         };
 
+        const fetchWithTimeout = async (url, options = {}, timeoutMs = 1800) => {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                return await fetch(url, { ...options, signal: controller.signal });
+            } finally {
+                clearTimeout(timeoutId);
+            }
+        };
+
         const fetchStoreList = async () => {
             try {
-                const res = await fetch(CSV_URL);
+                let res = null;
+                try {
+                    res = await fetchWithTimeout(CSV_URL, { cache: 'no-store' });
+                } catch (sheetError) {
+                    console.info("Google Sheet fetch skipped, using local CSV:", sheetError.message);
+                }
+
+                if (!res || !res.ok) {
+                    res = await fetch('stores_data.csv', { cache: 'no-store' });
+                }
+
                 const text = await res.text();
                 const rawData = parseCSV(text);
                 if (!rawData.length) return [];
@@ -373,8 +401,25 @@
                 const stores = rawData.map(row => ({
                     name: getVal(row, ['name', '점포명']),
                     description: getVal(row, ['description', 'shortDesc', '설명']),
+                    description_eng: getVal(row, ['shortDesc_eng']),
+                    description_cn: getVal(row, ['shortDesc_cn']),
+                    description_jp: getVal(row, ['shortDesc_jp']),
+                    summary: getVal(row, ['summary', '요약']),
+                    summary_eng: getVal(row, ['summary_eng']),
+                    summary_cn: getVal(row, ['summary_cn']),
+                    summary_jp: getVal(row, ['summary_jp']),
                     category: getVal(row, ['category', '분류']),
-                    slug: getVal(row, ['slug', '슬러그'])
+                    slug: getVal(row, ['slug', '슬러그']),
+                    keyword: getVal(row, ['keyword', '키워드']),
+                    coin: getVal(row, ['coin', '엽전']),
+                    recommendReason: getVal(row, ['recommendReason', 'recommend_reason', 'recommendDesc', 'recommend_desc', '추천이유', '추천 이유', '추천설명', '추천 설명']),
+                    recommendReason_eng: getVal(row, ['recommendReason_eng', 'recommend_reason_eng', 'recommendDesc_eng']),
+                    recommendReason_cn: getVal(row, ['recommendReason_cn', 'recommend_reason_cn', 'recommendDesc_cn']),
+                    recommendReason_jp: getVal(row, ['recommendReason_jp', 'recommend_reason_jp', 'recommendDesc_jp']),
+                    recommendHot: getVal(row, ['recommendHot', 'recommend_hot', 'hotReason', '핫플이유', '핫플 이유']),
+                    recommendFirst: getVal(row, ['recommendFirst', 'recommend_first', 'firstVisitReason', '첫방문이유', '첫 방문 이유']),
+                    recommendHidden: getVal(row, ['recommendHidden', 'recommend_hidden', 'hiddenReason', '숨은맛집이유', '숨은 맛집 이유']),
+                    recommendFast: getVal(row, ['recommendFast', 'recommend_fast', 'fastRouteReason', '빠른동선이유', '빠른 동선 이유'])
                 })).filter(s => s.name).filter(s => {
                     if (seen.has(s.name)) return false;
                     seen.add(s.name);
@@ -387,127 +432,190 @@
             }
         };
 
-        import { GoogleGenerativeAI } from '@google/generative-ai';
+        const normalizeText = (value) => String(value || '').toLowerCase().replace(/\s/g, '');
 
-        const getRecommendations = async (selection, storeList, lang) => {
-            // 1. 클라이언트 측에서 관심사에 맞춰 1차 필터링 (프롬프트 토큰 단축 및 AI 오추천 방지)
-            let filteredStores = storeList;
-            
-            if (selection.interests && selection.interests.length > 0) {
-                filteredStores = storeList.filter(s => {
-                    return selection.interests.some(interest => {
-                        const name = s.name || '';
-                        const desc = s.description || '';
-                        const cat = s.category || '';
-                        
-                        // 식사 필터
-                        if (interest === '식사' || interest === 'Meal' || interest === '正餐' || interest === '食事') {
-                            return cat === '식당';
-                        }
-                        // 간식 필터
-                        if (interest === '간식 • 디저트' || interest === 'Snack/Dessert' || interest === '零食 • 甜点' || interest === '軽食・デザート') {
-                            return cat === '간식';
-                        }
-                        // 전통 먹거리 필터 (식당 및 간식 카테고리에 분포됨)
-                        if (interest === '전통 먹거리' || interest === 'Traditional Food' || interest === '传统小吃' || interest === '伝統料理') {
-                            return cat === '간식' || cat === '식당';
-                        }
-                        // 구경 • 소품 필터
-                        if (interest === '구경 • 소품' || interest === 'Sightseeing/Goods' || interest === '参观 • 纪念品' || interest === '観光・雑貨') {
-                            return cat === '잡화' || 
-                                   (cat === '생활형 점포' && (
-                                       desc.includes('소품') || desc.includes('잡화') || desc.includes('기념품') || 
-                                       desc.includes('의류') || desc.includes('와인') || desc.includes('공방') || 
-                                       desc.includes('갤러리') || desc.includes('꽃') || name.includes('마켓') || 
-                                       name.includes('상점') || name.includes('작가') || name.includes('공방')
-                                   ));
-                        }
-                        return true;
+        const getLocalizedDescription = (store, lang) => {
+            const fieldMap = {
+                en: 'description_eng',
+                zh: 'description_cn',
+                ja: 'description_jp'
+            };
+            return store[fieldMap[lang]] || store.description || store.keyword || '';
+        };
+
+        const getLocalizedSummary = (store, lang) => {
+            const fieldMap = {
+                en: 'summary_eng',
+                zh: 'summary_cn',
+                ja: 'summary_jp'
+            };
+            return store[fieldMap[lang]] || store.summary || '';
+        };
+
+        const getSheetRecommendationReason = (store, selection, lang) => {
+            const langFieldMap = {
+                en: 'recommendReason_eng',
+                zh: 'recommendReason_cn',
+                ja: 'recommendReason_jp'
+            };
+            const preferenceFieldMap = [
+                { matches: ['핫플', 'Hot Place', '热门打卡'], field: 'recommendHot' },
+                { matches: ['첫 방문', 'First Visit', '首次访问'], field: 'recommendFirst' },
+                { matches: ['숨은 맛집', 'Hidden Gem', '隐秘美食'], field: 'recommendHidden' },
+                { matches: ['빠른 동선', 'Efficient', '高效路线'], field: 'recommendFast' }
+            ];
+            const preferenceMatch = preferenceFieldMap.find(item => item.matches.includes(selection.preference));
+            return (preferenceMatch && store[preferenceMatch.field])
+                || store[langFieldMap[lang]]
+                || store.recommendReason
+                || '';
+        };
+
+        const getInterestProfiles = (selection) => {
+            const selected = selection.interests || [];
+            const has = (labels) => selected.some(item => labels.includes(item));
+            const profiles = [];
+
+            if (has(['식사', 'Meal', '正餐', '食事'])) {
+                profiles.push({
+                    category: ['식당'],
+                    terms: ['식당', '밥', '식사', '국수', '분식', '떡볶이', '김밥', '만두', '한식', 'meal', 'restaurant', 'noodle', 'tteokbokki']
+                });
+            }
+            if (has(['간식 • 디저트', 'Snack/Dessert', '零食 • 甜点', 'おやつ • デザート'])) {
+                profiles.push({
+                    category: ['간식'],
+                    terms: ['간식', '디저트', '꽈배기', '도너츠', '떡', '빵', '카페', '커피', 'snack', 'dessert', 'doughnut', 'coffee']
+                });
+            }
+            if (has(['전통 먹거리', 'Traditional Food', '传统小吃', '伝統グルメ'])) {
+                profiles.push({
+                    category: ['간식', '식당'],
+                    terms: ['전통', '시장간식', '기름떡볶이', '떡', '엽전', 'traditional', 'market', 'tteok']
+                });
+            }
+            if (has(['구경 • 소품', 'Sightseeing/Goods', '参观 • 纪念品', '見学 • 小物'])) {
+                profiles.push({
+                    category: ['문화', '잡화', '생활형 점포'],
+                    terms: ['구경', '소품', '선물', '기념', '공방', '갤러리', '꽃', '문화', '생활', 'goods', 'gift', 'souvenir', 'craft']
+                });
+            }
+
+            return profiles;
+        };
+
+        const createRecommendationReason = (store, selection, lang) => {
+            const summary = getLocalizedSummary(store, lang);
+            if (summary) return summary;
+
+            const sheetReason = getSheetRecommendationReason(store, selection, lang);
+            if (sheetReason) return sheetReason;
+
+            const base = getLocalizedDescription(store, lang);
+            const interest = (selection.interests || []).join(', ');
+            const preference = selection.preference || '';
+            const messages = {
+                ko: `${base} 선택하신 관심사(${interest})와 '${preference}' 방식에 잘 맞는 점포예요.`,
+                en: `${base} This spot fits your interests (${interest}) and your "${preference}" recommendation style.`,
+                zh: `${base} 这家店很适合您选择的兴趣（${interest}）和「${preference}」推荐方式。`,
+                ja: `${base} 選択した関心事（${interest}）と「${preference}」のおすすめスタイルに合うお店です。`
+            };
+            return messages[lang] || messages.ko;
+        };
+
+        const getFastRecommendations = (selection, storeList, lang) => {
+            const stores = (storeList || []).filter(store => store.name);
+            if (!stores.length) return [];
+
+            const profiles = getInterestProfiles(selection);
+            const preferenceText = normalizeText(selection.preference);
+            const selectedText = normalizeText([
+                selection.purpose,
+                selection.companion,
+                ...(selection.interests || []),
+                selection.preference
+            ].join(' '));
+
+            const scored = stores.map((store, index) => {
+                const searchable = normalizeText([
+                    store.name,
+                    store.category,
+                    store.description,
+                    store.description_eng,
+                    store.description_cn,
+                    store.description_jp,
+                    store.keyword
+                ].join(' '));
+
+                let score = 0;
+
+                profiles.forEach(profile => {
+                    if (profile.category.some(category => store.category === category)) score += 35;
+                    profile.terms.forEach(term => {
+                        if (searchable.includes(normalizeText(term))) score += 12;
                     });
                 });
-            }
 
-            // 필터링 결과가 너무 적은 경우 안전장치: 생활형 점포를 제외한 모든 상점으로 대체
-            if (filteredStores.length < 8) {
-                filteredStores = storeList.filter(s => s.category !== '생활형 점포');
-            }
-
-            const storeListText = filteredStores.map(s => `${s.name}(${s.category})`).join(',');
-            const prompt = `통인시장 상점목록: ${storeListText}
-사용자: 목적-${selection.purpose}, 동행-${selection.companion}, 관심-${selection.interests.join(',')}, 선호-${selection.preference}
-위 목록에서 가장 적합한 4곳을 골라 JSON으로 답해줘. 답변 언어: ${lang}. 형식: [{ "name": "상점명", "description": "한줄추천이유" }]`;
-
-            try {
-                // 2. Diagnostics
-                if (!AppConfig.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing in AppConfig");
-
-                const genAI = new GoogleGenerativeAI(AppConfig.GEMINI_API_KEY);
-
-                // 모델 우선순위: gemini-3.1-flash-lite (극도로 빠름) -> gemini-2.5-flash -> gemini-3.5-flash (폴백)
-                const MODELS = ["gemini-3.1-flash-lite", "gemini-2.5-flash", "gemini-3.5-flash"];
-                let text = null;
-                let lastError = null;
-
-                for (const modelName of MODELS) {
-                    try {
-                        console.log("Trying GEMINI model:", modelName);
-                        const model = genAI.getGenerativeModel({ model: modelName });
-                        const result = await model.generateContent(prompt);
-                        const response = await result.response;
-                        text = response.text();
-                        if (text) {
-                            console.log("Success with model:", modelName);
-                            break;
-                        }
-                    } catch (modelErr) {
-                        console.warn(`Model ${modelName} failed:`, modelErr.message);
-                        lastError = modelErr;
-                    }
+                if (store.coin && normalizeText(store.coin) === 'o') score += 10;
+                if (selectedText.includes('먹거리') || selectedText.includes('food')) {
+                    if (['간식', '식당'].includes(store.category)) score += 12;
                 }
 
-                if (!text) {
-                    throw lastError || new Error('모든 모델에서 응답을 받지 못했습니다.');
+                if (preferenceText.includes('핫플') || preferenceText.includes('hot') || preferenceText.includes('热门')) {
+                    if (store.coin && normalizeText(store.coin) === 'o') score += 14;
+                    ['기름떡볶이', '꽈배기', '시장간식', '전통'].forEach(term => {
+                        if (searchable.includes(normalizeText(term))) score += 10;
+                    });
                 }
 
-                // 3. JSON Parsing
-                const cleanedText = text.replace(/```json|```/g, "").trim();
-                const parsed = JSON.parse(cleanedText);
+                if (preferenceText.includes('첫방문') || preferenceText.includes('first') || preferenceText.includes('首次')) {
+                    if (['간식', '식당'].includes(store.category)) score += 10;
+                    if (store.coin && normalizeText(store.coin) === 'o') score += 8;
+                }
 
-                const items = parsed.map((item, index) => {
-                    const matchedStore = storeList.find(s => s.name === item.name);
-                    return {
-                        id: `gen-${Date.now()}-${index}`,
-                        name: item.name,
-                        description: item.description,
-                        slug: matchedStore ? matchedStore.slug : null,
-                        checked: false
-                    };
-                });
+                if (preferenceText.includes('숨은') || preferenceText.includes('hidden') || preferenceText.includes('隐秘')) {
+                    ['수제', '전문', '공방', '직접', '특제', 'specialty', 'craft'].forEach(term => {
+                        if (searchable.includes(normalizeText(term))) score += 10;
+                    });
+                }
 
-                return { data: items, error: "" };
+                if (preferenceText.includes('빠른') || preferenceText.includes('efficient') || preferenceText.includes('高效')) {
+                    score += Math.max(0, 18 - index * 0.2);
+                }
 
-            } catch (error) {
-                console.error("Detailed Recommendation Error:", error);
+                return { store, index, score };
+            });
 
-                const diagnosticInfo = {
-                    message: error.message,
-                    name: error.name,
-                    online: navigator.onLine,
-                    apiKeySnippet: AppConfig.GEMINI_API_KEY ? `${AppConfig.GEMINI_API_KEY.slice(0, 8)}...${AppConfig.GEMINI_API_KEY.slice(-4)}` : 'MISSING',
-                    apiKeyPresent: !!AppConfig.GEMINI_API_KEY
-                };
+            const top = scored
+                .filter(item => item.score > 0)
+                .sort((a, b) => b.score - a.score || a.index - b.index)
+                .slice(0, 4);
 
-                let errorMsg = '추천을 불러오지 못했습니다.';
-                if (error.message.includes('400')) errorMsg = '요청 오류(400). 모델명이 지원되지 않거나 키가 유효하지 않습니다.';
-                else if (error.message.includes('403')) errorMsg = '권한 오류(403). API 키를 확인해주세요.';
-                else if (error.message.includes('429')) errorMsg = '할당량 초과(429). 잠시 후 시도해주세요.';
-                else if (error.message.includes('fetch')) errorMsg = '네트워크 연결 오류입니다.';
+            const fallback = scored
+                .filter(item => !top.some(topItem => topItem.store.name === item.store.name))
+                .filter(item => ['간식', '식당', '문화', '잡화'].includes(item.store.category) || item.store.coin)
+                .sort((a, b) => a.index - b.index)
+                .slice(0, Math.max(0, 4 - top.length));
 
-                return {
-                    data: [],
-                    error: `${errorMsg}\n\n[진단정보]\n- ${diagnosticInfo.message}\n- Online: ${diagnosticInfo.online}\n- API Key: ${diagnosticInfo.apiKeySnippet}`
-                };
+            return [...top, ...fallback].slice(0, 4).map(({ store }, index) => ({
+                id: `fast-${Date.now()}-${index}`,
+                name: store.name,
+                description: createRecommendationReason(store, selection, lang),
+                slug: store.slug || null,
+                checked: false
+            }));
+        };
+
+        const getRecommendations = async (selection, storeList, lang) => {
+            const fastRecommendations = getFastRecommendations(selection, storeList, lang);
+            if (fastRecommendations.length) {
+                return { data: fastRecommendations, error: "" };
             }
+
+            return {
+                data: [],
+                error: "\uC810\uD3EC \uB370\uC774\uD130\uB97C \uBD88\uB7EC\uC624\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. \uC7A0\uC2DC \uD6C4 \uB2E4\uC2DC \uC2DC\uB3C4\uD574\uC8FC\uC138\uC694."
+            };
         };
 
         // --- Components ---
@@ -919,36 +1027,43 @@
                 };
             }, [loading, lang]);
 
-            const fetchRecommendations = useCallback(async () => {
+            const fetchRecommendations = useCallback(async (nextSelection = selection) => {
                 setLoading(true);
                 setErrorMessage('');
                 setStep(Step.RECOMMENDATION);
 
                 track('recommendation_start', {
-                    purpose: selection.purpose,
-                    companion: selection.companion,
-                    interests: selection.interests.join('|'),
-                    preference: selection.preference
+                    purpose: nextSelection.purpose,
+                    companion: nextSelection.companion,
+                    interests: nextSelection.interests.join('|'),
+                    preference: nextSelection.preference
                 });
 
-                const result = await getRecommendations(selection, storeList, lang);
+                const stores = storeList.length ? storeList : await fetchStoreList();
+                if (!storeList.length && stores.length) {
+                    setStoreList(stores);
+                }
+
+                const result = await getRecommendations(nextSelection, stores, lang);
                 if (result.error) {
                     setRecommendations([]);
                     setErrorMessage(result.error);
+                    setLoading(false);
                     track('recommendation_error', {
                         error_message: String(result.error).slice(0, 100)
                     });
                 } else {
                     setRecommendations(result.data);
+                    setLoading(false);
                     track('recommendation_complete', {
                         result_count: result.data.length,
-                        purpose: selection.purpose,
-                        companion: selection.companion,
-                        interests: selection.interests.join('|'),
-                        preference: selection.preference
+                        purpose: nextSelection.purpose,
+                        companion: nextSelection.companion,
+                        interests: nextSelection.interests.join('|'),
+                        preference: nextSelection.preference
                     });
+
                 }
-                setLoading(false);
             }, [selection, storeList, lang]);
 
             // Rendering helpers
@@ -1005,7 +1120,7 @@
             const renderStep1 = () => (
                 <div className="py-6 space-y-8">
                     <div>
-                        <h2 className="text-2xl font-normal text-gray-900 mb-2 whitespace-pre-wrap leading-tight">{t.step1Title}</h2>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-2 whitespace-pre-wrap leading-tight" style={{ fontFamily: 'Jandari', fontWeight: 'normal' }}>{t.step1Title}</h2>
                         <p className="text-gray-500 text-base">{t.step1Desc}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -1025,7 +1140,7 @@
             const renderStep2 = () => (
                 <div className="py-6 space-y-8">
                     <div>
-                        <h2 className="text-2xl font-normal text-gray-900 mb-2 whitespace-pre-wrap leading-tight">{t.step2Title}</h2>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-2 whitespace-pre-wrap leading-tight" style={{ fontFamily: 'Jandari', fontWeight: 'normal' }}>{t.step2Title}</h2>
                         <p className="text-gray-500 text-base">{t.step2Desc}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -1045,7 +1160,7 @@
             const renderStep3 = () => (
                 <div className="py-6 space-y-8">
                     <div>
-                        <h2 className="text-2xl font-normal text-gray-900 mb-2 whitespace-pre-wrap leading-tight">{t.step3Title}</h2>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-2 whitespace-pre-wrap leading-tight" style={{ fontFamily: 'Jandari', fontWeight: 'normal' }}>{t.step3Title}</h2>
                         <p className="text-gray-500 text-base">{t.step3Desc}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -1065,12 +1180,20 @@
             const renderStep4 = () => (
                 <div className="py-6 space-y-8">
                     <div>
-                        <h2 className="text-2xl font-normal text-gray-900 mb-2 leading-tight">{t.step4Title}</h2>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-2 leading-tight" style={{ fontFamily: 'Jandari', fontWeight: 'normal' }}>{t.step4Title}</h2>
                         <p className="text-gray-500 text-base">{t.step4Desc}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         {t.step4Opts.map((item) => (
-                            <SelectionButton key={item.id} selected={selection.preference === item.id} onClick={() => { updateSelection('preference', item.id); fetchRecommendations(); }}>
+                            <SelectionButton key={item.id} selected={selection.preference === item.id} onClick={() => {
+                                const nextSelection = { ...selection, preference: item.id };
+                                track('recommendation_option_select', {
+                                    step_name: 'preference',
+                                    option_value: item.id
+                                });
+                                setSelection(nextSelection);
+                                fetchRecommendations(nextSelection);
+                            }}>
                                 <div className="mb-2 text-[#A68A64]">
                                     <item.Icon className="w-6 h-6" strokeWidth={3} />
                                 </div>
