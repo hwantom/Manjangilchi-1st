@@ -758,6 +758,20 @@
             const progressPercentage = (step / totalSteps) * 100;
             const [isMenuOpen, setIsMenuOpen] = useState(false);
             const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+            const [isScrolled, setIsScrolled] = useState(false);
+
+            useEffect(() => {
+                const handleScroll = () => {
+                    if (window.scrollY > 20) {
+                        setIsScrolled(true);
+                    } else {
+                        setIsScrolled(false);
+                    }
+                };
+                window.addEventListener('scroll', handleScroll, { passive: true });
+                handleScroll();
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
 
             const changeLang = (l) => {
                 setLang(l);
@@ -766,30 +780,52 @@
             };
 
             const langLabels = { ko: '한국어', en: 'English', zh: '中文', ja: '日本語' };
+            const isTransparent = step === 0 && !isScrolled;
 
             return (
                 <div className="min-h-[100dvh] bg-[#F1F5F9] flex justify-center">
                     <div className="w-full max-w-md bg-[#FAFAFA] min-h-[100dvh] shadow-xl flex flex-col relative">
-                        <header className="px-6 pt-[max(1rem,env(safe-area-inset-top))] pb-4 flex justify-between items-center bg-white border-b border-gray-100 z-50 sticky top-0">
+                        <header className={`px-6 pt-[max(1rem,env(safe-area-inset-top))] pb-4 flex justify-between items-center z-50 sticky top-0 transition-all duration-300 ${
+                            isTransparent
+                                ? 'bg-gradient-to-b from-black/70 via-black/35 to-transparent border-b border-transparent shadow-none -mb-[58px]'
+                                : 'bg-white/95 backdrop-blur-md border-b border-gray-100/90 shadow-xs'
+                        }`}>
                             <div className="flex items-center gap-3">
                                 {showBackButton && onBack && (
                                     <button
                                         onClick={onBack}
-                                        className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition-all active:scale-95"
+                                        className={`w-9 h-9 flex items-center justify-center rounded-full transition-all active:scale-95 ${
+                                            isTransparent ? 'hover:bg-white/20 text-white drop-shadow-md' : 'hover:bg-gray-100 text-gray-700'
+                                        }`}
                                         aria-label="이전 단계"
                                     >
-                                        <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
                                         </svg>
                                     </button>
                                 )}
                                 {step === 0 ? (
                                     <div className="flex items-center gap-2">
-                                        <img src="assets/mjlogo.png" alt="만장일치 로고" className="w-[1.2rem] mt-0.5 h-auto object-contain" />
-                                        <span className="text-[21px] text-gray-900 leading-none outline-none mt-1" style={{ fontFamily: 'Jandari', fontWeight: 'normal' }}>{title || '만장일치'}</span>
+                                        <img
+                                            src="assets/mjlogo.png"
+                                            alt="만장일치 로고"
+                                            className={`w-[1.2rem] mt-0.5 h-auto object-contain transition-all duration-300 ${
+                                                isTransparent ? 'brightness-0 invert drop-shadow-md' : ''
+                                            }`}
+                                        />
+                                        <span
+                                            className={`text-[21px] leading-none outline-none mt-1 transition-colors duration-300 ${
+                                                isTransparent ? 'text-white drop-shadow-md' : 'text-gray-900'
+                                            }`}
+                                            style={{ fontFamily: 'Jandari', fontWeight: 'normal' }}
+                                        >
+                                            {title || '만장일치'}
+                                        </span>
                                     </div>
                                 ) : (
-                                    <div className="text-gray-500 text-sm font-black uppercase tracking-widest">
+                                    <div className={`text-sm font-black uppercase tracking-widest transition-colors duration-300 ${
+                                        isTransparent ? 'text-white/90 drop-shadow-md' : 'text-gray-500'
+                                    }`}>
                                         {showProgress && step > 0 && step <= totalSteps ? `Step ${step} / ${totalSteps}` : ''}
                                     </div>
                                 )}
@@ -800,10 +836,12 @@
                                 <div className="relative">
                                     <button
                                         onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                                        className="p-1.5 rounded-full hover:bg-gray-100 transition-all active:scale-95 text-[#A68A64]"
+                                        className={`p-1.5 rounded-full transition-all active:scale-95 ${
+                                            isTransparent ? 'bg-black/20 hover:bg-black/40 text-white drop-shadow-md backdrop-blur-xs' : 'hover:bg-gray-100 text-[#A68A64]'
+                                        }`}
                                         aria-label="언어 변경"
                                     >
-                                        <Globe className="w-5.5 h-5.5 text-[#A68A64]" />
+                                        <Globe className={`w-5.5 h-5.5 ${isTransparent ? 'text-white' : 'text-[#A68A64]'}`} />
                                     </button>
 
                                     {isLangMenuOpen && (
@@ -819,7 +857,8 @@
                                             ))}
                                         </div>
                                     )}
-                                </div>                            </div>
+                                </div>
+                            </div>
                         </header>
 
                         {showProgress && step > 0 && step <= totalSteps && (
