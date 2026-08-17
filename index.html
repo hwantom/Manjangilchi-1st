@@ -1661,7 +1661,7 @@
                             </div>
 
                             {/* Main Actions Section */}
-                            <div className="-mx-6 px-6 pt-3 pb-2 bg-white flex gap-3">
+                            <div className="-mx-6 px-6 py-4 bg-white flex gap-3">
                                 <button
                                     onClick={() => {
                                         track('landing_cta_click', { cta_name: 'map' });
@@ -1684,26 +1684,7 @@
                                 </button>
                             </div>
 
-                            {/* Secondary AI Recommendation Banner Section */}
-                            <div className="-mx-6 px-6 pb-4 bg-white">
-                                <button
-                                    onClick={() => {
-                                        track('landing_cta_click', { cta_name: 'recommendation_sub' });
-                                        handleNext();
-                                    }}
-                                    className="w-full py-3 px-4 bg-[#FAF8F5] hover:bg-[#F5EFE6] border border-[#EFE8DC] hover:border-[#A68A64]/50 rounded-xl flex items-center justify-between transition-all active:scale-[0.99] group shadow-2xs"
-                                >
-                                    <div className="flex items-center gap-2.5">
-                                        <div className="w-7 h-7 rounded-lg bg-[#A68A64]/10 flex items-center justify-center text-[#A68A64] shrink-0">
-                                            <Sparkles className="w-4 h-4" />
-                                        </div>
-                                        <span className="text-xs sm:text-sm font-semibold text-gray-700">
-                                            萸?癒뱀쓣吏 怨좊??쒕떎硫? <strong className="text-[#8B6B4A] font-bold">AI 異붿쿇諛쏄린</strong>
-                                        </span>
-                                    </div>
-                                    <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#A68A64] transition-colors shrink-0" />
-                                </button>
-                            </div>
+
 
                             {/* Section Divider Bar */}
                             <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
