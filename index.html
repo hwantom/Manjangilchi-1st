@@ -1008,45 +1008,46 @@
                                     alt={`Slide ${idx}`}
                                     onError={(e) => { e.currentTarget.src = `https://picsum.photos/800/600?grayscale&sig=${idx}`; }}
                                 />
-                                {/* 전체 딥 그라데이션 오버레이 (상단/중앙/하단 텍스트 가독성) */}
-                                <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-black/85 pointer-events-none z-10" />
-
-                                {/* 사진 정중앙에 수직/수평 딱 맞게 중앙 정렬된 콘텐츠 블록 */}
-                                <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-6 text-center text-white pointer-events-auto">
-                                    <h1 className="text-2xl sm:text-3xl font-extrabold leading-snug tracking-tight drop-shadow-lg pointer-events-none">
-                                        도심과 전통,<br />
-                                        일상과 맛이 어우러진<br />
-                                        <span className="border-b-2 border-[#E6C687] text-white">통인시장</span>
-                                    </h1>
-                                    <p className="text-xs sm:text-sm font-medium text-white/90 mt-3.5 drop-shadow-md leading-relaxed max-w-xs mx-auto pointer-events-none">
-                                        일상 속 즐거움을 위해 정겨운 전통시장<br />
-                                        통인시장에 오신 것을 환영합니다.
-                                    </p>
-
-                                    {/* "일상속~" 텍스트 바로 하단에 배치된 검색바 */}
-                                    <form
-                                        onSubmit={(e) => {
-                                            e.preventDefault();
-                                            if (searchQuery && searchQuery.trim()) {
-                                                window.location.href = `map.html?search=${encodeURIComponent(searchQuery.trim())}`;
-                                            }
-                                        }}
-                                        className="mt-6 w-full max-w-xs sm:max-w-sm mx-auto bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/60 px-4 py-3 flex items-center gap-3 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-[#A68A64]"
-                                    >
-                                        <button type="submit" className="text-[#A68A64] hover:text-[#8B6B4A] transition-colors shrink-0 active:scale-95">
-                                            <Search className="w-5 h-5" />
-                                        </button>
-                                        <input
-                                            type="text"
-                                            value={searchQuery || ''}
-                                            onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
-                                            placeholder={searchPlaceholder || "어떤 매장을 찾으시나요?"}
-                                            className="w-full bg-transparent text-xs sm:text-sm font-semibold text-gray-900 placeholder:text-gray-400 placeholder:font-medium focus:outline-none"
-                                        />
-                                    </form>
-                                </div>
                             </div>
                         ))}
+                    </div>
+
+                    {/* 전체 고정 딥 그라데이션 오버레이 (사진 슬라이드 시에도 이동하지 않고 고정) */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-black/85 pointer-events-none z-10" />
+
+                    {/* 고정 중앙 정렬 타이틀/서브 타이틀 & 검색바 (사진만 슬라이드되고 고정) */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-6 text-center text-white pointer-events-auto">
+                        <h1 className="text-2xl sm:text-3xl font-extrabold leading-snug tracking-tight drop-shadow-lg pointer-events-none">
+                            도심과 전통,<br />
+                            일상과 맛이 어우러진<br />
+                            <span className="border-b-2 border-[#E6C687] text-white">통인시장</span>
+                        </h1>
+                        <p className="text-xs sm:text-sm font-medium text-white/90 mt-3.5 drop-shadow-md leading-relaxed max-w-xs mx-auto pointer-events-none">
+                            일상 속 즐거움을 위해 정겨운 전통시장<br />
+                            통인시장에 오신 것을 환영합니다.
+                        </p>
+
+                        {/* "일상속~" 텍스트 하단 고정 검색바 */}
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                if (searchQuery && searchQuery.trim()) {
+                                    window.location.href = `map.html?search=${encodeURIComponent(searchQuery.trim())}`;
+                                }
+                            }}
+                            className="mt-6 w-full max-w-xs sm:max-w-sm mx-auto bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/60 px-4 py-3 flex items-center gap-3 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-[#A68A64]"
+                        >
+                            <button type="submit" className="text-[#A68A64] hover:text-[#8B6B4A] transition-colors shrink-0 active:scale-95">
+                                <Search className="w-5 h-5" />
+                            </button>
+                            <input
+                                type="text"
+                                value={searchQuery || ''}
+                                onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
+                                placeholder={searchPlaceholder || "어떤 매장을 찾으시나요?"}
+                                className="w-full bg-transparent text-xs sm:text-sm font-semibold text-gray-900 placeholder:text-gray-400 placeholder:font-medium focus:outline-none"
+                            />
+                        </form>
                     </div>
 
                     {/* 하단 슬라이드 컨트롤 (← | ❚❚ | →) */}
