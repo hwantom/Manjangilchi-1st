@@ -1001,7 +1001,7 @@
                         className="flex w-full overflow-x-auto snap-x snap-mandatory no-scrollbar"
                     >
                         {extendedSlides.map((slide, idx) => (
-                            <div key={idx} className="w-full shrink-0 snap-center relative h-[480px] sm:h-[540px]">
+                            <div key={idx} className="w-full shrink-0 snap-center relative h-[100dvh] min-h-[560px]">
                                 <img
                                     src={slide.img}
                                     className="w-full h-full object-cover object-center"
@@ -1011,9 +1011,8 @@
                                 {/* 전체 딥 그라데이션 오버레이 (상단/중앙/하단 텍스트 가독성) */}
                                 <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-black/85 pointer-events-none z-10" />
 
-                                {/* 우측 상단 원형 퀵 액션 배너 2개 (레퍼런스 이미지 디자인 연출) */}
-                                <div className="absolute top-20 right-4 z-20 flex gap-2 sm:gap-2.5 pointer-events-auto">
-                                    {/* 배너 1: 엽전 도시락 */}
+                                {/* 우측 상단 원형 퀵 액션 배너 (엽전도시락) */}
+                                <div className="absolute top-20 right-4 z-20 pointer-events-auto">
                                     <a
                                         href="markets.html"
                                         className="w-22 h-22 sm:w-26 sm:h-26 rounded-full bg-emerald-600/85 hover:bg-emerald-500 backdrop-blur-md border border-emerald-300/40 text-white p-1.5 flex flex-col items-center justify-center text-center shadow-lg transition-transform active:scale-95 group"
@@ -1023,27 +1022,6 @@
                                         </span>
                                         <span className="text-xs sm:text-sm font-extrabold leading-tight">
                                             엽전도시락
-                                        </span>
-                                        <span className="mt-1 text-[9px] bg-black/40 group-hover:bg-black/60 px-1.5 py-0.5 rounded-full font-bold">
-                                            바로가기 →
-                                        </span>
-                                    </a>
-
-                                    {/* 배너 2: AI 코스 추천 */}
-                                    <a
-                                        href="#searchQuery"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            const el = document.querySelector('input[type="text"]');
-                                            if (el) el.focus();
-                                        }}
-                                        className="w-22 h-22 sm:w-26 sm:h-26 rounded-full bg-sky-600/85 hover:bg-sky-500 backdrop-blur-md border border-sky-300/40 text-white p-1.5 flex flex-col items-center justify-center text-center shadow-lg transition-transform active:scale-95 group"
-                                    >
-                                        <span className="text-[9px] font-bold text-sky-100 bg-sky-800/70 px-1.5 py-0.5 rounded-full mb-0.5">
-                                            맞춤 코스 추천!
-                                        </span>
-                                        <span className="text-xs sm:text-sm font-extrabold leading-tight">
-                                            AI 만장일치
                                         </span>
                                         <span className="mt-1 text-[9px] bg-black/40 group-hover:bg-black/60 px-1.5 py-0.5 rounded-full font-bold">
                                             바로가기 →
