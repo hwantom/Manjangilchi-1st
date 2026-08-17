@@ -4,7 +4,13 @@
 <head>
     <script>
         const base = document.createElement('base');
-        base.href = window.location.hostname.includes('github.io') ? '/Manjangilchi-1st/' : '/';
+        if (window.location.hostname.includes('github.io')) {
+            base.href = '/Manjangilchi-1st/';
+        } else if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
+            base.href = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        } else {
+            base.href = '/';
+        }
         document.head.prepend(base);
     </script>
 
@@ -30,6 +36,25 @@
     <script src="config.js?v=4"></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link href="style.css" rel="stylesheet">
+    <style>
+        /* 캐시 문제 우회 및 색상 강제 적용 */
+        .nmap-marker.active::before {
+            border: 4px solid #A68A64 !important;
+            box-shadow: 0 0 0 2px rgba(166, 138, 100, 0.3), 0 8px 24px rgba(0, 0, 0, 0.22) !important;
+        }
+        .nmap-marker.active::after {
+            border-bottom: 4px solid #A68A64 !important;
+            border-right: 4px solid #A68A64 !important;
+        }
+        /* 따뜻한 한옥/시장 감성 지도 타일 세피아 톤 적용 (연하고 화사한 톤) */
+        #map {
+            background-color: #FAF7F2 !important;
+        }
+        #map > div:first-child img,
+        #map > div:first-child canvas {
+            filter: sepia(16%) hue-rotate(-8deg) saturate(98%) contrast(101%) brightness(99.5%);
+        }
+    </style>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -37,9 +62,9 @@
                 extend: {
                     colors: {
                         brand: {
-                            bg: '#FAFBFC',
-                            ink: '#1A1A1B',
-                            accent: '#F3F4F6',
+                            bg: '#FAF8F5',
+                            ink: '#2B2621',
+                            accent: '#F7F3EC',
                             food: '#F4AFA0',
                             life: '#A8D8C9',
                             snack: '#F6D267',
@@ -141,12 +166,11 @@
 
         <!-- Locate Me Button -->
         <button id="locateMeBtn"
-            class="absolute bottom-8 right-8 z-20 w-14 h-14 bg-white rounded-2xl shadow-2xl flex items-center justify-center border border-gray-100 active:scale-90 transition-all">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            class="absolute bottom-[72px] right-5 z-30 w-[42px] h-[42px] bg-white rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.15)] flex items-center justify-center border border-gray-100 active:scale-90 transition-all text-gray-800">
+            <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="7.5" stroke-width="2.5"></circle>
+                <circle cx="12" cy="12" r="3" stroke-width="2.5"></circle>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 2v2.5m0 15V22m10-10h-2.5M4.5 12H2"></path>
             </svg>
         </button>
 
@@ -155,7 +179,7 @@
             class="fixed top-0 left-0 h-full z-50 bg-white shadow-[10px_0_30px_rgba(0,0,0,0.1)] panel-transition hidden-panel-left w-full sm:w-[380px] flex flex-col">
         </div>
         <div id="detailPanel"
-            class="fixed bottom-0 left-0 sm:top-0 sm:right-0 sm:left-auto h-full z-50 bg-white shadow-[0_-10px_40px_rgba(0,0,0,0.12)] sm:shadow-[-10px_0_30px_rgba(0,0,0,0.1)] rounded-t-3xl sm:rounded-t-none panel-transition hidden-panel-right w-full sm:w-[450px]">
+            class="fixed bottom-0 left-0 sm:top-0 sm:right-0 sm:left-auto h-full z-50 bg-white shadow-[0_-10px_40px_rgba(0,0,0,0.12)] sm:shadow-[-10px_0_30px_rgba(0,0,0,0.1)] rounded-t-[28px] sm:rounded-t-none panel-transition hidden-panel-right w-full sm:w-[450px]">
         </div>
         <div id="overlay" class="fixed inset-0 bg-black/20 z-40 hidden"></div>
         <div id="imageModal"
@@ -434,7 +458,7 @@
                 return new Promise((resolve, reject) => {
                     if (window.google && window.google.maps) { resolve(); return; }
                     const script = document.createElement('script');
-                    script.src = `https://maps.googleapis.com/maps/api/js?key=${AppConfig.GOOGLE_MAPS_API_KEY}&libraries=maps,marker&v=beta&map_ids=${AppConfig.MAP_ID}`;
+                    script.src = `https://maps.googleapis.com/maps/api/js?key=${AppConfig.GOOGLE_MAPS_API_KEY}&libraries=marker&v=beta&map_ids=${AppConfig.MAP_ID}`;
                     script.async = true;
                     script.defer = true;
                     script.onload = resolve;
@@ -493,6 +517,23 @@
                             map.fitBounds(bounds);
                             map.setHeading(-90);
                         }
+                    }
+                }
+                
+                const categoryParam = params.get('category');
+                if (categoryParam) {
+                    const catMap = {
+                        '식당': '식당',
+                        '간식': '간식',
+                        '생활': '생활형',
+                        '생활형': '생활형'
+                    };
+                    const mappedCat = catMap[categoryParam];
+                    if (mappedCat) {
+                        activeCategories.clear();
+                        activeCategories.add(mappedCat);
+                        renderFilters();
+                        updateMarkers();
                     }
                 }
             };
@@ -1227,14 +1268,14 @@
                 };
 
                 let html = `
-                <button data-filter="coin" class="chip-btn whitespace-nowrap px-5 py-2.5 rounded-full text-[13px] font-black shadow-md transition-all border border-gray-100 ${coinFilter ? 'bg-brand-coin text-white' : 'bg-white text-gray-900'}">
+                <button data-filter="coin" style="font-family: 'Jandari', 'HsJandari', sans-serif;" class="chip-btn whitespace-nowrap px-3.5 py-1.5 rounded-full text-[13px] font-normal shadow-md transition-all border border-gray-100 ${coinFilter ? 'bg-brand-coin text-white' : 'bg-white text-gray-900'}">
                     <img src="${CATEGORY_STYLES['엽전'].icon}" class="w-4 h-4" style="filter: ${coinFilter ? 'brightness(0) invert(1)' : colorFilters['엽전']}" />
                     <span class="chip-label">${t.cat_coin}</span>
                 </button>`;
 
                 if (favorites.size > 0) {
                     html += `
-                    <button data-filter="fav" class="chip-btn whitespace-nowrap px-5 py-2.5 rounded-full text-[13px] font-black shadow-md transition-all border border-gray-100 ${favoritesFilter ? 'bg-pink-500 text-white' : 'bg-white text-gray-900'}">
+                    <button data-filter="fav" style="font-family: 'Jandari', 'HsJandari', sans-serif;" class="chip-btn whitespace-nowrap px-3.5 py-1.5 rounded-full text-[13px] font-normal shadow-md transition-all border border-gray-100 ${favoritesFilter ? 'bg-pink-500 text-white' : 'bg-white text-gray-900'}">
                         <svg class="w-4 h-4 ${favoritesFilter ? 'text-white' : 'text-pink-500'}" fill="${favoritesFilter ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                         <span class="chip-label">${t.favoritesTitle}</span>
                     </button>`;
@@ -1245,7 +1286,7 @@
                     const style = CATEGORY_STYLES[cat];
                     const catKey = cat === '식당' ? 'food' : cat === '간식' ? 'snack' : 'life';
                     html += `
-                    <button data-filter-cat="${cat}" class="chip-btn whitespace-nowrap px-5 py-2.5 rounded-full text-[13px] font-black shadow-md transition-all border border-gray-100 ${isActive ? style.bg + ' text-white' : 'bg-white text-gray-900'}">
+                    <button data-filter-cat="${cat}" style="font-family: 'Jandari', 'HsJandari', sans-serif;" class="chip-btn whitespace-nowrap px-3.5 py-1.5 rounded-full text-[13px] font-normal shadow-md transition-all border border-gray-100 ${isActive ? style.bg + ' text-white' : 'bg-white text-gray-900'}">
                         <img src="${style.icon}" class="w-4 h-4" style="filter: ${isActive ? 'brightness(0) invert(1)' : colorFilters[cat]}" />
                         <span class="chip-label">${t['cat_' + catKey]}</span>
                     </button>`;
@@ -1255,7 +1296,12 @@
                     btn.onclick = () => {
                         const cat = btn.dataset.filterCat;
                         if (cat) {
-                            activeCategories.has(cat) ? activeCategories.delete(cat) : activeCategories.add(cat);
+                            if (activeCategories.has(cat) && activeCategories.size === 1) {
+                                activeCategories.clear();
+                            } else {
+                                activeCategories.clear();
+                                activeCategories.add(cat);
+                            }
                         } else if (btn.dataset.filter === 'coin') {
                             coinFilter = !coinFilter;
                         } else if (btn.dataset.filter === 'fav') {
@@ -1263,6 +1309,17 @@
                         }
                         renderFilters();
                         updateMarkers();
+
+                        // Fit map bounds to filtered stores for smooth UX
+                        const filteredStoreNames = getFilteredStoreNames();
+                        if (cat && activeCategories.size > 0 && filteredStoreNames.size > 0 && map) {
+                            const matchingStores = stores.filter(s => filteredStoreNames.has(s.name));
+                            if (matchingStores.length > 0) {
+                                const bounds = new google.maps.LatLngBounds();
+                                matchingStores.forEach(s => bounds.extend({ lat: parseFloat(s.lat), lng: parseFloat(s.lng) }));
+                                map.fitBounds(bounds);
+                            }
+                        }
                     };
                 });
             };
@@ -1334,13 +1391,15 @@
                 }
 
                 detailPanel.classList.add('hidden-panel-right');
+                const gnb = document.getElementById('globalNavBar');
+                if (gnb) gnb.classList.remove('translate-y-full');
                 favoritesPanel.classList.add('hidden-panel-left');
                 overlay.classList.add('hidden');
                 selectedStore = null;
                 updateMarkers();
 
                 if (window.location.pathname.includes('/shop/')) {
-                    const baseHref = window.location.hostname.includes('github.io') ? '/Manjangilchi-1st/' : '/';
+                    const baseHref = document.querySelector('base').getAttribute('href') || '/';
                     window.history.replaceState(null, '', baseHref + 'map.html');
                 }
 
@@ -1506,7 +1565,7 @@
                 if (selectedStore && selectedStore.name === store.name && (now - lastPanelOpenTime) < 200) return;
                 lastPanelOpenTime = now;
 
-                const baseHref = window.location.hostname.includes('github.io') ? '/Manjangilchi-1st/' : '/';
+                const baseHref = document.querySelector('base').getAttribute('href') || '/';
                 const url = store.slug ? `${baseHref}shop/${encodeURIComponent(store.slug)}` : '';
                 
                 if (!window.history.state || !window.history.state.panelOpen) {
@@ -1517,6 +1576,8 @@
                 selectedStore = store;
                 renderDetailPanel();
                 detailPanel.classList.remove('hidden-panel-right');
+                const gnb = document.getElementById('globalNavBar');
+                if (gnb) gnb.classList.add('translate-y-full');
 
                 const storeLatLng = { lat: parseFloat(store.lat), lng: parseFloat(store.lng) };
 
@@ -1586,11 +1647,11 @@
 
             const getCatTagHtml = (cat, catName) => {
                 if (cat === '식당') {
-                    return `<span class="bg-[#FEE2E2] text-[#E53E3E] border border-[#FEB2B2] px-2.5 py-0.5 rounded text-[11px] font-bold">${catName}</span>`;
+                    return `<span class="bg-brand-food text-white border border-transparent px-2.5 py-0.5 rounded text-[11px] font-bold">${catName}</span>`;
                 } else if (cat === '간식') {
-                    return `<span class="bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A] px-2.5 py-0.5 rounded text-[11px] font-bold">${catName}</span>`;
+                    return `<span class="bg-brand-snack text-brand-ink border border-transparent px-2.5 py-0.5 rounded text-[11px] font-bold">${catName}</span>`;
                 } else {
-                    return `<span class="bg-[#D1FAE5] text-[#059669] border border-[#A7F3D0] px-2.5 py-0.5 rounded text-[11px] font-bold">${catName}</span>`;
+                    return `<span class="bg-brand-life text-brand-ink border border-transparent px-2.5 py-0.5 rounded text-[11px] font-bold">${catName}</span>`;
                 }
             };
 
@@ -1662,17 +1723,36 @@
                 const catName = t['cat_' + catKey];
 
                 const tabClass = (tabId) => activeTab === tabId 
-                    ? "tab-btn active text-brand-ink font-bold border-b-2 border-brand-ink pb-2.5 transition-colors" 
-                    : "tab-btn text-gray-400 pb-2.5 border-b-2 border-transparent hover:text-gray-600 transition-colors";
+                    ? "tab-btn active text-brand-ink font-bold border-b-2 border-brand-ink pt-3.5 pb-3 transition-colors" 
+                    : "tab-btn text-gray-400 pt-3.5 pb-3 border-b-2 border-transparent hover:text-gray-600 transition-colors";
 
                 detailPanel.innerHTML = `
-                <div class="flex flex-col h-full w-full bg-white text-brand-ink overflow-hidden pb-safe">
+                <div id="stickyHeader" class="absolute top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-5 py-3 h-[56px] opacity-0 pointer-events-none transition-all duration-300 gap-3">
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <button id="stickyBackBtn" class="w-8 h-8 shrink-0 flex items-center justify-center text-gray-800 active:scale-90 transition-all">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <h1 class="text-lg text-gray-900 leading-none truncate" style="font-family: 'Jandari', sans-serif;">${getStoreProp(store, 'name')}</h1>
+                    </div>
+                    <div class="flex bg-gray-50 rounded-full p-0.5 border border-gray-100 shrink-0">
+                        <button class="px-2.5 py-1 text-[11px] font-bold rounded-full transition-all ${currentLang === 'ko' ? 'bg-[#1e293b] text-white shadow-sm' : 'text-gray-500 hover:text-gray-900'}" data-lang-set="ko">KO</button>
+                        <button class="px-2.5 py-1 text-[11px] font-bold rounded-full transition-all ${currentLang === 'en' ? 'bg-[#1e293b] text-white shadow-sm' : 'text-gray-500 hover:text-gray-900'}" data-lang-set="en">EN</button>
+                        <button class="px-2.5 py-1 text-[11px] font-bold rounded-full transition-all ${currentLang === 'zh' ? 'bg-[#1e293b] text-white shadow-sm' : 'text-gray-500 hover:text-gray-900'}" data-lang-set="zh">CN</button>
+                        <button class="px-2.5 py-1 text-[11px] font-bold rounded-full transition-all ${currentLang === 'ja' ? 'bg-[#1e293b] text-white shadow-sm' : 'text-gray-500 hover:text-gray-900'}" data-lang-set="ja">JP</button>
+                    </div>
+                    <div class="flex gap-2 shrink-0">
+                        <button id="stickyCloseBtn" class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 active:scale-95 transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-col h-full w-full bg-transparent text-brand-ink overflow-hidden pb-safe">
                         
                         <div id="sheetDetailBody" class="flex-1 overflow-y-auto no-scrollbar w-full h-full relative">
                             
                             <!-- Header Info -->
-                            <div id="sheetSummaryHeader" class="bg-white px-6 pt-3 pb-5 shrink-0 relative z-20 transition-all duration-300">
-                                <div class="sheet-handle-bar sm:hidden mx-auto mb-4 w-12 h-1.5 bg-gray-300 rounded-full shrink-0"></div>
+                            <div id="sheetSummaryHeader" class="bg-white px-6 pt-3 pb-5 shrink-0 relative z-20 rounded-t-[28px] transition-all duration-300">
+                                <div class="sheet-handle-bar sm:hidden mx-auto mb-3 w-12 h-1 bg-gray-300 rounded-full shrink-0"></div>
                                 <!-- Row 1: Tags on left, Action buttons on right -->
                                 <div class="flex justify-between items-center mb-2.5">
                                     <div class="flex items-center gap-1.5" id="sheetTagsContainer">
@@ -1697,7 +1777,7 @@
                                 </div>
                                 <!-- Row 2: Title and Description below -->
                                 <div class="flex flex-col">
-                                    <h2 class="text-[22px] font-bold text-gray-900 leading-tight">${getStoreProp(store, 'name')}</h2>
+                                    <h2 class="text-[24px] text-gray-900 leading-tight" style="font-family: 'Jandari', sans-serif; font-weight: normal;">${getStoreProp(store, 'name')}</h2>
                                     <p class="text-xs text-gray-500 mt-1 truncate">${getStoreProp(store, 'shortDesc') || catName}</p>
                                 </div>
                             </div>
@@ -1738,10 +1818,9 @@
                             <!-- Extended Content Area (Hidden in Collapsed & Half) -->
                             <div id="sheetExtendedArea" class="hidden flex-col min-h-screen bg-white">
                                 <!-- Tabs -->
-                                <div class="sticky top-0 z-30 bg-white border-b border-gray-100 flex justify-between px-6 text-sm w-full">
+                                <div class="sticky top-[56px] z-30 bg-white border-b border-gray-100 flex justify-between px-6 text-sm w-full">
                                     <button class="${tabClass('home')} flex-1 text-center" data-tab="home">홈</button>
                                     <button class="${tabClass('menu')} flex-1 text-center" data-tab="menu">메뉴</button>
-                                    <button class="${tabClass('review')} flex-1 text-center" data-tab="review">리뷰 128</button>
                                     <button class="${tabClass('info')} flex-1 text-center" data-tab="info">정보</button>
                                 </div>
                                 
@@ -1753,8 +1832,8 @@
                         
                         <!-- Sticky Bottom Bar -->
                         <div id="sheetBottomBar" class="bg-white border-t border-gray-100 p-4 flex gap-3 shrink-0 z-40 pb-safe">
-                            <button id="bottomCallBtn" class="w-12 h-12 flex items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-50 active:scale-95 transition-all shrink-0">
-                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <button id="bottomFavBtn" class="w-12 h-12 flex items-center justify-center rounded-full border ${isFav ? 'bg-pink-50 border-pink-200 text-pink-500 shadow-sm' : 'bg-white border-gray-200 text-gray-400'} hover:bg-gray-50 active:scale-95 transition-all shrink-0">
+                                <svg class="w-5 h-5" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                             </button>
                             <button id="bottomRouteBtn" class="flex-1 h-12 bg-[#0F172A] text-white font-bold text-[14.5px] rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all shadow-sm">
                                 <span>길찾기</span>
@@ -1772,17 +1851,14 @@
                 const sheetCloseBtn = document.getElementById('sheetCloseBtn');
                 if (sheetCloseBtn) sheetCloseBtn.onclick = () => closeAllPanels();
 
-                const bottomCallBtn = document.getElementById('bottomCallBtn');
-                if (bottomCallBtn) {
-                    bottomCallBtn.onclick = () => {
-                        const phone = getStorePhone(store.name);
-                        if (phone !== '정보 없음' && !phone.includes('XXXX')) {
-                            window.location.href = `tel:${phone}`;
-                        } else {
-                            alert('전화번호 정보가 없습니다.');
-                        }
-                    };
-                }
+                const stickyBackBtn = document.getElementById('stickyBackBtn');
+                if (stickyBackBtn) stickyBackBtn.onclick = () => closeAllPanels();
+
+                const stickyCloseBtn = document.getElementById('stickyCloseBtn');
+                if (stickyCloseBtn) stickyCloseBtn.onclick = () => closeAllPanels();
+
+                const bottomFavBtn = document.getElementById('bottomFavBtn');
+                if (bottomFavBtn) bottomFavBtn.onclick = () => toggleFavorite(store.name);
 
                 const bottomRouteBtn = document.getElementById('bottomRouteBtn');
                 if (bottomRouteBtn) bottomRouteBtn.onclick = () => handleRoute(store);
@@ -1823,6 +1899,21 @@
                     tabContentContainer.innerHTML = renderTabContent(store, activeTab, t, keywords);
                 }
 
+                // Sticky Header Scroll Logic
+                const sheetDetailBody = detailPanel.querySelector('#sheetDetailBody');
+                const stickyHeader = detailPanel.querySelector('#stickyHeader');
+                if (sheetDetailBody && stickyHeader) {
+                    sheetDetailBody.addEventListener('scroll', () => {
+                        if (sheetDetailBody.scrollTop > 150) {
+                            stickyHeader.classList.remove('opacity-0', 'pointer-events-none');
+                            stickyHeader.classList.add('opacity-100', 'pointer-events-auto');
+                        } else {
+                            stickyHeader.classList.add('opacity-0', 'pointer-events-none');
+                            stickyHeader.classList.remove('opacity-100', 'pointer-events-auto');
+                        }
+                    });
+                }
+
                 setupBottomSheetEvents();
                 // Initialize Stage
                 snapToStage(sheetStage);
@@ -1849,10 +1940,8 @@
                             <!-- Core Info (영업 시간, 사장님 픽, 위치, 연락처) -->
                             <div class="bg-[#F8FAFC] p-5 rounded-2xl space-y-5">
                                 <!-- Row 1: 영업 시간 -->
-                                <div class="flex gap-4">
-                                    <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-gray-400 shrink-0 border border-gray-100">
-                                        <svg class="w-4.5 h-4.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    </div>
+                                <div class="flex gap-2.5">
+                                    <svg class="w-3.5 h-3.5 mt-0.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     <div>
                                         <span class="text-[11px] font-bold text-gray-400 block mb-1">영업 시간</span>
                                         <div class="flex items-center text-[13px] font-bold text-gray-800">
@@ -1863,30 +1952,24 @@
                                     </div>
                                 </div>
                                 <!-- Row 2: 사장님 픽 -->
-                                <div class="flex gap-4">
-                                    <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-gray-400 shrink-0 border border-gray-100">
-                                        <svg class="w-4.5 h-4.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                    </div>
+                                <div class="flex gap-2.5">
+                                    <svg class="w-3.5 h-3.5 mt-0.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                     <div>
                                         <span class="text-[11px] font-bold text-gray-400 block mb-1">사장님 픽</span>
                                         <span class="text-[13px] font-bold text-gray-800">${store.price ? store.price : '인기 메뉴 구성'}</span>
                                     </div>
                                 </div>
                                 <!-- Row 3: 위치 -->
-                                <div class="flex gap-4">
-                                    <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-gray-400 shrink-0 border border-gray-100">
-                                        <svg class="w-4.5 h-4.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                                    </div>
+                                <div class="flex gap-2.5">
+                                    <svg class="w-3.5 h-3.5 mt-0.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                     <div>
                                         <span class="text-[11px] font-bold text-gray-400 block mb-1">위치</span>
                                         <span class="text-[13px] text-gray-800 font-bold block leading-relaxed">통인시장 내 점포 · 서울 종로구 자하문로15길 18</span>
                                     </div>
                                 </div>
                                 <!-- Row 4: 연락처 -->
-                                <div class="flex gap-4">
-                                    <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm text-gray-400 shrink-0 border border-gray-100">
-                                        <svg class="w-4.5 h-4.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                                    </div>
+                                <div class="flex gap-2.5">
+                                    <svg class="w-3.5 h-3.5 mt-0.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                                     <div>
                                         <span class="text-[11px] font-bold text-gray-400 block mb-1">연락처</span>
                                         <span class="text-[13px] font-bold text-gray-800">${getStorePhone(store.name)}</span>
@@ -1941,39 +2024,6 @@
                                 </div>
                                 <div class="flex gap-3 overflow-x-auto no-scrollbar pb-1">
                                     ${getStoreMenuCards(store)}
-                                </div>
-                            </div>
-
-                            <!-- Courses (이 점포가 포함된 코스) -->
-                            <div class="space-y-3">
-                                <h3 class="text-[14.5px] font-bold text-gray-900">이 점포가 포함된 코스</h3>
-                                <div class="space-y-2">
-                                    <!-- Course 1 -->
-                                    <div class="flex gap-3 border border-gray-100 rounded-xl p-2.5 bg-white shadow-sm hover:bg-gray-50/50 cursor-pointer transition-colors">
-                                        <div class="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
-                                            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=100&q=80" class="w-full h-full object-cover" />
-                                        </div>
-                                        <div class="flex-1 flex flex-col justify-center">
-                                            <div class="flex">
-                                                <span class="bg-blue-50 text-blue-600 text-[9.5px] font-bold px-1.5 py-0.5 rounded">데이트</span>
-                                            </div>
-                                            <h4 class="text-[13px] font-bold text-gray-800 mt-1">통인시장 레트로 카페 투어</h4>
-                                            <p class="text-[11px] text-gray-400 mt-0.5 font-medium">4개 점포 · 약 1시간</p>
-                                        </div>
-                                    </div>
-                                    <!-- Course 2 -->
-                                    <div class="flex gap-3 border border-gray-100 rounded-xl p-2.5 bg-white shadow-sm hover:bg-gray-50/50 cursor-pointer transition-colors">
-                                        <div class="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden shrink-0">
-                                            <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=100&q=80" class="w-full h-full object-cover" />
-                                        </div>
-                                        <div class="flex-1 flex flex-col justify-center">
-                                            <div class="flex">
-                                                <span class="bg-orange-50 text-orange-600 text-[9.5px] font-bold px-1.5 py-0.5 rounded">먹거리</span>
-                                            </div>
-                                            <h4 class="text-[13px] font-bold text-gray-800 mt-1">엽전도시락 + 디저트 코스</h4>
-                                            <p class="text-[11px] text-gray-400 mt-0.5 font-medium">5개 점포 · 약 1.5시간</p>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
@@ -2056,12 +2106,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
-                } else if (tab === 'review') {
-                    return `
-                        <div class="p-5 bg-white min-h-[500px]">
-                            <!-- 리뷰 내용 비워둠 -->
                         </div>
                     `;
                 } else if (tab === 'info') {
@@ -2601,7 +2645,7 @@
                             지도에 모두 표시 (${favStores.length}개)
                         </button>
                         <div class="grid gap-3">${favStores.map(store => `
-                        <div data-store-name="${store.name}" class="fav-item group relative flex items-center gap-4 p-3 bg-white border border-gray-100 rounded-2xl cursor-pointer hover:border-gray-200 transition-colors shadow-sm">
+                        <div data-store-name="${store.name}" class="fav-item group relative flex items-center gap-4 p-3 bg-white border-[2px] border-gray-100 rounded-2xl cursor-pointer hover:border-[#A68A64] active:border-[#A68A64] transition-colors shadow-sm">
                             <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0"><img src="${normalizeImageUrl(store.repre_image)}" class="w-full h-full object-cover" onerror="this.src='${PLACEHOLDER_IMG}'" /></div>
                             <div class="flex-1 min-w-0 pr-8">
                                 <h3 class="font-bold text-gray-900 truncate">${getStoreProp(store, 'name')}</h3>
@@ -2702,6 +2746,31 @@
             init();
         });
     </script>
+    <!-- Global Navigation Bar -->
+    <nav id="globalNavBar" class="fixed bottom-0 left-0 right-0 z-[60] flex justify-center pointer-events-none transition-transform duration-300">
+        <div class="w-full max-w-md bg-white border-t border-gray-100 flex justify-around items-center pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1.5 px-2 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)] pointer-events-auto">
+            <button onclick="window.location.href='index.html'" class="flex flex-col items-center gap-0.5 p-1.5 text-gray-400 hover:text-gray-900 transition-colors">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
+                <span class="text-[9px] font-bold">홈</span>
+            </button>
+            <button onclick="window.location.href='stores.html'" class="flex flex-col items-center gap-0.5 p-1.5 text-gray-400 hover:text-gray-900 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-store w-5 h-5"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7"/><path d="M18 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7"/><path d="M14 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7"/><path d="M10 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7"/><path d="M6 7v3a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2V7"/></svg>
+                <span class="text-[9px] font-bold">매장</span>
+            </button>
+            <button onclick="window.location.href='map.html'" class="flex flex-col items-center gap-0.5 p-1.5 text-gray-900 hover:text-gray-900 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin w-5 h-5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span class="text-[9px] font-bold">지도</span>
+            </button>
+            <button onclick="window.location.href='markets.html'" class="flex flex-col items-center gap-0.5 p-1.5 text-gray-400 hover:text-gray-900 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-coins w-5 h-5"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4H7"/><path d="M16.7 14.3h1v4h-1"/></svg>
+                <span class="text-[9px] font-bold">엽전도시락</span>
+            </button>
+            <button onclick="window.location.href='markets.html?view=facilities'" class="flex flex-col items-center gap-0.5 p-1.5 text-gray-400 hover:text-gray-900 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users w-5 h-5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span class="text-[9px] font-bold">편의시설</span>
+            </button>
+        </div>
+    </nav>
 </body>
 
 </html>
