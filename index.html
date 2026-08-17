@@ -1602,6 +1602,20 @@
             const [errorMessage, setErrorMessage] = useState('');
             const [selectedCategory, setSelectedCategory] = useState('전체');
             const [searchQuery, setSearchQuery] = useState('');
+            const [isNavVisible, setIsNavVisible] = useState(false);
+
+            useEffect(() => {
+                const handleScroll = () => {
+                    if (window.scrollY > 200) {
+                        setIsNavVisible(true);
+                    } else {
+                        setIsNavVisible(false);
+                    }
+                };
+                window.addEventListener('scroll', handleScroll, { passive: true });
+                handleScroll();
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
 
             // Loading State
             const [progress, setProgress] = useState(0);
@@ -1948,7 +1962,9 @@
                         </div>
 
                         {/* Bottom Navigation Bar */}
-                        <nav id="globalNavBar" className="fixed bottom-0 left-0 right-0 z-[60] flex justify-center pointer-events-none transition-transform duration-300">
+                        <nav id="globalNavBar" className={`fixed bottom-0 left-0 right-0 z-[60] flex justify-center pointer-events-none transition-all duration-300 ${
+                            isNavVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0 pointer-events-none'
+                        }`}>
                             <div className="w-full max-w-md bg-white border-t border-gray-100 flex justify-around items-center pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1.5 px-2 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)] pointer-events-auto">
                                 <button className="flex flex-col items-center gap-0.5 p-1.5 text-gray-900 font-bold transition-colors">
                                     <svg className="w-5 h-5 text-[#A68A64]" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>
