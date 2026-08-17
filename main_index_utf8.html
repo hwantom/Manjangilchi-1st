@@ -652,13 +652,25 @@
                         className="flex w-full overflow-x-auto snap-x snap-mandatory no-scrollbar"
                     >
                         {extendedImages.map((src, idx) => (
-                            <div key={idx} className="w-full shrink-0 snap-center">
+                            <div key={idx} className="w-full shrink-0 snap-center relative">
                                 <img
                                     src={src}
                                     className="w-full aspect-[4/3] object-cover"
                                     alt={`Slide ${idx}`}
                                     onError={(e) => { e.currentTarget.src = `https://picsum.photos/800/600?grayscale&sig=${idx}`; }}
                                 />
+                                {/* 하단 그라데이션 오버레이 */}
+                                <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none z-10" />
+
+                                {/* 이미지 하단 텍스트 (검색창과 겹치지 않게 bottom-14 위치 조절) */}
+                                <div className="absolute left-6 bottom-14 z-20 text-white pointer-events-none">
+                                    <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight drop-shadow-md">
+                                        통인시장
+                                    </h2>
+                                    <p className="text-xs sm:text-sm font-medium text-white/90 mt-1 drop-shadow-sm">
+                                        예술과 문화가 공존하는 전통시장
+                                    </p>
+                                </div>
                             </div>
                         ))}
                     </div>
