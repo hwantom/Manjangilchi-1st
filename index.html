@@ -1050,6 +1050,22 @@
                         </form>
                     </div>
 
+                    {/* 하단 중앙 스크롤 유도 애니메이션 힌트 */}
+                    <button
+                        onClick={() => {
+                            window.scrollTo({ top: window.innerHeight * 0.75, behavior: 'smooth' });
+                        }}
+                        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 text-white/85 hover:text-white transition-colors cursor-pointer animate-bounce pointer-events-auto group"
+                        aria-label="스크롤하여 둘러보기"
+                    >
+                        <span className="text-[10px] font-bold tracking-widest uppercase text-white/90 drop-shadow-md group-hover:text-[#E6C687] transition-colors">
+                            Scroll Down
+                        </span>
+                        <svg className="w-5 h-5 text-[#E6C687] drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
                     {/* 하단 슬라이드 컨트롤 (← | ❚❚ | →) */}
                     <div className="absolute bottom-8 right-6 z-20 flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-white text-xs">
                         <button onClick={prevSlide} className="hover:text-[#E6C687] transition-colors p-0.5">
