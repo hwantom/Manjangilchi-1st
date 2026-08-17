@@ -919,9 +919,15 @@
         };
 
         const LandingCarousel = () => {
-            const images = ['assets/slide1.jpg', 'assets/slide2.jpg', 'assets/slide3.jpg', 'assets/slide4.jpg'];
-            const extendedImages = [images[images.length - 1], ...images, images[0]];
+            const slides = [
+                { img: 'assets/slide1.jpg', location: '통인 제1경 통인시장 중앙골목' },
+                { img: 'assets/slide2.jpg', location: '통인 제2경 엽전도시락 카페' },
+                { img: 'assets/slide3.jpg', location: '통인 제3경 원조 기름떡볶이' },
+                { img: 'assets/slide4.jpg', location: '통인 제4경 정통 수제 한과방' }
+            ];
+            const extendedSlides = [slides[slides.length - 1], ...slides, slides[0]];
             const scrollContainerRef = React.useRef(null);
+            const [isPlaying, setIsPlaying] = useState(true);
 
             useEffect(() => {
                 const container = scrollContainerRef.current;
@@ -945,12 +951,12 @@
 
                     if (width === 0) return;
 
-                    const maxScroll = width * (extendedImages.length - 1);
+                    const maxScroll = width * (extendedSlides.length - 1);
 
                     if (scrollLeft <= 5) {
                         isFixing = true;
                         container.style.scrollBehavior = 'auto';
-                        container.scrollLeft = width * images.length;
+                        container.scrollLeft = width * slides.length;
                         requestAnimationFrame(() => {
                             container.style.scrollBehavior = "smooth";
                             isFixing = false;
@@ -974,34 +980,113 @@
                 };
             }, []);
 
+            const prevSlide = () => {
+                const container = scrollContainerRef.current;
+                if (container) {
+                    container.scrollBy({ left: -container.clientWidth, behavior: 'smooth' });
+                }
+            };
+
+            const nextSlide = () => {
+                const container = scrollContainerRef.current;
+                if (container) {
+                    container.scrollBy({ left: container.clientWidth, behavior: 'smooth' });
+                }
+            };
+
             return (
-                <div className="w-full relative bg-gray-100 overflow-hidden border-y border-gray-200/80">
+                <div className="w-full relative bg-gray-900 overflow-hidden border-b border-gray-200/80">
                     <div
                         ref={scrollContainerRef}
                         className="flex w-full overflow-x-auto snap-x snap-mandatory no-scrollbar"
                     >
-                        {extendedImages.map((src, idx) => (
-                            <div key={idx} className="w-full shrink-0 snap-center relative">
+                        {extendedSlides.map((slide, idx) => (
+                            <div key={idx} className="w-full shrink-0 snap-center relative h-[480px] sm:h-[540px]">
                                 <img
-                                    src={src}
-                                    className="w-full h-[300px] sm:h-[340px] object-cover object-center"
+                                    src={slide.img}
+                                    className="w-full h-full object-cover object-center"
                                     alt={`Slide ${idx}`}
                                     onError={(e) => { e.currentTarget.src = `https://picsum.photos/800/600?grayscale&sig=${idx}`; }}
                                 />
-                                {/* 하단 진한 그라데이션 오버레이 */}
-                                <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/90 via-black/60 to-transparent pointer-events-none z-10" />
+                                {/* 전체 딥 그라데이션 오버레이 (상단/중앙/하단 텍스트 가독성) */}
+                                <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-black/85 pointer-events-none z-10" />
 
-                                {/* 이미지 하단 텍스트 (더 크고 또렷하게, 검색창과 안겹치게 bottom-14 지정) */}
-                                <div className="absolute left-6 bottom-14 z-20 text-white pointer-events-none">
-                                    <h2 className="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-lg leading-tight">
-                                        통인시장
-                                    </h2>
-                                    <p className="text-sm sm:text-base font-semibold text-white/95 mt-1.5 drop-shadow-md">
-                                        예술과 문화가 공존하는 전통시장
+                                {/* 우측 상단 원형 퀵 액션 배너 2개 (레퍼런스 이미지 디자인 연출) */}
+                                <div className="absolute top-20 right-4 z-20 flex gap-2 sm:gap-2.5 pointer-events-auto">
+                                    {/* 배너 1: 엽전 도시락 */}
+                                    <a
+                                        href="markets.html"
+                                        className="w-22 h-22 sm:w-26 sm:h-26 rounded-full bg-emerald-600/85 hover:bg-emerald-500 backdrop-blur-md border border-emerald-300/40 text-white p-1.5 flex flex-col items-center justify-center text-center shadow-lg transition-transform active:scale-95 group"
+                                    >
+                                        <span className="text-[9px] font-bold text-emerald-100 bg-emerald-800/70 px-1.5 py-0.5 rounded-full mb-0.5">
+                                            엽전을 즐겨요!
+                                        </span>
+                                        <span className="text-xs sm:text-sm font-extrabold leading-tight">
+                                            엽전도시락
+                                        </span>
+                                        <span className="mt-1 text-[9px] bg-black/40 group-hover:bg-black/60 px-1.5 py-0.5 rounded-full font-bold">
+                                            바로가기 →
+                                        </span>
+                                    </a>
+
+                                    {/* 배너 2: AI 코스 추천 */}
+                                    <a
+                                        href="#searchQuery"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            const el = document.querySelector('input[type="text"]');
+                                            if (el) el.focus();
+                                        }}
+                                        className="w-22 h-22 sm:w-26 sm:h-26 rounded-full bg-sky-600/85 hover:bg-sky-500 backdrop-blur-md border border-sky-300/40 text-white p-1.5 flex flex-col items-center justify-center text-center shadow-lg transition-transform active:scale-95 group"
+                                    >
+                                        <span className="text-[9px] font-bold text-sky-100 bg-sky-800/70 px-1.5 py-0.5 rounded-full mb-0.5">
+                                            맞춤 코스 추천!
+                                        </span>
+                                        <span className="text-xs sm:text-sm font-extrabold leading-tight">
+                                            AI 만장일치
+                                        </span>
+                                        <span className="mt-1 text-[9px] bg-black/40 group-hover:bg-black/60 px-1.5 py-0.5 rounded-full font-bold">
+                                            바로가기 →
+                                        </span>
+                                    </a>
+                                </div>
+
+                                {/* 중앙 정렬 타이틀/서브 타이틀 (레퍼런스 이미지 스타일) */}
+                                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 px-6 text-center text-white pointer-events-none">
+                                    <h1 className="text-2xl sm:text-3xl font-extrabold leading-snug tracking-tight drop-shadow-lg">
+                                        도심과 전통,<br />
+                                        일상과 맛이 어우러진<br />
+                                        <span className="border-b-2 border-[#E6C687] text-white">통인시장</span>{' '}
+                                        <span className="text-[#E6C687] font-black">만장일치</span>
+                                    </h1>
+                                    <p className="text-xs sm:text-sm font-medium text-white/90 mt-3.5 drop-shadow-md leading-relaxed max-w-xs mx-auto">
+                                        일상 속 즐거움을 위해 정겨운 전통시장<br />
+                                        통인시장에 오신 것을 환영합니다.
                                     </p>
+                                </div>
+
+                                {/* 하단 좌측 장소 위치 태그 */}
+                                <div className="absolute left-5 bottom-14 z-20 text-white/90 text-xs font-semibold flex items-center gap-1.5 bg-black/35 backdrop-blur-xs px-3 py-1.5 rounded-full border border-white/20 pointer-events-none">
+                                    <MapPin className="w-3.5 h-3.5 text-[#E6C687]" />
+                                    <span>{slide.location}</span>
                                 </div>
                             </div>
                         ))}
+                    </div>
+
+                    {/* 하단 우측 슬라이드 컨트롤 (← | ❚❚ | →) */}
+                    <div className="absolute bottom-14 right-5 z-20 flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-white text-xs">
+                        <button onClick={prevSlide} className="hover:text-[#E6C687] transition-colors p-0.5">
+                            ←
+                        </button>
+                        <span className="text-white/30">|</span>
+                        <button onClick={() => setIsPlaying(!isPlaying)} className="hover:text-[#E6C687] transition-colors px-1 font-mono text-[10px]">
+                            {isPlaying ? '❚❚' : '▶'}
+                        </button>
+                        <span className="text-white/30">|</span>
+                        <button onClick={nextSlide} className="hover:text-[#E6C687] transition-colors p-0.5">
+                            →
+                        </button>
                     </div>
                 </div>
             );
@@ -1670,8 +1755,6 @@
                             {/* Hero Section */}
                             <div className="-mx-6 relative">
                                 <LandingCarousel />
-                                {/* Bottom Dark Gradient Overlay */}
-                                <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/80 via-black/35 to-transparent pointer-events-none z-10" />
                             </div>
 
                             {/* Overlapping Floating Search Bar Section (사진과 하단 섹션에 겹치게 배치) */}
