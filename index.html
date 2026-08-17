@@ -814,10 +814,10 @@
                                             }`}
                                         />
                                         <span
-                                            className={`text-[21px] leading-none outline-none mt-1 transition-colors duration-300 ${
+                                            className={`text-[19px] sm:text-[20px] leading-none outline-none mt-1 transition-colors duration-300 font-light ${
                                                 isTransparent ? 'text-white drop-shadow-md' : 'text-gray-900'
                                             }`}
-                                            style={{ fontFamily: 'Jandari', fontWeight: 'normal' }}
+                                            style={{ fontFamily: 'Jandari', fontWeight: '300' }}
                                         >
                                             {title || '만장일치'}
                                         </span>
@@ -1011,8 +1011,8 @@
                                 {/* 전체 딥 그라데이션 오버레이 (상단/중앙/하단 텍스트 가독성) */}
                                 <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-black/85 pointer-events-none z-10" />
 
-                                {/* 중앙 정렬 타이틀/서브 타이틀 & "일상속~" 텍스트 하단 검색바 */}
-                                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 px-6 text-center text-white pointer-events-auto">
+                                {/* 사진 정중앙에 수직/수평 딱 맞게 중앙 정렬된 콘텐츠 블록 */}
+                                <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-6 text-center text-white pointer-events-auto">
                                     <h1 className="text-2xl sm:text-3xl font-extrabold leading-snug tracking-tight drop-shadow-lg pointer-events-none">
                                         도심과 전통,<br />
                                         일상과 맛이 어우러진<br />
