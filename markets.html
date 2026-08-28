@@ -37,7 +37,8 @@
             }
         }
     </script>
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
     <style>
         body {
@@ -69,7 +70,7 @@
     <script type="text/babel" data-presets="react" data-type="module">
         import React, { useState, useCallback, useEffect } from 'react';
         import ReactDOM from 'react-dom/client';
-        import { Coins, MapPin, Users, Utensils, Zap, Search, Globe, User, Heart, Gift, Compass, Sparkles, ChefHat, Coffee, ShoppingBag, UtensilsCrossed, Menu, X, Store } from 'lucide-react';
+        import { Coins, MapPin, Users, Utensils, Zap, Search, Globe, User, Heart, Gift, Compass, Sparkles, ChefHat, Coffee, ShoppingBag, UtensilsCrossed, Menu, X, Instagram, ExternalLink, Store, Info, ChevronRight } from 'lucide-react';
 
         // --- Types & Constants ---
         const SHEET_ID = AppConfig.SHEET_ID;
@@ -132,7 +133,40 @@
                 recMapBtnMulti: (n) => `선택한 ${n}개 점포 지도에서 보기`,
                 recResetBtn: "추천 다시 고르기",
                 recError: "추천 중 오류가 발생했습니다.",
-                next: "다음"
+                next: "다음",
+                // Home screen translations
+                searchPlaceholder: "어떤 먹거리나 점포를 찾으세요?",
+                btnMapHome: "지도 보기",
+                btnDosirakHome: "엽전도시락 체험",
+                btnAiRec: "AI 추천받기",
+                sectionExplore: "통인시장 둘러보기",
+                iconFood: "대표 먹거리",
+                iconFacilities: "주차 / 편의시설",
+                iconMap: "오시는 길 · 지도",
+                iconCoin: "엽전 이용법",
+                sectionYeopjeon: "엽전도시락 만들기",
+                yeopjeonSub: "나만의 시장 코스",
+                yeopjeonTitle: "엽전도시락 조합하기",
+                sectionStore: "매장",
+                storeMore: "더보기",
+                sectionCourse: "통인시장 근처 코스",
+                catAll: "전체",
+                catRestaurant: "식당",
+                catSnack: "간식",
+                catLife: "생활형",
+                noStoreInCategory: "해당 카테고리의 점포가 없습니다.",
+                footerDesc: "통인시장 맞춤형 가이드 & 엽전도시락 서비스",
+                footerAddr: "위치: 서울특별시 종로구 자하문로15길 18 (통인동, 통인시장)",
+                footerHours: "도시락카페 운영시간: 11:00 - 17:00 (월요일 & 3째주 일요일 휴무)",
+                footerContact: "문의: 통인시장 고객만족센터 02-722-0936",
+                footerLinkMap: "시장 지도",
+                footerLinkGuide: "엽전도시락 가이드",
+                footerLinkFacility: "편의시설 안내",
+                navHome: "홈",
+                navStore: "매장",
+                navMap: "지도",
+                navYeopjeon: "엽전도시락",
+                navFacility: "편의시설"
             },
             en: {
                 title: "Manjangilchi",
@@ -180,7 +214,39 @@
                 recMapBtnMulti: (n) => `View ${n} selected shops on map`,
                 recResetBtn: "Start Over",
                 recError: "An error occurred during recommendation.",
-                next: "Next"
+                next: "Next",
+                searchPlaceholder: "Search for food or shops",
+                btnMapHome: "View Map",
+                btnDosirakHome: "Dosirak Experience",
+                btnAiRec: "AI Picks",
+                sectionExplore: "Explore Tongin Market",
+                iconFood: "Popular Food",
+                iconFacilities: "Parking / Facilities",
+                iconMap: "Directions · Map",
+                iconCoin: "Yeopjeon Guide",
+                sectionYeopjeon: "Make a Yeopjeon Dosirak",
+                yeopjeonSub: "Your own market course",
+                yeopjeonTitle: "Build a Yeopjeon Lunchbox",
+                sectionStore: "Shops",
+                storeMore: "More",
+                sectionCourse: "Nearby Courses",
+                catAll: "All",
+                catRestaurant: "Restaurant",
+                catSnack: "Snack",
+                catLife: "Lifestyle",
+                noStoreInCategory: "No shops found in this category.",
+                footerDesc: "Tongin Market custom guide & Yeopjeon Dosirak service",
+                footerAddr: "Location: 18, Jahamun-ro 15-gil, Jongno-gu, Seoul (Tongin Market)",
+                footerHours: "Dosirak Cafe hours: 11:00 - 17:00 (Closed Mon & 3rd Sun)",
+                footerContact: "Contact: Tongin Market Customer Center 02-722-0936",
+                footerLinkMap: "Market Map",
+                footerLinkGuide: "Yeopjeon Dosirak Guide",
+                footerLinkFacility: "Facilities",
+                navHome: "Home",
+                navStore: "Shops",
+                navMap: "Map",
+                navYeopjeon: "Dosirak",
+                navFacility: "Guide"
             },
             zh: {
                 title: "万众一致",
@@ -228,7 +294,39 @@
                 recMapBtnMulti: (n) => `在地图上查看${n}个所选店铺`,
                 recResetBtn: "重新选择",
                 recError: "推荐过程中出错。",
-                next: "下一步"
+                next: "下一步",
+                searchPlaceholder: "搜索美食或店铺",
+                btnMapHome: "查看地图",
+                btnDosirakHome: "铜钱便当体验",
+                btnAiRec: "AI 推荐",
+                sectionExplore: "逛通仁市场",
+                iconFood: "人气美食",
+                iconFacilities: "停车 / 便利设施",
+                iconMap: "交通 · 地图",
+                iconCoin: "铜钱使用指南",
+                sectionYeopjeon: "制作铜钱便当",
+                yeopjeonSub: "我的市场路线",
+                yeopjeonTitle: "组合铜钱便当",
+                sectionStore: "店铺",
+                storeMore: "更多",
+                sectionCourse: "通仁市场周边路线",
+                catAll: "全部",
+                catRestaurant: "餐厅",
+                catSnack: "小吃",
+                catLife: "生活",
+                noStoreInCategory: "该分类暂无店铺。",
+                footerDesc: "通仁市场定制指南 & 铜钱便当服务",
+                footerAddr: "地址: 首尔特别市钟路区紫霞门路15街18号 (通仁市场)",
+                footerHours: "便当咖啡厅营业时间: 11:00 - 17:00 (周一及第3个周日休息)",
+                footerContact: "咨询: 通仁市场客户服务中心 02-722-0936",
+                footerLinkMap: "市场地图",
+                footerLinkGuide: "铜钱便当指南",
+                footerLinkFacility: "便利设施",
+                navHome: "首页",
+                navStore: "店铺",
+                navMap: "地图",
+                navYeopjeon: "铜钱便当",
+                navFacility: "便利设施"
             },
             ja: {
                 title: "満場一致",
@@ -276,7 +374,39 @@
                 recMapBtnMulti: (n) => `選択した${n}店舗を地図で見る`,
                 recResetBtn: "選び直す",
                 recError: "おすすめ中にエラーが発生しました。",
-                next: "次へ"
+                next: "次へ",
+                searchPlaceholder: "食べ物やお店を検索",
+                btnMapHome: "地図を見る",
+                btnDosirakHome: "ヨプジョン弁当体験",
+                btnAiRec: "AI おすすめ",
+                sectionExplore: "通仁市場を巡る",
+                iconFood: "人気グルメ",
+                iconFacilities: "駐車場 / 施設",
+                iconMap: "アクセス · 地図",
+                iconCoin: "ヨプジョン利用法",
+                sectionYeopjeon: "ヨプジョン弁当を作る",
+                yeopjeonSub: "自分だけの市場コース",
+                yeopjeonTitle: "ヨプジョン弁当を組み合わせる",
+                sectionStore: "店舗",
+                storeMore: "もっと見る",
+                sectionCourse: "通仁市場周辺コース",
+                catAll: "全て",
+                catRestaurant: "食堂",
+                catSnack: "おやつ",
+                catLife: "生活",
+                noStoreInCategory: "該当カテゴリの店舗がありません。",
+                footerDesc: "通仁市場カスタムガイド & ヨプジョン弁当サービス",
+                footerAddr: "所在地: ソウル特別市鐘路区紫霞門路15ギル18 (通仁市場)",
+                footerHours: "弁当カフェ営業時間: 11:00 - 17:00 (月曜 & 第3日曜休み)",
+                footerContact: "お問い合わせ: 通仁市場カスタマーセンター 02-722-0936",
+                footerLinkMap: "市場地図",
+                footerLinkGuide: "ヨプジョン弁当ガイド",
+                footerLinkFacility: "便利施設",
+                navHome: "ホーム",
+                navStore: "店舗",
+                navMap: "地図",
+                navYeopjeon: "弁当",
+                navFacility: "施設"
             }
         };
 
@@ -398,29 +528,37 @@
                     return "";
                 };
                 const seen = new Set();
-                const stores = rawData.map(row => ({
-                    name: getVal(row, ['name', '점포명']),
-                    description: getVal(row, ['description', 'shortDesc', '설명']),
-                    description_eng: getVal(row, ['shortDesc_eng']),
-                    description_cn: getVal(row, ['shortDesc_cn']),
-                    description_jp: getVal(row, ['shortDesc_jp']),
-                    summary: getVal(row, ['summary', '요약']),
-                    summary_eng: getVal(row, ['summary_eng']),
-                    summary_cn: getVal(row, ['summary_cn']),
-                    summary_jp: getVal(row, ['summary_jp']),
-                    category: getVal(row, ['category', '분류']),
-                    slug: getVal(row, ['slug', '슬러그']),
-                    keyword: getVal(row, ['keyword', '키워드']),
-                    coin: getVal(row, ['coin', '엽전']),
-                    recommendReason: getVal(row, ['recommendReason', 'recommend_reason', 'recommendDesc', 'recommend_desc', '추천이유', '추천 이유', '추천설명', '추천 설명']),
-                    recommendReason_eng: getVal(row, ['recommendReason_eng', 'recommend_reason_eng', 'recommendDesc_eng']),
-                    recommendReason_cn: getVal(row, ['recommendReason_cn', 'recommend_reason_cn', 'recommendDesc_cn']),
-                    recommendReason_jp: getVal(row, ['recommendReason_jp', 'recommend_reason_jp', 'recommendDesc_jp']),
-                    recommendHot: getVal(row, ['recommendHot', 'recommend_hot', 'hotReason', '핫플이유', '핫플 이유']),
-                    recommendFirst: getVal(row, ['recommendFirst', 'recommend_first', 'firstVisitReason', '첫방문이유', '첫 방문 이유']),
-                    recommendHidden: getVal(row, ['recommendHidden', 'recommend_hidden', 'hiddenReason', '숨은맛집이유', '숨은 맛집 이유']),
-                    recommendFast: getVal(row, ['recommendFast', 'recommend_fast', 'fastRouteReason', '빠른동선이유', '빠른 동선 이유'])
-                })).filter(s => s.name).filter(s => {
+                const stores = rawData.map(row => {
+                    const rawCat = getVal(row, ['category', '분류']);
+                    let cat = "생활형";
+                    if (/식당/.test(rawCat)) cat = "식당";
+                    else if (/(간식|디저트|카페)/.test(rawCat)) cat = "간식";
+
+                    return {
+                        name: getVal(row, ['name', '점포명']),
+                        description: getVal(row, ['description', 'shortDesc', '설명']),
+                        description_eng: getVal(row, ['shortDesc_eng']),
+                        description_cn: getVal(row, ['shortDesc_cn']),
+                        description_jp: getVal(row, ['shortDesc_jp']),
+                        summary: getVal(row, ['summary', '요약']),
+                        summary_eng: getVal(row, ['summary_eng']),
+                        summary_cn: getVal(row, ['summary_cn']),
+                        summary_jp: getVal(row, ['summary_jp']),
+                        category: cat,
+                        slug: getVal(row, ['slug', '슬러그']),
+                        keyword: getVal(row, ['keyword', '키워드']),
+                        coin: getVal(row, ['coin', '엽전']),
+                        repre_img: getVal(row, ['repre_img', 'repre_image', '대표이미지', 'image']),
+                        recommendReason: getVal(row, ['recommendReason', 'recommend_reason', 'recommendDesc', 'recommend_desc', '추천이유', '추천 이유', '추천설명', '추천 설명']),
+                        recommendReason_eng: getVal(row, ['recommendReason_eng', 'recommend_reason_eng', 'recommendDesc_eng']),
+                        recommendReason_cn: getVal(row, ['recommendReason_cn', 'recommend_reason_cn', 'recommendDesc_cn']),
+                        recommendReason_jp: getVal(row, ['recommendReason_jp', 'recommend_reason_jp', 'recommendDesc_jp']),
+                        recommendHot: getVal(row, ['recommendHot', 'recommend_hot', 'hotReason', '핫플이유', '핫플 이유']),
+                        recommendFirst: getVal(row, ['recommendFirst', 'recommend_first', 'firstVisitReason', '첫방문이유', '첫 방문 이유']),
+                        recommendHidden: getVal(row, ['recommendHidden', 'recommend_hidden', 'hiddenReason', '숨은맛집이유', '숨은 맛집 이유']),
+                        recommendFast: getVal(row, ['recommendFast', 'recommend_fast', 'fastRouteReason', '빠른동선이유', '빠른 동선 이유'])
+                    };
+                }).filter(s => s.name).filter(s => {
                     if (seen.has(s.name)) return false;
                     seen.add(s.name);
                     return true;
@@ -620,7 +758,264 @@
 
         // --- Components ---
 
-        const Layout = ({ children, step, totalSteps, title, showProgress = true, lang, setLang, onBack, showBackButton = false }) => {
+        const RenderStoresView = ({ stores = [], onNavigate, onOpenStoreDetail, t }) => {
+            const [selectedCategory, setSelectedCategory] = useState('전체');
+            const [searchQuery, setSearchQuery] = useState('');
+
+            const categories = [
+                { label: t.catAll || '전체', value: '전체' },
+                { label: t.catRestaurant || '식당', value: '식당' },
+                { label: t.catSnack || '간식', value: '간식' },
+                { label: t.catLife || '생활형', value: '생활형' }
+            ];
+
+            const filtered = stores.filter(store => {
+                const matchCat = selectedCategory === '전체' || store.category === selectedCategory;
+                const matchSearch = !searchQuery.trim() ||
+                    store.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (store.description && store.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                    (store.keyword && store.keyword.toLowerCase().includes(searchQuery.toLowerCase()));
+                return matchCat && matchSearch;
+            });
+
+            return (
+                <div className="py-4 space-y-6">
+                    <div className="text-center space-y-1">
+                        <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">통인시장 매장</h1>
+                        <p className="text-xs text-gray-500 font-medium">통인시장의 모든 점포를 한눈에 둘러보세요 ({filtered.length}개)</p>
+                        <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto mt-2"></div>
+                    </div>
+
+                    <div className="space-y-3">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder={t.searchPlaceholder || "점포명 또는 메뉴 검색"}
+                                className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 pl-10 pr-9 text-xs font-semibold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#A68A64] focus:bg-white transition-all shadow-xs"
+                            />
+                            <Search className="w-4 h-4 text-[#A68A64] absolute left-3.5 top-3.5" />
+                            {searchQuery && (
+                                <button
+                                    onClick={() => setSearchQuery('')}
+                                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="flex gap-2 overflow-x-auto no-scrollbar pt-1 pb-1">
+                            {categories.map(cat => (
+                                <button
+                                    key={cat.value}
+                                    onClick={() => setSelectedCategory(cat.value)}
+                                    className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all ${selectedCategory === cat.value ? 'bg-[#A68A64] text-white shadow-xs' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                                >
+                                    {cat.label} {cat.value === '전체' ? `(${stores.length})` : ''}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {filtered.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-3.5 pt-1 pb-4">
+                            {filtered.map(store => {
+                                const rawImg = store.repre_img || store.repre_image || '';
+                                let imgUrl = rawImg;
+                                if (rawImg.includes('drive.google.com')) {
+                                    const match = rawImg.match(/\/d\/([^/]+)/);
+                                    if (match && match[1]) {
+                                        imgUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w600`;
+                                    }
+                                }
+                                return (
+                                    <div
+                                        key={store.name}
+                                        onClick={() => onOpenStoreDetail(store)}
+                                        className="bg-white rounded-2xl border border-gray-200/90 overflow-hidden cursor-pointer hover:border-[#A68A64] active:scale-[0.98] transition-all shadow-2xs group flex flex-col justify-between"
+                                    >
+                                        <div className="h-[125px] bg-gray-100 flex items-center justify-center overflow-hidden relative">
+                                            {imgUrl ? (
+                                                <img
+                                                    src={imgUrl}
+                                                    alt={store.name}
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    onError={(e) => {
+                                                        e.target.style.display = 'none';
+                                                        if (e.target.nextElementSibling) e.target.nextElementSibling.style.display = 'flex';
+                                                    }}
+                                                />
+                                            ) : null}
+                                            <div className={`w-full h-full flex items-center justify-center ${imgUrl ? 'hidden' : ''}`}>
+                                                <span className="text-3xl">{store.category === '식당' ? '🍲' : store.category === '간식' ? '🥨' : '🏪'}</span>
+                                            </div>
+                                        </div>
+                                        <div className="p-3 space-y-1 flex-1 flex flex-col justify-between">
+                                            <div>
+                                                <div className="text-[10px] text-[#b5926b] font-bold">{store.category}</div>
+                                                <div className="font-bold text-[14px] text-gray-900 truncate">{store.name}</div>
+                                                <div className="text-[11px] text-gray-500 truncate">{store.description || store.summary || '상세보기'}</div>
+                                            </div>
+                                            <div className="pt-2 text-[10px] text-[#A68A64] font-bold flex items-center gap-0.5">
+                                                위치 보기 <ChevronRight className="w-3 h-3" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="py-16 text-center space-y-3 bg-gray-50 rounded-2xl border border-gray-100">
+                            <span className="text-4xl">🔍</span>
+                            <h3 className="text-base font-bold text-gray-800">검색 조건에 맞는 점포가 없습니다</h3>
+                            <p className="text-xs text-gray-500">카테고리를 바꾸거나 다른 단어로 검색해보세요.</p>
+                            <button
+                                onClick={() => { setSelectedCategory('전체'); setSearchQuery(''); }}
+                                className="px-4 py-2 bg-[#A68A64] text-white text-xs font-bold rounded-xl shadow-xs active:scale-95"
+                            >
+                                전체 점포 보기
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const RenderMarketsView = ({ initialSubView = 'INPUT', onNavigate, onOpenStoreDetail, t, stores = [] }) => {
+            const [subView, setSubView] = useState(initialSubView);
+            const [coinCount, setCoinCount] = useState(10);
+            const COIN_PRICE_KRW = 500;
+
+            useEffect(() => {
+                setSubView(initialSubView);
+            }, [initialSubView]);
+
+            if (subView === 'FACILITIES') {
+                return (
+                    <div className="py-4 space-y-6">
+                        <div>
+                            <h2 className="text-[22px] font-bold text-gray-900 leading-tight">
+                                통인시장 편의시설 안내
+                            </h2>
+                            <p className="text-xs text-gray-500 mt-1">
+                                화장실, 주차장, 고객만족센터 위치를 확인하세요
+                            </p>
+                        </div>
+
+                        <div className="space-y-3">
+                            <div className="p-4 bg-white rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                                        🚻
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-900">고객만족센터 화장실</h3>
+                                        <p className="text-[11px] text-gray-500">시장 중앙 2층 (남/녀 구분)</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => onNavigate('MAP')}
+                                    className="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-lg hover:bg-gray-200"
+                                >
+                                    위치 보기
+                                </button>
+                            </div>
+
+                            <div className="p-4 bg-white rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                                        🅿️
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-bold text-gray-900">신교 공영주차장</h3>
+                                        <p className="text-[11px] text-gray-500">도보 5분 · 5분당 250원</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => onNavigate('MAP')}
+                                    className="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-lg hover:bg-gray-200"
+                                >
+                                    위치 보기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="py-4 flex flex-col justify-between min-h-[calc(100vh-180px)]">
+                    <div className="space-y-6">
+                        <div>
+                            <h2 className="text-[22px] font-bold text-gray-900 leading-tight">
+                                지금 가지고 있는 엽전이 몇 개인가요?
+                            </h2>
+                            <p className="text-xs text-gray-500 mt-1">
+                                방금 구매했든, 쓰다 남았든 현재 개수를 넣어주세요
+                            </p>
+                        </div>
+
+                        <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm flex flex-col items-center justify-center space-y-4">
+                            <div className="flex items-center justify-center gap-6 w-full">
+                                <button
+                                    onClick={() => setCoinCount(prev => Math.max(1, prev - 1))}
+                                    className="w-12 h-12 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-2xl font-bold text-gray-600 active:scale-95 transition-all hover:bg-gray-100"
+                                >
+                                    –
+                                </button>
+
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-5xl font-black text-gray-900 tracking-tight">
+                                        {coinCount}
+                                    </span>
+                                    <span className="text-lg font-bold text-gray-600">개</span>
+                                </div>
+
+                                <button
+                                    onClick={() => setCoinCount(prev => prev + 1)}
+                                    className="w-12 h-12 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-2xl font-bold text-gray-600 active:scale-95 transition-all hover:bg-gray-100"
+                                >
+                                    +
+                                </button>
+                            </div>
+
+                            <p className="text-xs font-semibold text-gray-400">
+                                = {(coinCount * COIN_PRICE_KRW).toLocaleString()}원 · 엽전 1개 500원
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className="text-xs font-bold text-gray-400 mb-2.5">빠른 선택</p>
+                            <div className="grid grid-cols-6 gap-2">
+                                {[2, 4, 7, 10, 20, 30].map(cnt => (
+                                    <button
+                                        key={cnt}
+                                        onClick={() => setCoinCount(cnt)}
+                                        className={`py-2 rounded-xl text-xs font-bold border transition-all active:scale-95 ${coinCount === cnt ? 'bg-[#A68A64] text-white border-[#A68A64] shadow-xs' : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'}`}
+                                    >
+                                        {cnt}개
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="pt-4">
+                        <button
+                            onClick={() => onNavigate('STORES')}
+                            className="w-full py-4 bg-[#A68A64] text-white font-bold text-base rounded-2xl shadow-md active:scale-[0.98] transition-all hover:bg-[#937754] flex items-center justify-center gap-2"
+                        >
+                            <Coins className="w-5 h-5" />
+                            <span>가맹점 둘러보기</span>
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const Layout = ({ children, step, totalSteps, title, showProgress = true, lang, setLang, onBack, showBackButton = false, onOpenGuide, mainTab = 'HOME', switchTab }) => {
             const progressPercentage = (step / totalSteps) * 100;
             const [isMenuOpen, setIsMenuOpen] = useState(false);
             const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
@@ -632,11 +1027,12 @@
             };
 
             const langLabels = { ko: '한국어', en: 'English', zh: '中文', ja: '日本語' };
+            const t = TRANSLATIONS[lang] || TRANSLATIONS.ko;
 
             return (
                 <div className="min-h-[100dvh] bg-[#F1F5F9] flex justify-center">
-                    <div className="w-full max-w-md bg-[#FAFAFA] min-h-[100dvh] shadow-xl flex flex-col relative pb-[60px]">
-                        <header className="px-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-6 flex justify-between items-center bg-white border-b border-gray-100 z-50 sticky top-0">
+                    <div className="w-full max-w-md bg-[#FAFAFA] min-h-[100dvh] shadow-xl flex flex-col relative">
+                        <header className="px-6 pt-[max(1rem,env(safe-area-inset-top))] pb-4 flex justify-between items-center bg-white border-b border-gray-100 z-50 sticky top-0">
                             <div className="flex items-center gap-3">
                                 {showBackButton && onBack && (
                                     <button
@@ -664,8 +1060,8 @@
                             <div className="flex items-center gap-1.5 relative">
                                 {/* Globe Language Selector */}
                                 <div className="relative">
-                                    <button 
-                                        onClick={() => setIsLangMenuOpen(!isLangMenuOpen)} 
+                                    <button
+                                        onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                                         className="p-1.5 rounded-full hover:bg-gray-100 transition-all active:scale-95 text-[#A68A64]"
                                         aria-label="언어 변경"
                                     >
@@ -685,9 +1081,7 @@
                                             ))}
                                         </div>
                                     )}
-                                </div>
-
-                            </div>
+                                </div>                            </div>
                         </header>
 
                         {showProgress && step > 0 && step <= totalSteps && (
@@ -701,9 +1095,35 @@
                             </div>
                         )}
 
-                        <main className="flex-1 px-6 pb-32 overflow-y-auto no-scrollbar">
+                        <main className="flex-1 px-6 pb-16 overflow-y-auto no-scrollbar flex flex-col">
                             {children}
                         </main>
+
+                        {/* Global Bottom Navigation Bar (BNB) */}
+                        <nav id="globalNavBar" className="fixed bottom-0 left-0 right-0 z-[60] flex justify-center pointer-events-none transition-transform duration-300">
+                            <div className="w-full max-w-md bg-white border-t border-gray-100 flex justify-around items-center pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1.5 px-2 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)] pointer-events-auto">
+                                <button onClick={() => switchTab && switchTab('HOME')} className={`flex flex-col items-center gap-0.5 p-1.5 transition-colors ${mainTab === 'HOME' ? 'text-gray-900 font-bold' : 'text-gray-400 hover:text-gray-900'}`}>
+                                    <svg className={`w-5 h-5 ${mainTab === 'HOME' ? 'text-[#A68A64]' : ''}`} fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" /></svg>
+                                    <span className={`text-[9px] font-bold ${mainTab === 'HOME' ? 'text-[#A68A64]' : ''}`}>{t.navHome}</span>
+                                </button>
+                                <button onClick={() => switchTab && switchTab('STORES')} className={`flex flex-col items-center gap-0.5 p-1.5 transition-colors ${mainTab === 'STORES' ? 'text-gray-900 font-bold' : 'text-gray-400 hover:text-gray-900'}`}>
+                                    <Store className={`w-5 h-5 ${mainTab === 'STORES' ? 'text-[#A68A64]' : ''}`} />
+                                    <span className={`text-[9px] font-bold ${mainTab === 'STORES' ? 'text-[#A68A64]' : ''}`}>{t.navStore}</span>
+                                </button>
+                                <button onClick={() => switchTab && switchTab('MAP')} className="flex flex-col items-center gap-0.5 p-1.5 text-gray-400 hover:text-gray-900 transition-colors">
+                                    <MapPin className="w-5 h-5" />
+                                    <span className="text-[9px] font-bold">{t.navMap}</span>
+                                </button>
+                                <button onClick={() => switchTab && switchTab('YEOPJEON')} className={`flex flex-col items-center gap-0.5 p-1.5 transition-colors ${mainTab === 'YEOPJEON' ? 'text-gray-900 font-bold' : 'text-gray-400 hover:text-gray-900'}`}>
+                                    <Coins className={`w-5 h-5 ${mainTab === 'YEOPJEON' ? 'text-[#A68A64]' : ''}`} />
+                                    <span className={`text-[9px] font-bold ${mainTab === 'YEOPJEON' ? 'text-[#A68A64]' : ''}`}>{t.navYeopjeon}</span>
+                                </button>
+                                <button onClick={() => switchTab && switchTab('FACILITIES')} className={`flex flex-col items-center gap-0.5 p-1.5 transition-colors ${mainTab === 'FACILITIES' ? 'text-gray-900 font-bold' : 'text-gray-400 hover:text-gray-900'}`}>
+                                    <Info className={`w-5 h-5 ${mainTab === 'FACILITIES' ? 'text-[#A68A64]' : ''}`} />
+                                    <span className={`text-[9px] font-bold ${mainTab === 'FACILITIES' ? 'text-[#A68A64]' : ''}`}>{t.navFacility}</span>
+                                </button>
+                            </div>
+                        </nav>
                     </div>
                 </div>
             );
@@ -763,7 +1183,7 @@
                         container.style.scrollBehavior = "smooth";
                     }
                 };
-                
+
                 requestAnimationFrame(initScroll);
 
                 let isFixing = false;
@@ -771,18 +1191,18 @@
                     if (isFixing) return;
                     const width = container.clientWidth;
                     const scrollLeft = container.scrollLeft;
-                    
+
                     if (width === 0) return;
-                    
+
                     const maxScroll = width * (extendedImages.length - 1);
-                    
+
                     if (scrollLeft <= 5) {
                         isFixing = true;
                         container.style.scrollBehavior = 'auto';
                         container.scrollLeft = width * images.length;
                         requestAnimationFrame(() => {
                             container.style.scrollBehavior = "smooth";
-                            isFixing = false; 
+                            isFixing = false;
                         });
                     } else if (scrollLeft >= maxScroll - 5) {
                         isFixing = true;
@@ -790,7 +1210,7 @@
                         container.scrollLeft = width;
                         requestAnimationFrame(() => {
                             container.style.scrollBehavior = "smooth";
-                            isFixing = false; 
+                            isFixing = false;
                         });
                     }
                 };
@@ -813,7 +1233,7 @@
                             <div key={idx} className="w-full shrink-0 snap-center relative">
                                 <img
                                     src={src}
-                                    className="w-full aspect-[4/3] object-cover"
+                                    className="w-full h-[300px] sm:h-[340px] object-cover object-center"
                                     alt={`Slide ${idx}`}
                                     onError={(e) => { e.currentTarget.src = `https://picsum.photos/800/600?grayscale&sig=${idx}`; }}
                                 />
@@ -832,6 +1252,76 @@
                             </div>
                         ))}
                     </div>
+                </div>
+            );
+        };
+
+        const CourseSlider = () => {
+            const scrollRef = React.useRef(null);
+            const [isPaused, setIsPaused] = useState(false);
+
+            const items = [
+                { id: 1, img: 'assets/story-thumb-1.jpg' },
+                { id: 2, img: 'assets/story-thumb-2.jpg' },
+                { id: 3, img: 'assets/story-thumb-3.jpg' }
+            ];
+
+            const extendedItems = [...items, ...items, ...items, ...items];
+
+            useEffect(() => {
+                const container = scrollRef.current;
+                if (!container) return;
+
+                let animationId;
+                const scroll = () => {
+                    if (!isPaused && container) {
+                        container.scrollLeft += 0.8;
+                        if (container.scrollLeft >= container.scrollWidth / 2) {
+                            container.scrollLeft = 0;
+                        }
+                    }
+                    animationId = requestAnimationFrame(scroll);
+                };
+
+                animationId = requestAnimationFrame(scroll);
+
+                return () => {
+                    if (animationId) cancelAnimationFrame(animationId);
+                };
+            }, [isPaused]);
+
+            return (
+                <div
+                    ref={scrollRef}
+                    onMouseEnter={() => setIsPaused(true)}
+                    onMouseLeave={() => setIsPaused(false)}
+                    onTouchStart={() => setIsPaused(true)}
+                    onTouchEnd={() => setIsPaused(false)}
+                    className="flex gap-3 overflow-x-auto no-scrollbar pt-1 pb-1"
+                >
+                    {extendedItems.map((item, idx) => (
+                        <a
+                            key={idx}
+                            href="https://www.instagram.com/manjang_mag/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="shrink-0 w-[135px] rounded-2xl overflow-hidden border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all shadow-2xs group bg-white"
+                        >
+                            <div className="h-[175px] bg-gray-100 relative overflow-hidden">
+                                <img
+                                    src={item.img}
+                                    alt="통인시장 근처 코스"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                    onError={(e) => { e.currentTarget.src = `https://picsum.photos/400/600?sig=${item.id}`; }}
+                                />
+
+                                {/* Top Right Instagram Icon Overlay */}
+                                <div className="absolute top-2.5 right-2.5 z-10 w-6 h-6 rounded-full bg-black/40 backdrop-blur-xs flex items-center justify-center text-white">
+                                    <Instagram className="w-3.5 h-3.5" />
+                                </div>
+                            </div>
+                        </a>
+                    ))}
                 </div>
             );
         };
@@ -924,20 +1414,20 @@
 
                             <div className="flex items-center justify-between mt-auto pt-1">
                                 <div className="flex gap-1.5 items-center">
-                                    {[1,2,3,4].map(idx => (
+                                    {[1, 2, 3, 4].map(idx => (
                                         <div key={idx} className={`h-[5px] rounded-full transition-all duration-300 ${step === idx ? 'w-[16px] bg-[#A88761]' : 'w-[5px] bg-[#D9CDB8]'}`}></div>
                                     ))}
                                 </div>
 
                                 <div className="flex gap-2">
-                                    <button 
+                                    <button
                                         onClick={() => step > 1 && setStep(step - 1)}
                                         disabled={step === 1}
                                         className={`w-[36px] h-[36px] rounded-full flex items-center justify-center transition-all ${step === 1 ? 'bg-[#EAE5DB] text-[#D9CDB8] cursor-not-allowed' : 'bg-[#EAE5DB] text-[#8B6B4A] hover:bg-[#E0DBCF] active:scale-95'}`}
                                     >
                                         <svg className="w-[16px] h-[16px] pr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
                                     </button>
-                                    <button 
+                                    <button
                                         onClick={() => step < 4 ? setStep(step + 1) : onClose()}
                                         className="w-[36px] h-[36px] rounded-full bg-[#A88761] flex items-center justify-center text-white hover:bg-[#96744E] transition-all active:scale-95 shadow-sm"
                                     >
@@ -955,1062 +1445,1021 @@
             );
         };
 
-        const FACILITIES_DATA = {
-            market: [
-                {
-                    id: 'toilet_public',
-                    type: 'toilet',
-                    name: '통인시장 공용 화장실',
-                    address: '서울특별시 종로구 자하문로15길 18 (고객센터 1층)',
-                    phone: '02-722-0936',
-                    hours: '09:00 - 18:00 (연중무휴)',
-                    price: '무료 이용',
-                    note: '남녀 구분 화장실, 기저귀 교환대 설치, 장애인 편의시설 완비',
-                    image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600&q=80',
-                    mapUrl: 'map.html?filter=toilet'
-                },
-                {
-                    id: 'yeopjeon_center',
-                    type: 'yeopjeon',
-                    name: '엽전 도시락카페 · 고객센터',
-                    address: '서울특별시 종로구 자하문로13길 20 (통인시장 중앙 2층)',
-                    phone: '02-731-0026',
-                    hours: '11:00 - 17:00 (월요일 & 3째주 일요일 휴무)',
-                    price: '엽전 1개 500원 (20개 10,000원 묶음)',
-                    note: '엽전 구매·환불 및 나만의 도시락 용기 수령, 2층 식사 공간 제공',
-                    image: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=600&q=80',
-                    mapUrl: 'map.html?open=도시락카페'
-                }
-            ],
-            parking: [
-                {
-                    id: 'seochon_parking',
-                    name: '서촌 민영주차장',
-                    address: '서울특별시 종로구 통인동 159 (통인시장 남쪽 입구)',
-                    phone: '02-736-3880',
-                    hours: '24시간 연중무휴',
-                    price: '30분당 2,000원 (1시간 4,000원)',
-                    note: '시장에서 가장 가까운 주차장 (도보 4분 소요, 약 350m 거리)',
-                    image: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=600&q=80',
-                    mapUrl: 'https://map.naver.com/p/search/서촌주차장'
-                },
-                {
-                    id: 'sejong_singyo',
-                    name: '세종마을 신교 공영주차장',
-                    address: '서울특별시 종로구 청운효자동 68',
-                    phone: '02-2236-0052',
-                    hours: '24시간 연중무휴',
-                    price: '5분당 250원 (1시간 3,000원)',
-                    note: '카드 전용 결제 (현금 불가), 평지 도보 6분, 경차·전기차 할인 가능',
-                    image: 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=600&q=80',
-                    mapUrl: 'https://map.naver.com/p/search/세종마을신교공영주차장'
-                },
-                {
-                    id: 'baeksong_parking',
-                    name: '백송 민영주차장',
-                    address: '서울특별시 종로구 통의동 백송빌딩 1층',
-                    phone: '02-736-3880',
-                    hours: '08:00 - 22:00',
-                    price: '30분당 2,500원 (1시간 5,000원)',
-                    note: '키를 맡기는 발렛 주차 방식 (통인시장 도보 6분 소요)',
-                    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80',
-                    mapUrl: 'https://map.naver.com/p/search/백송주차장'
-                },
-                {
-                    id: 'okin_public',
-                    name: '옥인 공영주차장',
-                    address: '서울특별시 종로구 필운대로9길 25',
-                    phone: '02-2236-0052',
-                    hours: '24시간 연중무휴',
-                    price: '5분당 250원 (1시간 3,000원)',
-                    note: '인왕산 방향 오르막길 위치 (통인시장 도보 8분 소요)',
-                    image: 'https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?w=600&q=80',
-                    mapUrl: 'https://map.naver.com/p/search/옥인공영주차장'
-                }
-            ]
-        };
-
-        const COIN_PRICE_KRW = 500;
-
-        const DEFAULT_COIN_STORES = [
-            {
-                id: 'wonjo_grandma',
-                name: '원조할머니 기름떡볶이',
-                category: '간식',
-                walkTime: '도보 1분',
-                minCoin: 10,
-                coinText: '10엽전',
-                img: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&q=80',
-                status: '영업중',
-                menus: [
-                    { name: '기름떡볶이 (고추장+간장 2인)', coins: 10, desc: '통인시장 60년 원조 기름떡볶이' }
-                ]
-            },
-            {
-                id: 'tongin_green',
-                name: '통인초록',
-                category: '간식',
-                walkTime: '도보 1분',
-                minCoin: 3,
-                coinText: '3엽전부터',
-                img: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&q=80',
-                status: '영업중',
-                menus: [
-                    { name: '구절판 한접시', coins: 3, desc: '담백하고 정갈한 모듬 구절판' },
-                    { name: '녹두전 / 나물전', coins: 4, desc: '바삭하게 부쳐낸 전' }
-                ]
-            },
-            {
-                id: 'seochon_lighthouse',
-                name: '서촌등대',
-                category: '간식',
-                walkTime: '도보 1분',
-                minCoin: 4,
-                coinText: '4엽전',
-                img: 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=400&q=80',
-                status: '영업중',
-                menus: [
-                    { name: '씨앗호떡 1개', coins: 4, desc: '고소한 씨앗이 듬뿍 든 찹쌀호떡' },
-                    { name: '호떡 2개 세트', coins: 7, desc: '친구와 나눠먹기 좋은 세트' }
-                ]
-            },
-            {
-                id: 'ire_noodle',
-                name: '이레해물칼국수',
-                category: '식당',
-                walkTime: '도보 2분',
-                minCoin: 4,
-                coinText: '4~9엽전',
-                img: 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&q=80',
-                status: '영업중',
-                menus: [
-                    { name: '잔치국수', coins: 4, desc: '진한 멸치 육수의 잔치국수' },
-                    { name: '해물칼국수', coins: 9, desc: '신선한 해물이 들어간 대표 칼국수' }
-                ]
-            },
-            {
-                id: 'somunnan_gim',
-                name: '소문난김구이',
-                category: '간식',
-                walkTime: '도보 1분',
-                minCoin: 6,
-                coinText: '6엽전',
-                img: 'https://images.unsplash.com/photo-1607301406259-dfb186e15de8?w=400&q=80',
-                status: '영업중',
-                menus: [
-                    { name: '직화 구운김 1묶음', coins: 6, desc: '숯불 향이 그윽한 수제 김구이' }
-                ]
-            },
-            {
-                id: 'hyoja365',
-                name: '효자365김밥',
-                category: '식당',
-                walkTime: '도보 2분',
-                minCoin: 7,
-                coinText: '7엽전',
-                img: 'https://images.unsplash.com/photo-1553163147-622ab57be1c7?w=400&q=80',
-                status: '영업중',
-                menus: [
-                    { name: '효자 계란말이 김밥', coins: 7, desc: '고소한 계란 지단이 통째로 들어간 김밥' }
-                ]
-            },
-            {
-                id: 'bulanjip',
-                name: '불란집',
-                category: '식당',
-                walkTime: '도보 2분',
-                minCoin: 8,
-                coinText: '8엽전',
-                img: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&q=80',
-                status: '영업중',
-                menus: [
-                    { name: '옛날 떡볶이 (소)', coins: 8, desc: '매콤달콤 전통 분식 떡볶이' }
-                ]
-            },
-            {
-                id: 'hyoja_skewers',
-                name: '효자동닭꼬치',
-                category: '간식',
-                walkTime: '도보 2분',
-                minCoin: 12,
-                coinText: '12엽전',
-                img: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=400&q=80',
-                status: '영업중',
-                menus: [
-                    { name: '와인치즈 닭꼬치', coins: 12, desc: '특제 와인소스와 풍부한 치즈' }
-                ]
-            },
-            {
-                id: 'seolya_dumpling',
-                name: '설야만두',
-                category: '식당',
-                walkTime: '도보 3분',
-                minCoin: 14,
-                coinText: '14엽전',
-                img: 'https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=400&q=80',
-                status: '영업중',
-                menus: [
-                    { name: '수제 모듬만두 12개', coins: 14, desc: '고기만두와 김치만두 반반 세트' }
-                ]
-            },
-            {
-                id: 'wonjo_jeong',
-                name: '원조정할머니 기름떡볶이',
-                category: '간식',
-                walkTime: '도보 1분',
-                minCoin: 20,
-                coinText: '20엽전',
-                img: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&q=80',
-                status: '영업중',
-                menus: [
-                    { name: '기름떡볶이 2종 + 모듬전 세트', coins: 20, desc: '떡볶이 2종과 모둠전 패키지' }
-                ]
-            }
-        ];
-
-        const App = () => {
-            const [coinCount, setCoinCount] = useState(20);
-            const [view, setView] = useState('INPUT'); // 'INPUT' (F2) | 'LIST' (F3~F5) | 'COMPLETE' (F6)
-const [bentoItems, setBentoItems] = useState([]);
-            const [activeModal, setActiveModal] = useState(null); // null | 'STORE_DETAIL' (S1) | 'PURCHASE_INFO' (S2) | 'HELP'
-            const [detailStore, setDetailStore] = useState(null);
-            const [storeList, setStoreList] = useState(DEFAULT_COIN_STORES);
-            const [lang, setLang] = useState('ko');
-            const [isMenuOpen, setIsMenuOpen] = useState(false);
-            const [facilityCategory, setFacilityCategory] = useState('전체'); // '전체' | '화장실' | '엽전' | '주차'
-            const [selectedParking, setSelectedParking] = useState(null); // C2 주차장 상세 모달
-            const [selectedToilet, setSelectedToilet] = useState(null); // C3 화장실 지도 모달
-            const [highlightFacilityId, setHighlightFacilityId] = useState(null);
+        const AllStoresModal = ({ isOpen, onClose, storeList, initialCategory = '전체' }) => {
+            const [category, setCategory] = useState(initialCategory);
+            const [search, setSearch] = useState('');
 
             useEffect(() => {
-                const params = new URLSearchParams(window.location.search);
-                if (params.get('view') === 'facilities' || params.get('tab') === 'facilities') {
-                    setView('FACILITIES');
-                    if (params.get('scroll') === 'yeopjeon' || params.get('highlight') === 'yeopjeon') {
-                        setHighlightFacilityId('yeopjeon_center');
-                        setFacilityCategory('엽전');
-                    }
+                if (isOpen) {
+                    setCategory(initialCategory);
+                    setSearch('');
                 }
-            }, []);
+            }, [isOpen, initialCategory]);
 
-            useEffect(() => {
-                const loadData = async () => {
-                    const fetched = await fetchStoresList();
-                    if (fetched && fetched.length > 0) {
-                        const coinStoresOnly = fetched.filter(s => s.coin === 'o' || (s.keyword && s.keyword.includes('엽전')));
-                        if (coinStoresOnly.length > 0) {
-                            const formatted = coinStoresOnly.map((s, idx) => {
-                                const parsedCoin = parseInt(s.coin_price) || (idx % 3 === 0 ? 3 : idx % 3 === 1 ? 4 : 10);
-                                return {
-                                    id: s.slug || `store_${idx}`,
-                                    name: s.name,
-                                    category: s.category || '간식',
-                                    walkTime: `도보 ${1 + (idx % 3)}분`,
-                                    minCoin: parsedCoin,
-                                    coinText: `${parsedCoin}엽전부터`,
-                                    img: s.repre_image && !s.repre_image.includes('google.com') ? s.repre_image : DEFAULT_COIN_STORES[idx % DEFAULT_COIN_STORES.length].img,
-                                    status: '영업중',
-                                    menus: [
-                                        { name: s.description || `${s.name} 대표 메뉴`, coins: parsedCoin, desc: s.keyword || '통인시장 엽전 가맹점' }
-                                    ]
-                                };
-                            });
-                            setStoreList(prev => {
-                                const names = new Set(formatted.map(f => f.name));
-                                const defaultsNotFetched = prev.filter(d => !names.has(d.name));
-                                return [...formatted, ...defaultsNotFetched];
-                            });
-                        }
-                    }
-                };
-                loadData();
-            }, []);
+            if (!isOpen) return null;
 
-            const usedCoins = bentoItems.reduce((sum, item) => sum + item.coins, 0);
-            const remainingCoins = Math.max(0, coinCount - usedCoins);
+            const categories = ['전체', '식당', '간식', '생활형'];
+            const filtered = storeList.filter(store => {
+                const matchCat = category === '전체' || store.category === category;
+                const matchSearch = !search.trim() || store.name.toLowerCase().includes(search.toLowerCase()) || (store.description && store.description.toLowerCase().includes(search.toLowerCase()));
+                return matchCat && matchSearch;
+            });
 
-            useEffect(() => {
-                if (bentoItems.length > 0 && remainingCoins === 0 && view === 'LIST') {
-                    setView('COMPLETE');
-                }
-            }, [remainingCoins, bentoItems, view]);
-
-            const handleAddMenuToBento = (store, menu) => {
-                if (menu.coins > remainingCoins) return;
-                const newItem = {
-                    id: `${store.id}_${menu.name}_${Date.now()}`,
-                    storeId: store.id,
-                    storeName: store.name,
-                    menuName: menu.name,
-                    coins: menu.coins,
-                    category: store.category,
-                    walkTime: store.walkTime,
-                    img: store.img
-                };
-                setBentoItems(prev => [...prev, newItem]);
-                if (activeModal === 'STORE_DETAIL') {
-                    setActiveModal(null);
-                }
-            };
-
-            const handleRemoveItem = (itemId) => {
-                setBentoItems(prev => prev.filter(item => item.id !== itemId));
-                if (view === 'COMPLETE') {
-                    setView('LIST');
-                }
-            };
-
-            const handleSmartCombo = () => {
-                let currentRem = remainingCoins;
-                const candidates = [];
-                
-                for (const store of storeList) {
-                    for (const m of store.menus) {
-                        if (m.coins === currentRem && !bentoItems.some(i => i.storeName === store.name)) {
-                            candidates.push({ store, menu: m });
-                            break;
-                        }
-                    }
-                    if (candidates.length > 0) break;
-                }
-
-                if (candidates.length === 0) {
-                    outer: for (const s1 of storeList) {
-                        for (const m1 of s1.menus) {
-                            for (const s2 of storeList) {
-                                if (s1.id === s2.id) continue;
-                                for (const m2 of s2.menus) {
-                                    if (m1.coins + m2.coins === currentRem) {
-                                        candidates.push({ store: s1, menu: m1 });
-                                        candidates.push({ store: s2, menu: m2 });
-                                        break outer;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (candidates.length > 0) {
-                    const newAdditions = candidates.map(({ store, menu }) => ({
-                        id: `${store.id}_${menu.name}_${Date.now()}_${Math.random()}`,
-                        storeId: store.id,
-                        storeName: store.name,
-                        menuName: menu.name,
-                        coins: menu.coins,
-                        category: store.category,
-                        walkTime: store.walkTime,
-                        img: store.img
-                    }));
-                    setBentoItems(prev => [...prev, ...newAdditions]);
-                }
-            };
-
-            const handleNavigateRoute = () => {
-                const storeNames = bentoItems.map(item => item.storeName);
-                if (storeNames.length === 0) {
-                    window.location.href = 'map.html';
-                    return;
-                }
-                const uniqueNames = Array.from(new Set(storeNames)).join(',');
-                window.location.href = `map.html?highlight=${encodeURIComponent(uniqueNames)}`;
-            };
-
-            const TopNavHeader = () => (
-                <header className="px-5 pt-[max(1rem,env(safe-area-inset-top))] pb-3 flex justify-between items-center bg-white z-40 sticky top-0 border-b border-gray-100/80 shadow-xs">
-                    <div className="flex items-center gap-2">
-                        <span className="text-[20px] font-bold text-gray-900 leading-none">
-                            {view === 'FACILITIES' ? '편의시설' : '엽전도시락'}
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <button 
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="px-2.5 py-1 rounded-full border border-gray-200 text-xs font-bold text-gray-600 flex items-center gap-1 hover:bg-gray-50 transition-colors"
-                        >
-                            <span>{lang === 'ko' ? '한' : lang.toUpperCase()}</span>
-                            <span className="text-[10px]">▾</span>
-                        </button>
-                        <button 
-                            onClick={() => setActiveModal('HELP')}
-                            className="w-7 h-7 rounded-full border border-gray-200 text-xs font-black text-gray-500 flex items-center justify-center hover:bg-gray-50 transition-colors"
-                        >
-                            ?
-                        </button>
-                    </div>
-
-                    {isMenuOpen && (
-                        <div className="absolute right-5 top-full mt-1 w-28 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50">
-                            {['ko', 'en', 'zh', 'ja'].map((l) => (
-                                <button
-                                    key={l}
-                                    onClick={() => { setLang(l); setIsMenuOpen(false); }}
-                                    className={`w-full text-left px-3.5 py-2.5 text-xs font-bold transition-colors ${lang === l ? 'text-[#A68A64] bg-[#FDFBF7]' : 'text-gray-600'}`}
-                                >
-                                    {l === 'ko' ? '한국어' : l === 'en' ? 'English' : l === 'zh' ? '中文' : '日本語'}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </header>
-            );
-
-            const RenderInputView = () => (
-                <div className="px-5 py-6 flex flex-col justify-between min-h-[calc(100vh-140px)]">
-                    <div className="space-y-6">
-                        <div>
-                            <h2 className="text-[22px] font-bold text-gray-900 leading-tight">
-                                지금 가지고 있는 엽전이 몇 개인가요?
-                            </h2>
-                            <p className="text-xs text-gray-500 mt-1">
-                                방금 구매했든, 쓰다 남았든 현재 개수를 넣어주세요
-                            </p>
-                        </div>
-
-                        <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm flex flex-col items-center justify-center space-y-4">
-                            <div className="flex items-center justify-center gap-6 w-full">
-                                <button
-                                    onClick={() => setCoinCount(prev => Math.max(1, prev - 1))}
-                                    className="w-12 h-12 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-2xl font-bold text-gray-600 active:scale-95 transition-all hover:bg-gray-100"
-                                >
-                                    –
-                                </button>
-
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-5xl font-black text-gray-900 tracking-tight">
-                                        {coinCount}
-                                    </span>
-                                    <span className="text-lg font-bold text-gray-600">개</span>
-                                </div>
-
-                                <button
-                                    onClick={() => setCoinCount(prev => prev + 1)}
-                                    className="w-12 h-12 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-2xl font-bold text-gray-600 active:scale-95 transition-all hover:bg-gray-100"
-                                >
-                                    +
-                                </button>
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
+                    <div className="bg-white w-full max-w-md max-h-[85vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-100">
+                        {/* Modal Header */}
+                        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
+                            <div>
+                                <h3 className="font-extrabold text-gray-900 text-base">매장 둘러보기</h3>
+                                <p className="text-[11px] text-gray-500">통인시장의 모든 점포를 한눈에 확인해보세요 ({filtered.length}개)</p>
                             </div>
-
-                            <p className="text-xs font-semibold text-gray-400">
-                                = {(coinCount * COIN_PRICE_KRW).toLocaleString()}원 · 엽전 1개 500원
-                            </p>
+                            <button
+                                onClick={onClose}
+                                className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold text-base flex items-center justify-center hover:bg-gray-200 active:scale-95 transition-all"
+                            >
+                                ✕
+                            </button>
                         </div>
 
-                        <div>
-                            <p className="text-xs font-bold text-gray-400 mb-2.5">빠른 선택</p>
-                            <div className="grid grid-cols-6 gap-2">
-                                {[2, 4, 7, 10, 20, 30].map(cnt => (
+                        {/* Filter & Search Bar */}
+                        <div className="px-5 pt-3 pb-3 space-y-3 bg-gray-50/50 border-b border-gray-100 shrink-0">
+                            {/* Category Chips */}
+                            <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                                {categories.map(cat => (
                                     <button
-                                        key={cnt}
-                                        onClick={() => setCoinCount(cnt)}
-                                        className={`py-2 rounded-xl text-xs font-bold border transition-all active:scale-95 ${coinCount === cnt ? 'bg-[#A68A64] text-white border-[#A68A64] shadow-xs' : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'}`}
+                                        key={cat}
+                                        onClick={() => setCategory(cat)}
+                                        className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${category === cat ? 'bg-[#A68A64] text-white shadow-xs' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-100'}`}
                                     >
-                                        {cnt}개
+                                        {cat}
                                     </button>
                                 ))}
                             </div>
+
+                            {/* Quick Store Search Input */}
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    placeholder="점포명 또는 메뉴 검색..."
+                                    className="w-full bg-white border border-gray-200 rounded-xl px-3.5 py-2 pl-9 text-xs font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#A68A64]"
+                                />
+                                <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
+                            </div>
                         </div>
 
-                        <div className="flex items-center justify-between bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                            <span className="text-xs font-bold text-gray-600">아직 엽전이 없어요</span>
-                            <button
-                                onClick={() => setActiveModal('PURCHASE_INFO')}
-                                className="text-xs font-bold text-[#A68A64] hover:underline flex items-center gap-0.5"
-                            >
-                                구매처 보기 &rsaquo;
-                            </button>
+                        {/* Modal Body - 2x2 Grid Layout */}
+                        <div className="p-4 overflow-y-auto flex-1 no-scrollbar bg-gray-50/30">
+                            {filtered.length > 0 ? (
+                                <div className="grid grid-cols-2 gap-3">
+                                    {filtered.map(store => {
+                                        const rawImg = store.repre_img || store.repre_image || '';
+                                        let imgUrl = rawImg;
+                                        if (rawImg.includes('drive.google.com')) {
+                                            const match = rawImg.match(/\/d\/([^/]+)/);
+                                            if (match && match[1]) {
+                                                imgUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w600`;
+                                            }
+                                        }
+                                        return (
+                                            <div
+                                                key={store.id}
+                                                onClick={() => window.location.href = `map.html?open=${encodeURIComponent(store.name)}`}
+                                                className="bg-white rounded-2xl border border-gray-200/90 overflow-hidden cursor-pointer hover:border-[#A68A64] hover:shadow-md active:scale-[0.98] transition-all flex flex-col group"
+                                            >
+                                                <div className="h-[115px] bg-gray-100 flex items-center justify-center overflow-hidden relative">
+                                                    {imgUrl ? (
+                                                        <img
+                                                            src={imgUrl}
+                                                            alt={store.name}
+                                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                            onError={(e) => {
+                                                                e.target.style.display = 'none';
+                                                                if (e.target.nextElementSibling) e.target.nextElementSibling.style.display = 'flex';
+                                                            }}
+                                                        />
+                                                    ) : null}
+                                                    <div className={`w-full h-full flex items-center justify-center ${imgUrl ? 'hidden' : ''}`}>
+                                                        <span className="text-3xl">{store.category === '식당' ? '🍲' : store.category === '간식' ? '🥨' : '🏪'}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="p-3 space-y-1 flex-1 flex flex-col justify-between">
+                                                    <div>
+                                                        <div className="text-[10px] text-[#b5926b] font-bold">{store.category}</div>
+                                                        <div className="font-bold text-[13.5px] text-gray-900 truncate">{store.name}</div>
+                                                        <div className="text-[11px] text-gray-500 truncate">{store.description || store.keywords || '상세정보 보기'}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="py-12 text-center space-y-2">
+                                    <span className="text-3xl">🔍</span>
+                                    <p className="text-sm font-bold text-gray-600">검색 조건과 일치하는 점포가 없습니다.</p>
+                                    <p className="text-xs text-gray-400">카테고리를 바꾸거나 다른 단어로 검색해보세요.</p>
+                                </div>
+                            )}
                         </div>
-                    </div>
-
-                    <div className="pt-4">
-                        <button
-                            onClick={() => setView('LIST')}
-                            className="w-full py-4 bg-[#A68A64] text-white font-bold text-base rounded-2xl shadow-md active:scale-[0.98] transition-all hover:bg-[#937754]"
-                        >
-                            {coinCount}엽전으로 살 수 있는 점포 보기
-                        </button>
                     </div>
                 </div>
             );
+        };
 
-            const RenderListView = () => {
-                const exactMatches = storeList.filter(s => 
-                    s.menus.some(m => m.coins === remainingCoins) && !bentoItems.some(b => b.storeName === s.name)
-                );
-                const affordableStores = storeList.filter(s => 
-                    s.minCoin <= remainingCoins && !exactMatches.some(e => e.id === s.id)
-                );
-                const exceededStores = storeList.filter(s => s.minCoin > remainingCoins);
+        const StoreDetailModal = ({ store, onClose }) => {
+            if (!store) return null;
+            const [activeTab, setActiveTab] = useState('home');
+            const [isFav, setIsFav] = useState(false);
 
-                const RenderStoreCard = ({ store, highlightExact = false, disabled = false }) => {
-                    const isAdded = bentoItems.some(i => i.storeName === store.name);
-                    const firstMenu = store.menus[0] || { name: '대표 메뉴', coins: store.minCoin };
+            const rawImg = store.repre_img || store.repre_image || '';
+            let imgUrl = rawImg;
+            if (rawImg.includes('drive.google.com')) {
+                const match = rawImg.match(/\/d\/([^/]+)/);
+                if (match && match[1]) {
+                    imgUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w600`;
+                }
+            }
 
-                    return (
-                        <div 
-                            onClick={() => {
-                                setDetailStore(store);
-                                setActiveModal('STORE_DETAIL');
-                            }}
-                            className={`p-3 rounded-2xl border transition-all cursor-pointer flex gap-3 items-center bg-white shadow-2xs hover:border-[#A68A64] ${highlightExact ? 'border-[#A7F3D0] bg-[#ECFDF5]/50 ring-1 ring-[#059669]' : 'border-gray-100'}`}
-                        >
-                            <img 
-                                src={store.img} 
-                                alt={store.name} 
-                                className="w-16 h-16 rounded-xl object-cover shrink-0 bg-gray-100" 
-                            />
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                    <span className="text-[11px] font-bold text-gray-500">{store.category}</span>
-                                    <span className="text-[10px] text-gray-400">• {store.walkTime}</span>
-                                    {highlightExact && (
-                                        <span className="bg-[#D1FAE5] text-[#059669] text-[9.5px] font-bold px-1.5 py-0.5 rounded">딱 맞음</span>
-                                    )}
+            const rawDesc = store.description || '';
+            // Check if description is a real sentence (>20 chars) vs just menu keywords
+            const isRealDesc = rawDesc && rawDesc.length > 20 && rawDesc !== store.category && !(/^[가-힣a-zA-Z0-9\s,·]+$/.test(rawDesc) && rawDesc.length < 25);
+            const descText = isRealDesc
+                ? rawDesc
+                : rawDesc && rawDesc.length > 1 && rawDesc !== store.category
+                    ? `${store.name}은(는) ${rawDesc} 등을 제공하는 통인시장의 인기 ${store.category} 상점입니다. 정성과 인심을 담아 고객을 맞이합니다.`
+                    : `${store.name}은(는) 통인시장의 정성과 인심을 담아 고객을 맞이하는 대표 ${store.category} 상점입니다. 신선한 재료와 정성스러운 서비스를 제공합니다.`;
+
+            const subText = rawDesc && rawDesc.length > 1 && rawDesc !== store.category
+                ? rawDesc
+                : `통인시장 대표 ${store.category} 상점`;
+
+            const keywordList = (store.keywords || store.description || '')
+                .split(/[,|\s]+/)
+                .filter(k => k && k.length >= 2 && k !== store.category);
+            
+            const displayKeywords = keywordList.length > 0 ? keywordList.slice(0, 5) : [store.category, '통인시장', '추천점포', '엽전가맹점'];
+
+            const catTagColor = store.category === '식당'
+                ? 'bg-[#F4AFA0] text-[#1A1A1B]'
+                : store.category === '간식'
+                    ? 'bg-[#F6D267] text-[#1A1A1B]'
+                    : 'bg-[#A8D8C9] text-[#1A1A1B]';
+
+            const handleShare = () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: store.name,
+                        text: `${store.name} - 통인시장`,
+                        url: window.location.href
+                    }).catch(() => { });
+                } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('점포 링크가 복사되었습니다!');
+                }
+            };
+
+            return (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200" onClick={onClose}>
+                    <div className="bg-white w-full max-w-md max-h-[85vh] max-h-[85dvh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+                        {/* Top Summary Header */}
+                        <div className="px-6 pt-4 pb-3.5 bg-white border-b border-gray-100 shrink-0">
+                            <div className="flex justify-between items-center mb-2">
+                                <div className="flex items-center gap-1.5">
+                                    <span className={`${catTagColor} px-2.5 py-0.5 rounded text-[11px] font-bold`}>
+                                        {store.category}
+                                    </span>
+                                    <span className="inline-flex items-center gap-1 bg-[#FFFBEB] border border-[#FDE68A] text-[#D97706] px-2 py-0.5 rounded text-[11px] font-bold">
+                                        <span>🪙 엽전 가맹점</span>
+                                    </span>
                                 </div>
-                                <h4 className="text-sm font-bold text-gray-900 truncate mt-0.5">{store.name}</h4>
-                                <p className="text-xs font-semibold text-[#A68A64] mt-0.5">
-                                    {store.coinText}
-                                </p>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={handleShare}
+                                        className="w-8 h-8 rounded-full border border-gray-200 text-gray-500 bg-white hover:bg-gray-50 active:scale-95 flex items-center justify-center transition-all"
+                                        title="공유하기"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                                    </button>
+                                    <button
+                                        onClick={() => setIsFav(!isFav)}
+                                        className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all active:scale-95 ${isFav ? 'bg-pink-50 border-pink-200 text-pink-500' : 'bg-white border-gray-200 text-gray-400 hover:bg-gray-50'}`}
+                                        title="즐겨찾기"
+                                    >
+                                        <svg className="w-4 h-4" fill={isFav ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                                    </button>
+                                    <button
+                                        onClick={onClose}
+                                        className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold text-sm flex items-center justify-center hover:bg-gray-200 active:scale-95 transition-all"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <h2 className="text-[22px] text-gray-900 leading-tight font-extrabold" style={{ fontFamily: 'Jandari, Pretendard, sans-serif' }}>{store.name}</h2>
+                                <p className="text-xs text-gray-500 mt-0.5 truncate">{subText}</p>
+                            </div>
+                        </div>
+
+                        {/* Scrollable Content Body - min-h-0 is mandatory for flex-1 scrolling */}
+                        <div className="overflow-y-auto flex-1 min-h-0 no-scrollbar bg-white">
+                            {/* Image Banner */}
+                            <div className="relative w-full h-44 sm:h-48 bg-gray-100 shrink-0 overflow-hidden">
+                                {imgUrl ? (
+                                    <img
+                                        src={imgUrl}
+                                        alt={store.name}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            if (e.target.nextElementSibling) e.target.nextElementSibling.style.display = 'flex';
+                                        }}
+                                    />
+                                ) : null}
+                                <div className={`w-full h-full flex items-center justify-center ${imgUrl ? 'hidden' : ''}`}>
+                                    <span className="text-5xl">{store.category === '식당' ? '🍲' : store.category === '간식' ? '🥨' : '🏪'}</span>
+                                </div>
+                                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
                             </div>
 
-                            <div className="shrink-0">
-                                {disabled ? (
-                                    <span className="text-[11px] font-bold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-xl">
-                                        +{store.minCoin - remainingCoins}엽전 필요
-                                    </span>
-                                ) : isAdded ? (
-                                    <span className="text-xs font-bold text-[#059669] bg-[#D1FAE5] px-3 py-1.5 rounded-xl border border-[#A7F3D0]">
-                                        담김 ✓
-                                    </span>
-                                ) : (
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleAddMenuToBento(store, firstMenu);
-                                        }}
-                                        className="text-xs font-bold text-[#A68A64] bg-[#FAF8F5] border border-[#EFE8DC] px-3 py-1.5 rounded-xl hover:bg-[#A68A64] hover:text-white transition-colors"
-                                    >
-                                        + 담기
-                                    </button>
+                            {/* Tabs Navigation */}
+                            <div className="sticky top-0 z-30 bg-white border-b border-gray-100 flex justify-between px-6 text-xs font-bold text-gray-500">
+                                <button onClick={() => setActiveTab('home')} className={`flex-1 py-3 text-center transition-colors ${activeTab === 'home' ? 'text-gray-900 border-b-2 border-gray-900 font-extrabold' : 'hover:text-gray-700'}`}>홈</button>
+                                <button onClick={() => setActiveTab('menu')} className={`flex-1 py-3 text-center transition-colors ${activeTab === 'menu' ? 'text-gray-900 border-b-2 border-gray-900 font-extrabold' : 'hover:text-gray-700'}`}>메뉴</button>
+                                <button onClick={() => setActiveTab('info')} className={`flex-1 py-3 text-center transition-colors ${activeTab === 'info' ? 'text-gray-900 border-b-2 border-gray-900 font-extrabold' : 'hover:text-gray-700'}`}>정보</button>
+                            </div>
+
+                            {/* Tab Body Content */}
+                            <div className="p-5 space-y-4">
+                                {activeTab === 'home' && (
+                                    <>
+                                        <div className="space-y-1.5 bg-[#FAF8F5] p-4 rounded-2xl border border-[#EFE8DC]">
+                                            <h4 className="text-xs font-extrabold text-[#8B6B4A]">상점 소개</h4>
+                                            <p className="text-xs text-gray-700 leading-relaxed font-medium">
+                                                {descText}
+                                            </p>
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <h4 className="text-xs font-bold text-gray-400">대표 키워드</h4>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {displayKeywords.map((tag, idx) => (
+                                                    <span key={idx} className="bg-gray-100 text-gray-600 text-[11px] font-bold px-2.5 py-1 rounded-lg">
+                                                        #{tag}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+
+                                {activeTab === 'menu' && (
+                                    <div className="space-y-3">
+                                        <h4 className="text-xs font-bold text-gray-700">대표 메뉴 목록</h4>
+                                        <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
+                                            <div>
+                                                <div className="text-xs font-bold text-gray-900">대표 메뉴 1</div>
+                                                <div className="text-[11px] text-gray-500">통인시장 정통 손맛</div>
+                                            </div>
+                                            <span className="text-xs font-bold text-[#D97706]">5,000원</span>
+                                        </div>
+                                        <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
+                                            <div>
+                                                <div className="text-xs font-bold text-gray-900">추천 메뉴 2</div>
+                                                <div className="text-[11px] text-gray-500">인기 시그니처 아이템</div>
+                                            </div>
+                                            <span className="text-xs font-bold text-[#D97706]">3,000원</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'info' && (
+                                    <div className="space-y-2 text-xs text-gray-700 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                                        <p><strong className="text-gray-900">주소:</strong> 서울특별시 종로구 자하문로15길 18 (통인시장)</p>
+                                        <p><strong className="text-gray-900">영업시간:</strong> 11:00 - 17:00 (월요일 휴무)</p>
+                                        <p><strong className="text-gray-900">결제안내:</strong> 엽전, 카드, 현금 가능</p>
+                                    </div>
                                 )}
                             </div>
                         </div>
-                    );
-                };
 
-                return (
-                    <div className="space-y-4 pb-36">
-                        <div className="sticky top-[53px] z-30 bg-white/95 backdrop-blur-md px-5 py-3 border-b border-gray-100 flex items-center justify-between shadow-xs mb-1">
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs font-bold text-gray-400">쓸 수 있는 엽전</span>
-                                <div className="flex items-center gap-1.5 bg-gray-100 px-2.5 py-1 rounded-full border border-gray-200">
-                                    <button 
-                                        onClick={() => setCoinCount(prev => Math.max(usedCoins + 1, prev - 1))}
-                                        className="text-sm font-bold text-gray-500 w-4 h-4 flex items-center justify-center hover:text-gray-900"
-                                    >–</button>
-                                    <span className="text-sm font-black text-gray-900">{remainingCoins}개</span>
-                                    <button 
-                                        onClick={() => setCoinCount(prev => prev + 1)}
-                                        className="text-sm font-bold text-gray-500 w-4 h-4 flex items-center justify-center hover:text-gray-900"
-                                    >+</button>
-                                </div>
-                            </div>
-                            <span className="text-xs font-bold text-gray-500">
-                                담음 <strong className="text-[#A68A64]">{usedCoins}</strong> / {coinCount}엽전
-                            </span>
-                        </div>
-
-                        {/* 엽전 도시락 식판/트레이 (Yeopjeon Bento Tray) */}
-                        {bentoItems.length > 0 && (
-                            <div className="mx-5 bg-[#2B231D] rounded-3xl p-4 border-2 border-[#4A3B31] shadow-md space-y-3">
-                                {/* 트레이 상단 헤더 */}
-                                <div className="flex justify-between items-center border-b border-[#4A3B31] pb-2.5">
-                                    <div className="flex items-center gap-1.5">
-                                        <span className="text-base">🍱</span>
-                                        <span className="text-xs font-extrabold text-[#E6D4B8] tracking-tight">내 엽전도시락 트레이</span>
-                                        <span className="bg-[#4A3B31] text-[#E6D4B8] text-[10px] font-bold px-2 py-0.5 rounded-full">
-                                            {bentoItems.length}개 담김
-                                        </span>
-                                    </div>
-                                    <span className="text-xs font-bold text-[#F3C06B]">
-                                        남은 엽전 {remainingCoins}개
-                                    </span>
-                                </div>
-
-                                {/* 식판 칸 분할 (Grid of Bento Compartments) */}
-                                <div className="grid grid-cols-2 gap-2.5">
-                                    {bentoItems.map((item, idx) => (
-                                        <div 
-                                            key={item.id} 
-                                            className="relative bg-[#3A3028] border border-[#5A493D] rounded-2xl p-2.5 flex items-center gap-2.5 shadow-xs group hover:border-[#F3C06B] transition-all"
-                                        >
-                                            <span className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-[#F3C06B] text-[#2B231D] text-[10px] font-black flex items-center justify-center shadow-xs">
-                                                {idx + 1}
-                                            </span>
-                                            <img 
-                                                src={item.img} 
-                                                alt={item.storeName} 
-                                                className="w-11 h-11 rounded-xl object-cover shrink-0 border border-[#5A493D]" 
-                                            />
-                                            <div className="flex-1 min-w-0">
-                                                <h5 className="text-xs font-bold text-[#FAF6F0] truncate">{item.storeName}</h5>
-                                                <p className="text-[10px] text-[#C5B7A8] truncate mt-0.5">{item.menuName}</p>
-                                                <span className="text-[10px] font-extrabold text-[#F3C06B] block mt-0.5">
-                                                    {item.coins}엽전
-                                                </span>
-                                            </div>
-                                            <button 
-                                                onClick={() => handleRemoveItem(item.id)}
-                                                className="text-[#9A8778] hover:text-red-400 text-sm font-black p-1 transition-colors"
-                                                title="삭제"
-                                            >
-                                                &times;
-                                            </button>
-                                        </div>
-                                    ))}
-
-                                    {/* 빈 식판 슬롯 (Empty Slot Prompt) */}
-                                    {Array.from({ length: Math.max(1, 4 - bentoItems.length) }).map((_, slotIdx) => (
-                                        <div 
-                                            key={`empty_${slotIdx}`}
-                                            className="border-2 border-dashed border-[#4A3B31] rounded-2xl p-3 flex flex-col items-center justify-center text-center min-h-[64px] bg-[#231C17]/40"
-                                        >
-                                            <span className="text-[10px] font-bold text-[#7A695B]">
-                                                + 먹거리 담기
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        <div className="px-5 space-y-6">
-                            {remainingCoins <= 5 && exactMatches.length > 0 && (
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="text-xs font-bold text-[#059669] flex items-center gap-1">
-                                            <span className="w-2 h-2 rounded-full bg-[#059669] animate-ping"></span>
-                                            딱 {remainingCoins} 엽전으로 쓸 수 있어요 · {exactMatches.length}곳
-                                        </h3>
-                                    </div>
-                                    <div className="space-y-2.5">
-                                        {exactMatches.map(store => (
-                                            <RenderStoreCard key={store.id} store={store} highlightExact={true} />
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="space-y-3">
-                                <h3 className="text-xs font-bold text-gray-400">
-                                    {remainingCoins <= 5 
-                                        ? `${remainingCoins} 엽전 이하로 가능 · ${affordableStores.length}곳`
-                                        : `엽전 쓸 수 있는 점포 ${storeList.length}곳 중 ${affordableStores.length + exactMatches.length}곳 가능`
-                                    }
-                                </h3>
-                                <div className="space-y-2.5">
-                                    {affordableStores.map(store => (
-                                        <RenderStoreCard key={store.id} store={store} />
-                                    ))}
-                                </div>
-                            </div>
-
-                            {exceededStores.length > 0 && (
-                                <div className="space-y-3 pt-2">
-                                    <h3 className="text-xs font-bold text-gray-400">
-                                        {remainingCoins <= 5 ? `조금 더 사면 가능 · ${exceededStores.length}곳` : `지금 잔액으로는 부족해요 · ${exceededStores.length}곳`}
-                                    </h3>
-                                    <div className="space-y-2.5 opacity-75">
-                                        {exceededStores.map(store => (
-                                            <RenderStoreCard key={store.id} store={store} disabled={true} />
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="fixed bottom-[56px] left-0 right-0 max-w-md mx-auto p-4 bg-white/95 backdrop-blur-md border-t border-gray-100 flex gap-2 z-40 shadow-lg">
-                            {remainingCoins <= 5 && remainingCoins > 0 && (
-                                <button
-                                    onClick={handleSmartCombo}
-                                    className="flex-1 py-3 px-3 bg-[#EFE8DC] text-[#7A6A58] font-bold text-xs rounded-xl active:scale-95 transition-all hover:bg-[#E5DAC8] flex items-center justify-center gap-1"
-                                >
-                                    <span>✨</span> 딱 맞게 쓰는 조합
-                                </button>
-                            )}
+                        {/* Bottom Action Buttons Bar */}
+                        <div className="p-4 bg-white border-t border-gray-100 flex gap-3 shrink-0">
                             <button
-                                onClick={handleNavigateRoute}
-                                disabled={bentoItems.length === 0}
-                                className={`flex-1 py-3 px-3 font-bold text-xs rounded-xl active:scale-95 transition-all flex items-center justify-center gap-1 ${bentoItems.length > 0 ? 'bg-[#A68A64] text-white shadow-sm' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
+                                onClick={() => window.location.href = `map.html?open=${encodeURIComponent(store.name)}`}
+                                className="flex-1 h-12 bg-[#0F172A] hover:bg-[#1e293b] text-white font-bold text-[14.5px] rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-sm"
                             >
-                                <span>🗺️</span> 동선 보기 · {bentoItems.length}곳
+                                <MapPin className="w-4 h-4 text-white" />
+                                <span>지도에서 길찾기</span>
+                            </button>
+                            <button
+                                onClick={() => window.location.href = 'markets.html'}
+                                className="px-4 h-12 bg-[#FAF5ED] hover:bg-[#F5EFE4] text-[#8B6B4A] border border-[#E8DEC9] font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all shrink-0"
+                            >
+                                <Coins className="w-4 h-4" />
+                                <span>엽전도시락</span>
                             </button>
                         </div>
                     </div>
-                );
+                </div>
+            );
+        };
+
+        // --- Main App Logic ---
+
+        const App = () => {
+            const getInitialTab = () => {
+                const pathname = window.location.pathname.toLowerCase();
+                const search = window.location.search.toLowerCase();
+                if (pathname.includes('stores.html') || search.includes('view=stores')) return 'STORES';
+                if (pathname.includes('markets.html') || search.includes('view=yeopjeon') || search.includes('view=input')) {
+                    if (search.includes('view=facilities')) return 'FACILITIES';
+                    return 'YEOPJEON';
+                }
+                if (search.includes('view=facilities')) return 'FACILITIES';
+                return 'HOME';
             };
 
-            const RenderCompleteView = () => (
-                <div className="px-5 py-6 space-y-6 pb-36">
-                    <div className="bg-[#FAF8F5] rounded-3xl border border-[#EFE8DC] p-6 text-center space-y-2 shadow-xs">
-                        <span className="inline-block bg-[#059669] text-white text-xs font-bold px-3 py-1 rounded-full animate-bounce">
-                            완성 ✨
-                        </span>
-                        <h2 className="text-2xl font-bold text-gray-900">내 도시락 완성!</h2>
-                        <p className="text-xs text-gray-500">
-                            총 {coinCount}개 엽전을 알차게 모두 사용했습니다
-                        </p>
-                    </div>
+            const [mainTab, setMainTab] = useState(() => getInitialTab());
 
-                    <div className="bg-white rounded-3xl border border-gray-100 p-5 space-y-4 shadow-sm">
-                        <div className="flex justify-between items-center border-b border-gray-100 pb-3">
-                            <h3 className="text-base font-bold text-gray-900">내 도시락 · {bentoItems.length}곳</h3>
-                            <span className="text-xs font-bold text-[#A68A64]">{coinCount}엽전 사용</span>
-                        </div>
+            const switchTab = useCallback((targetTab, extraParams = {}) => {
+                if (targetTab === 'MAP') {
+                    let target = 'map.html';
+                    if (extraParams.open) {
+                        target += `?open=${encodeURIComponent(extraParams.open)}`;
+                    } else if (extraParams.search) {
+                        target += `?search=${encodeURIComponent(extraParams.search)}`;
+                    } else if (extraParams.highlight) {
+                        target += `?highlight=${encodeURIComponent(extraParams.highlight)}`;
+                    }
+                    window.location.href = target;
+                    return;
+                }
 
-                        <div className="space-y-3">
-                            {bentoItems.map((item, idx) => (
-                                <div key={item.id} className="flex items-center gap-3 bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                                    <span className="w-6 h-6 rounded-full bg-[#A68A64] text-white font-bold text-xs flex items-center justify-center shrink-0">
-                                        {idx + 1}
-                                    </span>
-                                    <div className="flex-1 min-w-0">
-                                        <h4 className="text-xs font-bold text-gray-900 truncate">{item.storeName}</h4>
-                                        <p className="text-[11px] text-gray-500 truncate">{item.menuName}</p>
-                                    </div>
-                                    <span className="text-xs font-bold text-[#A68A64] shrink-0">{item.coins}엽전</span>
+                setMainTab(targetTab);
+
+                let targetUrl = 'index.html';
+                if (targetTab === 'STORES') {
+                    targetUrl = 'stores.html';
+                } else if (targetTab === 'YEOPJEON') {
+                    targetUrl = 'markets.html';
+                } else if (targetTab === 'FACILITIES') {
+                    targetUrl = 'markets.html?view=facilities';
+                }
+
+                window.history.pushState({ tab: targetTab }, '', targetUrl);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, []);
+
+            useEffect(() => {
+                const handlePopState = () => {
+                    setMainTab(getInitialTab());
+                };
+                window.addEventListener('popstate', handlePopState);
+                return () => window.removeEventListener('popstate', handlePopState);
+            }, []);
+
+            const [step, setStep] = useState(Step.LANDING);
+            const [isGuideOpen, setIsGuideOpen] = useState(false);
+            const [isAllStoresModalOpen, setIsAllStoresModalOpen] = useState(false);
+            const [selectedStore, setSelectedStore] = useState(null);
+            const [lang, setLang] = useState(localStorage.getItem('tongin_lang') || 'ko');
+
+            const t = TRANSLATIONS[lang];
+
+            // Update localStorage when lang changes
+            useEffect(() => {
+                localStorage.setItem('tongin_lang', lang);
+            }, [lang]);
+
+            const [loading, setLoading] = useState(false);
+            const [recommendations, setRecommendations] = useState([]);
+            const [storeList, setStoreList] = useState([]);
+            const [errorMessage, setErrorMessage] = useState('');
+            const [selectedCategory, setSelectedCategory] = useState('전체');
+            const [searchQuery, setSearchQuery] = useState('');
+
+            // Loading State
+            const [progress, setProgress] = useState(0);
+            const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+
+            const [selection, setSelection] = useState({
+                purpose: '',
+                companion: '',
+                interests: [],
+                preference: ''
+            });
+
+            const track = (eventName, params = {}) => {
+                window.mjTrack?.(eventName, params);
+            };
+
+            const handleNext = () => setStep(prev => prev + 1);
+            const handleBack = () => setStep(prev => Math.max(prev - 1, Step.LANDING));
+            const handleReset = () => {
+                setSelection({ purpose: '', companion: '', interests: [], preference: '' });
+                setStep(Step.LANDING);
+                setRecommendations([]);
+            };
+
+            const updateSelection = (field, value) => {
+                track('recommendation_option_select', {
+                    step_name: field,
+                    option_value: Array.isArray(value) ? value.join('|') : value
+                });
+                setSelection(prev => ({ ...prev, [field]: value }));
+            };
+
+            const handleInterestToggle = (value) => {
+                setSelection(prev => {
+                    const current = prev.interests;
+                    if (current.includes(value)) return { ...prev, interests: current.filter(i => i !== value) };
+                    if (current.length >= 3) return prev;
+                    return { ...prev, interests: [...current, value] };
+                });
+            };
+
+            useEffect(() => {
+                let mounted = true;
+                fetchStoreList().then((list) => {
+                    if (mounted) setStoreList(list);
+                }).catch(() => {
+                    if (mounted) setErrorMessage('데이터를 불러오지 못했습니다. 다시 시도해주세요.');
+                });
+                return () => { mounted = false; };
+            }, []);
+
+            // Loading Effect
+            useEffect(() => {
+                if (!loading) return;
+                setProgress(0);
+                setCurrentMessageIndex(0);
+
+                const progressInterval = setInterval(() => {
+                    setProgress(prev => {
+                        if (prev >= 90) return prev;
+                        const diff = Math.random() * 5 + 7;
+                        return Math.min(prev + diff, 90);
+                    });
+                }, 200);
+
+                const messageInterval = setInterval(() => {
+                    setCurrentMessageIndex(prev => (prev + 1) % LOADING_MESSAGES[lang].length);
+                }, 2500);
+
+                return () => {
+                    clearInterval(progressInterval);
+                    clearInterval(messageInterval);
+                };
+            }, [loading, lang]);
+
+            const fetchRecommendations = useCallback(async (nextSelection = selection) => {
+                setLoading(true);
+                setErrorMessage('');
+                setStep(Step.RECOMMENDATION);
+
+                track('recommendation_start', {
+                    purpose: nextSelection.purpose,
+                    companion: nextSelection.companion,
+                    interests: nextSelection.interests.join('|'),
+                    preference: nextSelection.preference
+                });
+
+                const stores = storeList.length ? storeList : await fetchStoreList();
+                if (!storeList.length && stores.length) {
+                    setStoreList(stores);
+                }
+
+                const result = await getRecommendations(nextSelection, stores, lang);
+                if (result.error) {
+                    setRecommendations([]);
+                    setErrorMessage(result.error);
+                    setLoading(false);
+                    track('recommendation_error', {
+                        error_message: String(result.error).slice(0, 100)
+                    });
+                } else {
+                    setRecommendations(result.data);
+                    setLoading(false);
+                    track('recommendation_complete', {
+                        result_count: result.data.length,
+                        purpose: nextSelection.purpose,
+                        companion: nextSelection.companion,
+                        interests: nextSelection.interests.join('|'),
+                        preference: nextSelection.preference
+                    });
+                }
+            }, [selection, storeList, lang]);
+
+            // Rendering helpers
+            const renderLanding = () => {
+                const categories = [
+                    { value: '전체', label: t.catAll },
+                    { value: '식당', label: t.catRestaurant },
+                    { value: '간식', label: t.catSnack },
+                    { value: '생활형', label: t.catLife }
+                ];
+                const filteredStores = storeList.filter(s => selectedCategory === '전체' || s.category === selectedCategory).slice(0, 5);
+
+                return (
+                    <>
+                        <div className="flex-1 flex flex-col">
+                            {/* Hero Section */}
+                            <div className="-mx-6 relative">
+                                <LandingCarousel />
+                                {/* Bottom Dark Gradient Overlay */}
+                                <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/80 via-black/35 to-transparent pointer-events-none z-10" />
+                            </div>
+
+                            {/* Overlapping Floating Search Bar Section (사진과 하단 섹션에 겹치게 배치) */}
+                            <div className="-mt-7 z-20 px-6 relative mb-2">
+                                <form
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        if (searchQuery.trim()) {
+                                            window.location.href = `map.html?search=${encodeURIComponent(searchQuery.trim())}`;
+                                        }
+                                    }}
+                                    className="w-full bg-white rounded-2xl shadow-xl border border-gray-200/90 px-4 py-3 flex items-center gap-3 transition-all focus-within:border-[#A68A64] focus-within:ring-2 focus-within:ring-[#A68A64]/20"
+                                >
+                                    <button type="submit" className="text-[#A68A64] hover:text-[#8B6B4A] transition-colors shrink-0 active:scale-95">
+                                        <Search className="w-5 h-5" />
+                                    </button>
+                                    <input
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder={t.searchPlaceholder}
+                                        className="w-full bg-transparent text-xs sm:text-sm font-semibold text-gray-900 placeholder:text-gray-400 placeholder:font-medium focus:outline-none"
+                                    />
+                                </form>
+                            </div>
+
+                            {/* Main Actions Section */}
+                            <div className="-mx-6 px-6 py-4 bg-white flex gap-3">
+                                <button
+                                    onClick={() => {
+                                        track('landing_cta_click', { cta_name: 'map' });
+                                        switchTab('MAP');
+                                    }}
+                                    className="flex-1 py-3.5 bg-[#A68A64] hover:bg-[#957954] text-white font-bold text-[15px] rounded-xl shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                                >
+                                    <MapPin className="w-4 h-4 text-white" />
+                                    {t.btnMapHome}
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        track('landing_cta_click', { cta_name: 'dosirak' });
+                                        switchTab('YEOPJEON');
+                                    }}
+                                    className="flex-1 py-3.5 bg-white border-2 border-[#A68A64] text-[#8B6B4A] font-bold text-[15px] rounded-xl shadow-xs active:scale-[0.98] transition-all flex items-center justify-center gap-2 hover:bg-[#FDFBF7]"
+                                >
+                                    <Coins className="w-4 h-4 text-[#A68A64]" />
+                                    {t.btnDosirakHome}
+                                </button>
+                            </div>
+
+                            {/* Section Divider Bar */}
+                            <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
+
+                            {/* 4 Quick Icons Grid Section (Gwangjang Market Style) */}
+                            <div className="-mx-6 px-6 py-6 bg-white space-y-4">
+                                <div className="text-center space-y-1">
+                                    <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionExplore}</h3>
+                                    <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto"></div>
                                 </div>
-                            ))}
-                        </div>
-                    </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <button onClick={() => switchTab('STORES')} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-[#FAF8F5] border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all space-y-2 group">
+                                        <span className="text-[14.5px] font-extrabold text-gray-900 group-hover:text-[#A68A64] transition-colors">{t.iconFood}</span>
+                                        <div className="w-12 h-12 rounded-full bg-[#F4EFE6] border border-[#E8DEC9] text-[#8B6B4A] group-hover:bg-[#A68A64] group-hover:text-white group-hover:border-[#A68A64] flex items-center justify-center transition-all shadow-2xs">
+                                            <Utensils className="w-6 h-6" />
+                                        </div>
+                                    </button>
 
-                    <div className="fixed bottom-[56px] left-0 right-0 max-w-md mx-auto p-4 bg-white/95 backdrop-blur-md border-t border-gray-100 flex gap-3 z-40 shadow-lg">
-                        <button
-                            onClick={() => setView('LIST')}
-                            className="flex-1 py-4 bg-gray-100 text-gray-700 font-bold text-sm rounded-2xl active:scale-95 transition-all hover:bg-gray-200"
-                        >
-                            수정하기
-                        </button>
-                        <button
-                            onClick={handleNavigateRoute}
-                            className="flex-2 py-4 bg-[#A68A64] text-white font-bold text-sm rounded-2xl shadow-md active:scale-95 transition-all hover:bg-[#937754]"
-                        >
-                            동선 보기 ›
-                        </button>
+                                    <button onClick={() => switchTab('FACILITIES')} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-[#FAF8F5] border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all space-y-2 group">
+                                        <span className="text-[14.5px] font-extrabold text-gray-900 group-hover:text-[#A68A64] transition-colors">{t.iconFacilities}</span>
+                                        <div className="w-12 h-12 rounded-full bg-[#F4EFE6] border border-[#E8DEC9] text-[#8B6B4A] group-hover:bg-[#A68A64] group-hover:text-white group-hover:border-[#A68A64] flex items-center justify-center transition-all shadow-2xs">
+                                            <Users className="w-6 h-6" />
+                                        </div>
+                                    </button>
+
+                                    <button onClick={() => switchTab('MAP')} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-[#FAF8F5] border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all space-y-2 group">
+                                        <span className="text-[14.5px] font-extrabold text-gray-900 group-hover:text-[#A68A64] transition-colors">{t.iconMap}</span>
+                                        <div className="w-12 h-12 rounded-full bg-[#F4EFE6] border border-[#E8DEC9] text-[#8B6B4A] group-hover:bg-[#A68A64] group-hover:text-white group-hover:border-[#A68A64] flex items-center justify-center transition-all shadow-2xs">
+                                            <MapPin className="w-6 h-6" />
+                                        </div>
+                                    </button>
+
+                                    <button onClick={() => setIsGuideOpen(true)} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-[#FAF8F5] border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all space-y-2 group">
+                                        <span className="text-[14.5px] font-extrabold text-gray-900 group-hover:text-[#A68A64] transition-colors">{t.iconCoin}</span>
+                                        <div className="w-12 h-12 rounded-full bg-[#F4EFE6] border border-[#E8DEC9] text-[#8B6B4A] group-hover:bg-[#A68A64] group-hover:text-white group-hover:border-[#A68A64] flex items-center justify-center transition-all shadow-2xs">
+                                            <Coins className="w-6 h-6" />
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Section Divider Bar */}
+                            <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
+
+                            {/* Full-bleed Tongin Market Story / Yeopjeon Banner Section (Gwangjang Market Story Style) */}
+                            <div className="-mx-6 px-6 py-8 bg-[#2C251E] text-white space-y-4 relative overflow-hidden shadow-inner">
+                                {/* Background pattern tint */}
+                                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#A68A64_1px,transparent_1px)] [background-size:16px_16px]"></div>
+
+                                <div className="relative z-10 text-center space-y-1">
+                                    <h3 className="text-xl font-extrabold tracking-tight text-amber-100">{t.sectionYeopjeon}</h3>
+                                    <div className="w-6 h-0.5 bg-amber-400/60 mx-auto"></div>
+                                </div>
+
+                                <button
+                                    onClick={() => switchTab('YEOPJEON')}
+                                    className="relative z-10 w-full bg-white text-gray-900 rounded-2xl p-5 shadow-lg flex items-center justify-between active:scale-[0.98] transition-all group"
+                                >
+                                    <div className="space-y-1 text-left">
+                                        <span className="text-xs font-bold text-[#A68A64]">{t.yeopjeonSub}</span>
+                                        <h4 className="text-base font-extrabold text-gray-900">{t.yeopjeonTitle}</h4>
+                                    </div>
+                                    <div className="w-10 h-10 rounded-full bg-[#FAF5ED] border border-[#E8DEC9] flex items-center justify-center text-[#A68A64] group-hover:bg-[#A68A64] group-hover:text-white transition-all">
+                                        <span className="text-xl font-bold">+</span>
+                                    </div>
+                                </button>
+                            </div>
+
+                            {/* Section Divider Bar */}
+                            <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
+
+                            {/* Store Showcase Section */}
+                            <div className="-mx-6 px-6 py-6 bg-white space-y-4">
+                                <div className="flex justify-between items-center relative">
+                                    <div className="flex-1 text-center space-y-1 pl-12">
+                                        <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionStore}</h3>
+                                        <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto"></div>
+                                    </div>
+                                    <button
+                                        onClick={() => switchTab('STORES')}
+                                        className="text-xs text-[#A68A64] font-bold hover:underline flex items-center gap-0.5 shrink-0"
+                                    >
+                                        {t.storeMore} <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                                    </button>
+                                </div>
+
+                                {/* Category Chips */}
+                                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                                    {categories.map(cat => (
+                                        <button
+                                            key={cat.value}
+                                            onClick={() => setSelectedCategory(cat.value)}
+                                            className={`shrink-0 px-4 py-1.5 rounded-full text-[13px] font-bold transition-all ${selectedCategory === cat.value ? 'bg-[#A68A64] text-white shadow-xs' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                                        >
+                                            {cat.label}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Store Cards Horizontal List */}
+                                <div className="flex gap-3 overflow-x-auto no-scrollbar pt-2 pb-2">
+                                    {filteredStores.map(store => {
+                                        const rawImg = store.repre_img || store.repre_image || '';
+                                        let imgUrl = rawImg;
+                                        if (rawImg.includes('drive.google.com')) {
+                                            const match = rawImg.match(/\/d\/([^/]+)/);
+                                            if (match && match[1]) {
+                                                imgUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w600`;
+                                            }
+                                        }
+                                        return (
+                                            <div key={store.id} onClick={() => setSelectedStore(store)} className="shrink-0 w-[165px] bg-white rounded-2xl border border-gray-200/80 overflow-hidden cursor-pointer hover:border-[#A68A64] active:scale-[0.98] transition-all shadow-2xs">
+                                                <div className="h-[115px] bg-gray-100 flex items-center justify-center overflow-hidden relative">
+                                                    {imgUrl ? (
+                                                        <img
+                                                            src={imgUrl}
+                                                            alt={store.name}
+                                                            className="w-full h-full object-cover"
+                                                            onError={(e) => {
+                                                                e.target.style.display = 'none';
+                                                                if (e.target.nextElementSibling) e.target.nextElementSibling.style.display = 'flex';
+                                                            }}
+                                                        />
+                                                    ) : null}
+                                                    <div className={`w-full h-full flex items-center justify-center ${imgUrl ? 'hidden' : ''}`}>
+                                                        <span className="text-3xl">{store.category === '식당' ? '🍲' : store.category === '간식' ? '🥨' : '🏪'}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="p-3 space-y-1">
+                                                    <div className="text-[10px] text-[#b5926b] font-bold">{store.category}</div>
+                                                    <div className="font-bold text-[13.5px] text-gray-900 truncate">{store.name}</div>
+                                                    <div className="text-[11px] text-gray-500 truncate">{store.description || store.keywords}</div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                    {filteredStores.length === 0 && (
+                                        <div className="w-full text-center py-6 text-sm text-gray-400">{t.noStoreInCategory}</div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Section Divider Bar */}
+                            <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
+
+                            {/* 통인시장 근처 코스 Section (인스타그램 연동 & 슬라이드 썸네일) */}
+                            <div className="-mx-6 px-6 py-6 bg-white space-y-4">
+                                <div className="text-center space-y-1">
+                                    <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionCourse}</h3>
+                                    <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto"></div>
+                                </div>
+
+                                {/* Continuous Auto-Sliding Story Thumbnails (마우스 호버 시 일시정지) */}
+                                <CourseSlider />
+                            </div>
+
+                            {/* Section Divider Bar */}
+                            <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
+
+                            {/* Footer - Full Bleed */}
+                            <footer className="mt-auto pt-8 pb-12 bg-gray-50 border-t border-gray-200/80 -mx-6 px-6 text-gray-500">
+                                <div className="space-y-4">
+                                    {/* Brand Header */}
+                                    <div className="flex items-center gap-2">
+                                        <img src="assets/mjlogo.png" alt="만장일치 로고" className="w-4 h-auto object-contain opacity-80" />
+                                        <span className="font-bold text-gray-800 text-sm" style={{ fontFamily: 'Jandari' }}>만장일치 (萬場一致)</span>
+                                    </div>
+
+                                    {/* Info Text */}
+                                    <div className="space-y-1 text-gray-500 leading-relaxed text-[11px]">
+                                        <p className="font-medium text-gray-700">{t.footerDesc}</p>
+                                        <p>{t.footerAddr}</p>
+                                        <p>{t.footerHours}</p>
+                                        <p>{t.footerContact}</p>
+                                    </div>
+
+                                    {/* Links & Copyright */}
+                                    <div className="pt-3 border-t border-[#E8DEC9]/60 flex flex-col gap-2">
+                                        <div className="flex gap-3 text-[11px] text-gray-600 font-medium">
+                                            <button onClick={() => switchTab && switchTab('MAP')} className="hover:text-[#A68A64] transition-colors">{t.footerLinkMap}</button>
+                                            <span>·</span>
+                                            <button onClick={() => switchTab && switchTab('YEOPJEON')} className="hover:text-[#A68A64] transition-colors">{t.footerLinkGuide}</button>
+                                            <span>·</span>
+                                            <button onClick={() => switchTab && switchTab('FACILITIES')} className="hover:text-[#A68A64] transition-colors">{t.footerLinkFacility}</button>
+                                        </div>
+                                        <p className="text-[10px] text-gray-400">© 2026 만장일치 (Manjanilchi). All rights reserved.</p>
+                                    </div>
+                                </div>
+                            </footer>
+                        </div>
+                    </>
+                )
+            };
+
+            const renderStep1 = () => (
+                <div className="py-6 space-y-8">
+                    <div>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-2 whitespace-pre-wrap leading-tight" style={{ fontFamily: 'Jandari', fontWeight: 'normal' }}>{t.step1Title}</h2>
+                        <p className="text-gray-500 text-base">{t.step1Desc}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        {t.step1Opts.map((item) => (
+                            <SelectionButton key={item.label} selected={selection.purpose === item.label} onClick={() => updateSelection('purpose', item.label)}>
+                                <div className="mb-2 text-[#A68A64]">
+                                    <item.Icon className="w-6 h-6" strokeWidth={3} />
+                                </div>
+                                <span className="font-bold text-lg">{item.label}</span>
+                            </SelectionButton>
+                        ))}
+                    </div>
+                    <NextButton onClick={handleNext} disabled={!selection.purpose} label={t.next} />
+                </div>
+            );
+
+            const renderStep2 = () => (
+                <div className="py-6 space-y-8">
+                    <div>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-2 whitespace-pre-wrap leading-tight" style={{ fontFamily: 'Jandari', fontWeight: 'normal' }}>{t.step2Title}</h2>
+                        <p className="text-gray-500 text-base">{t.step2Desc}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        {t.step2Opts.map((item) => (
+                            <SelectionButton key={item.label} selected={selection.companion === item.label} onClick={() => updateSelection('companion', item.label)}>
+                                <div className={`mb-2 ${item.color || 'text-[#A68A64]'}`}>
+                                    <item.Icon className="w-6 h-6" strokeWidth={3} />
+                                </div>
+                                <span className="font-bold text-lg">{item.label}</span>
+                            </SelectionButton>
+                        ))}
+                    </div>
+                    <NextButton onClick={handleNext} disabled={!selection.companion} label={t.next} />
+                </div>
+            );
+
+            const renderStep3 = () => (
+                <div className="py-6 space-y-8">
+                    <div>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-2 whitespace-pre-wrap leading-tight" style={{ fontFamily: 'Jandari', fontWeight: 'normal' }}>{t.step3Title}</h2>
+                        <p className="text-gray-500 text-base">{t.step3Desc}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        {t.step3Opts.map((item) => (
+                            <SelectionButton key={item.label} selected={selection.interests.includes(item.label)} onClick={() => handleInterestToggle(item.label)} className="aspect-[4/3]">
+                                <div className="mb-2 text-[#A68A64]">
+                                    <item.Icon className="w-6 h-6" strokeWidth={3} />
+                                </div>
+                                <span className="font-bold text-lg">{item.label}</span>
+                            </SelectionButton>
+                        ))}
+                    </div>
+                    <NextButton onClick={handleNext} disabled={selection.interests.length === 0} label={t.next} />
+                </div>
+            );
+
+            const renderStep4 = () => (
+                <div className="py-6 space-y-8">
+                    <div>
+                        <h2 className="text-2xl font-normal text-gray-900 mb-2 leading-tight" style={{ fontFamily: 'Jandari', fontWeight: 'normal' }}>{t.step4Title}</h2>
+                        <p className="text-gray-500 text-base">{t.step4Desc}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        {t.step4Opts.map((item) => (
+                            <SelectionButton key={item.id} selected={selection.preference === item.id} onClick={() => {
+                                const nextSelection = { ...selection, preference: item.id };
+                                track('recommendation_option_select', {
+                                    step_name: 'preference',
+                                    option_value: item.id
+                                });
+                                setSelection(nextSelection);
+                                fetchRecommendations(nextSelection);
+                            }}>
+                                <div className="mb-2 text-[#A68A64]">
+                                    <item.Icon className="w-6 h-6" strokeWidth={3} />
+                                </div>
+                                <span className="font-bold text-lg text-center leading-tight">{item.label}</span>
+                            </SelectionButton>
+                        ))}
                     </div>
                 </div>
             );
 
-            const RenderFacilitiesView = () => {
-                const showMarket = facilityCategory === '전체' || facilityCategory === '화장실' || facilityCategory === '엽전';
-                const showParking = facilityCategory === '전체' || facilityCategory === '주차';
-
-                const marketList = FACILITIES_DATA.market.filter(item => {
-                    if (facilityCategory === '화장실') return item.type === 'toilet';
-                    if (facilityCategory === '엽전') return item.type === 'yeopjeon';
-                    return true;
-                });
-
-                const allItems = [
-                    ...(showMarket ? marketList : []),
-                    ...(showParking ? FACILITIES_DATA.parking : [])
-                ];
-
-                return (
-                    <div className="space-y-5 pb-36 px-5 py-4">
-                        {/* 상단 카테고리 칩 필터 */}
-                        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                            {['전체', '화장실', '엽전', '주차'].map(cat => (
-                                <button
-                                    key={cat}
-                                    onClick={() => setFacilityCategory(cat)}
-                                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all border shrink-0 ${facilityCategory === cat ? 'bg-[#A68A64] text-white border-[#A68A64] shadow-xs' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
+            const renderRecommendation = () => {
+                if (loading) {
+                    return (
+                        <div className="h-full flex flex-col items-center justify-center px-6">
+                            <div className="w-full max-w-[240px] mb-8 relative">
+                                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-[#A68A64] transition-all duration-500 ease-out"
+                                        style={{ width: `${progress}%` }}
+                                    ></div>
+                                </div>
+                                <p className="text-right text-xs text-[#A68A64] font-bold mt-2">{Math.round(progress)}%</p>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-800 mb-2 text-center animate-pulse">
+                                {LOADING_MESSAGES[lang][currentMessageIndex]}
+                            </h3>
                         </div>
+                    );
+                }
 
-                        {/* 시설 카드 리스트 */}
-                        <div className="space-y-5">
-                            {allItems.map(item => (
-                                <div key={item.id} id={item.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-xs hover:shadow-md transition-all">
-                                    {/* 상단 시설 썸네일 이미지 */}
-                                    <div className="w-full h-52 bg-gray-100 relative overflow-hidden">
-                                        <img 
-                                            src={item.image} 
-                                            alt={item.name} 
-                                            className="w-full h-full object-cover"
-                                            onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=600&q=80'; }}
-                                        />
-                                    </div>
-
-                                    {/* 정보 본문 영역 */}
-                                    <div className="p-5 space-y-3">
-                                        {/* 타이틀 및 지도보기 버튼 */}
-                                        <div className="flex justify-between items-start gap-3 pb-1 border-b border-gray-100/80">
-                                            <h4 className="text-[20px] font-extrabold text-gray-900 leading-tight tracking-tight">{item.name}</h4>
-                                            <button 
-                                                onClick={() => {
-                                                    if (item.mapUrl && item.mapUrl.startsWith('http')) {
-                                                        window.open(item.mapUrl, '_blank');
-                                                    } else {
-                                                        window.location.href = item.mapUrl || 'map.html';
-                                                    }
-                                                }}
-                                                className="px-3.5 py-1.5 border-2 border-[#A68A64] text-[#8B6B4A] rounded-xl text-[13px] font-bold hover:bg-[#FAF6F0] active:scale-95 transition-all shrink-0 shadow-2xs"
-                                            >
-                                                지도보기
-                                            </button>
-                                        </div>
-
-                                        {/* 항목별 상세 명세 (주소, 전화, 이용시간, 요금, 비고) */}
-                                        <div className="space-y-2 text-[13px] text-gray-700 pt-1">
-                                            {(item.address || item.location) && (
-                                                <div className="flex items-start">
-                                                    <span className="w-16 shrink-0 text-gray-500 font-medium">주　소</span>
-                                                    <span className="flex-1 text-gray-800 leading-snug">{item.address || item.location}</span>
-                                                </div>
-                                            )}
-                                            {item.phone && (
-                                                <div className="flex items-start">
-                                                    <span className="w-16 shrink-0 text-gray-500 font-medium">전　화</span>
-                                                    <a href={`tel:${item.phone}`} className="flex-1 text-gray-800 hover:text-blue-600 underline decoration-gray-300">{item.phone}</a>
-                                                </div>
-                                            )}
-                                            {item.hours && (
-                                                <div className="flex items-start">
-                                                    <span className="w-16 shrink-0 text-gray-500 font-medium">이용시간</span>
-                                                    <span className="flex-1 text-gray-800">{item.hours}</span>
-                                                </div>
-                                            )}
-                                            {item.price && (
-                                                <div className="flex items-start">
-                                                    <span className="w-16 shrink-0 text-gray-500 font-medium">주차요금</span>
-                                                    <span className="flex-1 text-gray-800">{item.price}</span>
-                                                </div>
-                                            )}
-                                            {(item.note || item.desc || item.details) && (
-                                                <div className="flex items-start">
-                                                    <span className="w-16 shrink-0 text-gray-500 font-medium">비　고</span>
-                                                    <span className="flex-1 text-gray-800 leading-snug">{item.note || item.desc || item.details}</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                );
-            };
-
-            const RenderParkingDetailModal = () => {
-                if (!selectedParking) return null;
-
-                return (
-                    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
-                        <div className="w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto p-6 space-y-5">
-                            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
-                                <button 
-                                    onClick={() => setSelectedParking(null)}
-                                    className="text-sm font-bold text-gray-500 hover:text-gray-900 flex items-center gap-1"
-                                >
-                                    ← 돌아가기
-                                </button>
-                                <button 
-                                    onClick={() => setSelectedParking(null)}
-                                    className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold text-base flex items-center justify-center"
-                                >×</button>
-                            </div>
-
-                            <div className="bg-[#FAF8F5] border border-[#EFE8DC] p-4 rounded-2xl flex items-center justify-between shadow-2xs">
-                                <div>
-                                    <span className="text-xs font-bold text-gray-400">통인시장까지</span>
-                                    <h4 className="text-sm font-bold text-gray-900">{selectedParking.distance || '도보 이동'}</h4>
-                                </div>
-                                <div className="text-right">
-                                    <span className="text-2xl font-black text-[#A68A64]">{selectedParking.walkTime}</span>
-                                    <span className="text-xs font-bold text-gray-400 block">도보</span>
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <h4 className="text-xs font-bold text-gray-400">기본 정보</h4>
-                                <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 space-y-2 text-xs">
-                                    <div className="flex justify-between py-1 border-b border-gray-200/60">
-                                        <span className="text-gray-500 font-bold">구분</span>
-                                        <span className="font-bold text-gray-900">{selectedParking.desc || selectedParking.typeTag}</span>
-                                    </div>
-                                    {selectedParking.price && (
-                                        <div className="flex justify-between py-1 border-b border-gray-200/60">
-                                            <span className="text-gray-500 font-bold">요금</span>
-                                            <span className="font-bold text-[#A68A64]">{selectedParking.price}</span>
-                                        </div>
-                                    )}
-                                    {selectedParking.floors && (
-                                        <div className="flex justify-between py-1 border-b border-gray-200/60">
-                                            <span className="text-gray-500 font-bold">규모</span>
-                                            <span className="font-bold text-gray-900">{selectedParking.floors}</span>
-                                        </div>
-                                    )}
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-gray-500 font-bold">주소</span>
-                                        <span className="font-bold text-gray-900 text-right truncate max-w-[200px]">{selectedParking.address}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {selectedParking.cautions && (
-                                <div className="space-y-2">
-                                    <h4 className="text-xs font-bold text-amber-700">가기 전 확인하세요</h4>
-                                    <div className="space-y-2">
-                                        {selectedParking.cautions.map((c, idx) => (
-                                            <div key={idx} className={`p-3 rounded-2xl text-xs font-bold space-y-1 ${c.type === 'warning' ? 'bg-amber-50 text-amber-900 border border-amber-200' : 'bg-blue-50 text-blue-900 border border-blue-100'}`}>
-                                                <div className="flex items-center gap-1.5">
-                                                    <span>{c.type === 'warning' ? '⚠️' : 'ℹ️'}</span>
-                                                    <span>{c.text}</span>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
+                if (errorMessage) {
+                    return (
+                        <div className="h-full flex flex-col items-center justify-center space-y-4 text-center px-6">
+                            <p className="text-gray-600">{t.recError}</p>
+                            <button
+                                onClick={fetchRecommendations}
+                                className="px-5 py-2.5 rounded-lg bg-[#A68A64] text-white text-sm font-medium"
+                            >
+                                {t.recRetry}
+                            </button>
+                            {errorMessage && (
+                                <div className="mt-8 p-4 bg-red-50 rounded-2xl border border-red-100">
+                                    <p className="text-red-600 text-sm font-bold mb-2">Error Details</p>
+                                    <pre className="text-red-500 text-[10px] leading-tight whitespace-pre-wrap break-all font-mono opacity-80">{errorMessage}</pre>
+                                    <button
+                                        onClick={fetchRecommendations}
+                                        className="mt-4 w-full py-3 bg-red-100 text-red-700 rounded-xl font-bold text-sm active:scale-95 transition-all"
+                                    >
+                                        {t.recRetry}
+                                    </button>
                                 </div>
                             )}
-
-                            <div className="flex gap-3 pt-2">
-                                <a 
-                                    href={`tel:${selectedParking.phone}`}
-                                    className="flex-1 py-3.5 bg-gray-100 text-gray-800 font-bold text-xs rounded-2xl flex items-center justify-center gap-1 active:scale-95 transition-all hover:bg-gray-200"
-                                >
-                                    📞 전화 문의
-                                </a>
-                                <a 
-                                    href={selectedParking.mapUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex-2 py-3.5 bg-[#A68A64] text-white font-bold text-xs rounded-2xl flex items-center justify-center gap-1 shadow-md active:scale-95 transition-all hover:bg-[#937754]"
-                                >
-                                    🚗 길찾기 시작
-                                </a>
-                            </div>
                         </div>
-                    </div>
-                );
-            };
+                    );
+                }
 
-            const RenderToiletMapModal = () => {
-                if (!selectedToilet) return null;
+                const handleOpenMap = () => {
+                    const selectedStores = recommendations.filter((store) => store.checked);
+                    const firstRec = recommendations[0];
+
+                    track('recommendation_map_open', {
+                        selected_count: selectedStores?.length || 0,
+                        recommended_count: recommendations?.length || 0,
+                        target_store: firstRec?.name || ''
+                    });
+
+                    // Auto-Favorites Logic
+                    try {
+                        const currentFavs = new Set(JSON.parse(localStorage.getItem('tongin_favs') || '[]'));
+                        recommendations.forEach(r => currentFavs.add(r.name));
+                        localStorage.setItem('tongin_favs', JSON.stringify(Array.from(currentFavs)));
+                    } catch (e) { console.error("Auto-fav failed", e); }
+
+                    if (selectedStores.length === 0) {
+                        // No selection - show first recommendation
+                        if (!firstRec) {
+                            window.location.href = 'map.html';
+                            return;
+                        }
+                        window.location.href = firstRec.slug ? `shop/${encodeURIComponent(firstRec.slug)}` : `map.html?open=${encodeURIComponent(firstRec.name)}`;
+                    } else if (selectedStores.length === 1) {
+                        // Single selection - open detail panel
+                        const selected = selectedStores[0];
+                        window.location.href = selected.slug ? `shop/${encodeURIComponent(selected.slug)}` : `map.html?open=${encodeURIComponent(selected.name)}`;
+                    } else {
+                        // Multiple selections - show all on map
+                        const names = selectedStores.map(s => s.name).join(',');
+                        window.location.href = `map.html?highlight=${encodeURIComponent(names)}`;
+                    }
+                };
 
                 return (
-                    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
-                        <div className="w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl max-h-[85vh] overflow-y-auto p-6 space-y-5">
-                            <div className="flex justify-between items-center border-b border-gray-100 pb-3">
-                                <button 
-                                    onClick={() => setSelectedToilet(null)}
-                                    className="text-sm font-bold text-gray-500 hover:text-gray-900 flex items-center gap-1"
+                    <div className="pt-4 pb-48">
+                        <h2 className="text-2xl font-normal text-gray-900 mb-10 whitespace-pre-wrap leading-tight">{t.recTitle}</h2>
+                        <div className="space-y-4">
+                            {recommendations.map((store) => (
+                                <div
+                                    key={store.id}
+                                    className={`p-4 border-[2px] rounded-xl flex items-start gap-3 bg-white transition-colors cursor-pointer ${store.checked ? 'border-[#A68A64]' : 'border-gray-200 hover:border-[#A68A64]'}`}
+                                    onClick={() => setRecommendations(prev => prev.map(s => s.id === store.id ? { ...s, checked: !s.checked } : s))}
                                 >
-                                    ← 화장실 위치
-                                </button>
-                                <button 
-                                    onClick={() => setSelectedToilet(null)}
-                                    className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold text-base flex items-center justify-center"
-                                >×</button>
-                            </div>
-
-                            <div className="bg-[#FAF8F5] rounded-2xl p-4 border border-[#EFE8DC] space-y-2">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <span className="text-xs font-bold text-gray-400">{selectedToilet.location}</span>
-                                        <h4 className="text-lg font-bold text-gray-900">{selectedToilet.name}</h4>
+                                    <div className={`mt-1 w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${store.checked ? 'bg-[#A68A64] border-[#A68A64]' : 'border-gray-300'}`}>
+                                        {store.checked && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
                                     </div>
-                                    <span className="text-xl font-black text-[#A68A64]">{selectedToilet.walkTime} <span className="text-xs text-gray-500 font-bold">도보</span></span>
+                                    <div>
+                                        <h3 className="font-bold text-gray-800 text-lg mb-1">[{store.name}]</h3>
+                                        <p className="text-sm text-gray-500 leading-relaxed">{store.description}</p>
+                                    </div>
                                 </div>
-
-                                <div className="flex flex-wrap gap-1.5 pt-1">
-                                    {selectedToilet.tags.map((t, idx) => (
-                                        <span key={idx} className="bg-white text-gray-700 border border-gray-200 text-[10px] font-bold px-2 py-0.5 rounded-md">
-                                            {t}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="h-44 bg-gray-100 rounded-2xl overflow-hidden relative border border-gray-200 flex flex-col items-center justify-center text-center p-4">
-                                <div className="absolute inset-0 bg-cover bg-center opacity-40" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=400&q=80')` }}></div>
-                                <div className="relative z-10 space-y-1">
-                                    <span className="text-2xl block">📍</span>
-                                    <p className="text-xs font-bold text-gray-900">내 위치에서 도보 1분</p>
-                                    <p className="text-[10px] text-gray-500">통인시장 고객센터 1층 중앙 입구</p>
-                                </div>
-                            </div>
-
-                            <a 
-                                href="map.html?filter=toilet"
-                                className="w-full py-4 bg-[#A68A64] text-white font-bold text-sm rounded-2xl shadow-md active:scale-95 transition-all flex items-center justify-center gap-1"
+                            ))}
+                        </div>
+                        <div className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto bg-white px-6 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] border-t border-gray-50 space-y-3 z-20 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
+                            <button
+                                onClick={handleOpenMap}
+                                className="w-full py-4 bg-[#A68A64] text-white rounded-2xl font-bold text-lg shadow-md active:scale-[0.98] transition-all"
                             >
-                                🗺️ 길찾기 시작
-                            </a>
+                                {(() => {
+                                    const selectedCount = recommendations.filter(r => r.checked).length;
+                                    if (selectedCount === 0) return t.recMapBtn;
+                                    if (selectedCount === 1) return t.recMapBtn;
+                                    return t.recMapBtnMulti(selectedCount);
+                                })()}
+                            </button>
+                            <button onClick={handleReset} className="w-full py-4 text-gray-400 font-semibold text-sm hover:text-gray-600 transition-colors uppercase tracking-widest">{t.recResetBtn}</button>
                         </div>
                     </div>
                 );
             };
 
             return (
-                <div className="min-h-screen bg-gray-50 flex justify-center font-sans">
-                    <div className="w-full max-w-md bg-white min-h-screen shadow-lg flex flex-col relative pb-[60px]">
-                        <TopNavHeader />
-
-                        <main className="flex-1 overflow-y-auto no-scrollbar">
-                            {view === 'INPUT' && <RenderInputView />}
-                            {view === 'LIST' && <RenderListView />}
-                            {view === 'COMPLETE' && <RenderCompleteView />}
-                            {view === 'FACILITIES' && <RenderFacilitiesView />}
-                        </main>
-
-                        {activeModal === 'STORE_DETAIL' && <StoreDetailModal />}
-                        {activeModal === 'PURCHASE_INFO' && <PurchaseInfoModal />}
-                        {selectedParking && <RenderParkingDetailModal />}
-                        {selectedToilet && <RenderToiletMapModal />}
-
-                        {/* Global Navigation Bar */}
-                        <nav className="fixed bottom-0 left-0 right-0 z-[60] flex justify-center pointer-events-none transition-transform duration-300">
-                            <div className="w-full max-w-md bg-white border-t border-gray-100 flex justify-around items-center pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-1.5 px-2 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)] pointer-events-auto">
-                                <button onClick={() => window.location.href='index.html'} className="flex flex-col items-center gap-0.5 p-1.5 text-gray-400 hover:text-gray-900 transition-colors">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
-                                    <span className="text-[9px] font-bold">홈</span>
-                                </button>
-                                <button onClick={() => window.location.href='stores.html'} className="flex flex-col items-center gap-0.5 p-1.5 text-gray-400 hover:text-gray-900 transition-colors">
-                                    <Store className="w-5 h-5" />
-                                    <span className="text-[9px] font-bold">매장</span>
-                                </button>
-                                <button onClick={() => window.location.href='map.html'} className="flex flex-col items-center gap-0.5 p-1.5 text-gray-400 hover:text-gray-900 transition-colors">
-                                    <MapPin className="w-5 h-5" />
-                                    <span className="text-[9px] font-bold">지도</span>
-                                </button>
-                                <button 
-                                    onClick={() => setView('INPUT')} 
-                                    className={`flex flex-col items-center gap-0.5 p-1.5 transition-colors ${view !== 'FACILITIES' ? 'text-gray-900 font-bold' : 'text-gray-400 hover:text-gray-900'}`}
-                                >
-                                    <Coins className="w-5 h-5" />
-                                    <span className="text-[9px] font-bold">엽전도시락</span>
-                                </button>
-                                <button 
-                                    onClick={() => setView('FACILITIES')} 
-                                    className={`flex flex-col items-center gap-0.5 p-1.5 transition-colors ${view === 'FACILITIES' ? 'text-gray-900 font-bold' : 'text-gray-400 hover:text-gray-900'}`}
-                                >
-                                    <Users className="w-5 h-5" />
-                                    <span className="text-[9px] font-bold">편의시설</span>
-                                </button>
-                            </div>
-                        </nav>
-                    </div>
-                </div>
+                <Layout
+                    step={step}
+                    totalSteps={TOTAL_STEPS}
+                    title={step === Step.LANDING ? t.title : undefined}
+                    showProgress={step !== Step.LANDING && step !== Step.RECOMMENDATION && mainTab === 'HOME'}
+                    lang={lang}
+                    setLang={setLang}
+                    onBack={handleBack}
+                    showBackButton={step > Step.LANDING && step < Step.RECOMMENDATION && mainTab === 'HOME'}
+                    mainTab={mainTab}
+                    switchTab={switchTab}
+                >
+                    {mainTab === 'STORES' && (
+                        <RenderStoresView stores={storeList} onNavigate={switchTab} onOpenStoreDetail={setSelectedStore} t={t} />
+                    )}
+                    {(mainTab === 'YEOPJEON' || mainTab === 'FACILITIES') && (
+                        <RenderMarketsView initialSubView={mainTab === 'FACILITIES' ? 'FACILITIES' : 'INPUT'} onNavigate={switchTab} onOpenStoreDetail={setSelectedStore} t={t} stores={storeList} />
+                    )}
+                    {mainTab === 'HOME' && (
+                        <>
+                            {step === Step.LANDING && renderLanding()}
+                            {step === Step.PURPOSE && renderStep1()}
+                            {step === Step.COMPANION && renderStep2()}
+                            {step === Step.INTEREST && renderStep3()}
+                            {step === Step.PREFERENCE && renderStep4()}
+                            {step === Step.RECOMMENDATION && renderRecommendation()}
+                        </>
+                    )}
+                    <GuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} lang={lang} setLang={setLang} />
+                    <StoreDetailModal store={selectedStore} onClose={() => setSelectedStore(null)} />
+                </Layout>
             );
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
+
 </body>
 
 </html>
