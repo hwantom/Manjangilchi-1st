@@ -2,5 +2,10 @@
   command = "node generate-config.js"
   publish = "."
 
+[build.environment]
+  # generate-config.js writes these into the public config.js on purpose: the browser needs them for the map
+  # and the sheet CSV (the Maps key is protected by its HTTP referrer restriction). Real secrets are not listed.
+  SECRETS_SCAN_OMIT_KEYS = "GOOGLE_MAPS_API_KEY,MAP_ID,SHEET_ID"
+
 [functions]
   directory = "netlify/functions"

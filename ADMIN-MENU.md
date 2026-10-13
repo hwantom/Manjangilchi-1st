@@ -19,7 +19,7 @@ Netlify 프로젝트: `manjang-menu-admin` (hwantom 팀). 고객용 사이트와
 | `GEMINI_API_KEY` | 사진 인식용 Google Gemini API 키. 로컬에서는 기존 .env의 값을 사용 |
 | `GEMINI_OCR_MODEL` | 선택. 기본값 `gemini-3.1-flash-lite`. 이미지 입력과 JSON 구조화 출력을 지원하는 Gemini 모델 ID |
 | `GEMINI_OCR_FALLBACK_MODEL` | 선택. 기본값 `gemini-3.5-flash-lite`. 모델 사용 불가·서버 오류·연결 실패 시 한 번 전환합니다. 인증·사용량 한도 오류나 검토가 필요한 인식 결과에는 재요청하지 않습니다. 두 요청은 총 55초 이내로 제한합니다. |
-| `SHEET_ID` | `1g2rEV5btOLXMNJJ0HDNCyY6MWQG60rIAnofpWsBqksI` |
+| `SHEET_ID` | `(Google Sheet ID)` |
 | `SHEET_TAB` | `시트1` (기본값) |
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | Google 서비스 계정 JSON 키의 전체 내용. 서버 환경 변수에만 저장 |
 

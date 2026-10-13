@@ -23,14 +23,10 @@ exports.handler = async function (event, context) {
         return { statusCode: 400, body: JSON.stringify({ error: "Missing start or end coordinates." }) };
     }
 
-    // Use environment variable, fallback to client config if absolutely necessary (but Env Var is preferred for security)
-    let appKey = process.env.TMAP_APP_KEY;
-
-    // Fallback if local dev doesn't have it mapped correctly in process.env yet
+    // The key lives only in the TMAP_APP_KEY environment variable (Netlify UI or local .env).
+    const appKey = process.env.TMAP_APP_KEY;
     if (!appKey) {
-        appKey = 'h3kf9zsM5F8xTry3VPbgS7YLcR4xjmJ76juisX51';
-        // WARNING: Hardcoding here for testing as requested by the current user session setup. 
-        // Ideally, this is strictly kept in .env or Netlify UI.
+        return { statusCode: 500, body: JSON.stringify({ error: "TMAP_APP_KEY is not configured on the server." }) };
     }
 
     try {
