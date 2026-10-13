@@ -1,5 +1,7 @@
 # Netlify 배포 가이드
 
+관리자 메뉴판 사진 인식·시트 저장 기능 설정은 [ADMIN-MENU.md](ADMIN-MENU.md)를 참고하세요. 관리자 화면은 `/admin-menu.html`입니다.
+
 이 프로젝트는 정적 웹사이트이지만, 보안상 중요한 API 키(`config.js`)를 GitHub에 올리지 않도록 설정되어 있습니다. 따라서 Netlify 배포 시 환경 변수를 통해 `config.js`를 생성해주어야 합니다.
 
 ## 1. GitHub 업로드 준비

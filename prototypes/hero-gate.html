@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Hero Gate Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <style>
+        @font-face { font-family: 'Jandari'; src: url('../assets/HSJandari-Regular.ttf') format('truetype'); }
+        /* Per-mode art geometry (fractions of the 1024×1536 art): the day and night pictures are composed slightly differently. */
+        :root { --sky: #2EA6FD; --sign-top: 67%; --sign-h: 9.2%; --sign-inset: 20.5%; --sign-w: 27%; --rope: 12%; }
+        .night { --sky: #1D2562; --sign-top: 60.4%; --sign-h: 8.6%; --sign-inset: 18%; --sign-w: 26.5%; --rope: 14%; }
+        body { font-family: 'Pretendard', system-ui, sans-serif; background: #F1F5F9; }
+
+        /* Hero fills the first screen with the 2:3 illustration (1024×1536), see layoutScene: it covers the screen,
+           but only as far as the gate stays fully in view; any space left above is the same sky colour. */
+        .hero { position: relative; height: 100vh; height: 100dvh; min-height: 560px; overflow: hidden; background: var(--sky); transition: background-color .6s ease; }
+.scene { position: absolute; left: 50%; bottom: 0; width: 100%; transform: translateX(-50%); aspect-ratio: 2 / 3;
+            /* soften the picture's top edge into the extended sky (clouds touch that edge) */
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 7%); mask-image: linear-gradient(to bottom, transparent 0, #000 7%); }
+        .scene img.art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .6s ease; }
+        .scene .art-night { opacity: 0; }
+        .night .scene .art-night { opacity: 1; }
+        .hero::after { content: ''; position: absolute; inset: auto 0 0 0; height: 30%; pointer-events: none; z-index: 1;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.35) 55%, rgba(0, 0, 0, 0.75) 100%); }
+
+        /* Signboards hang from the beam painted in the art. Day: beam bottom at 65.9%, and the signs cover the blank
+           boards (x 21.5–29.8% / 70.3–78.6%, y 67–76%). Night: beam bottom at 59.2%, signs clear of the centre lantern
+           (x 45.7–53.5%). All positions are % of the scene so they track the art at any screen size. */
+        .sign { position: absolute; top: var(--sign-top); height: var(--sign-h); width: var(--sign-w); border-radius: 10px; border: 2.5px solid #4A3320;
+            box-shadow: 0 4px 0 #4A3320, 0 10px 18px rgba(0, 0, 0, 0.28); font-family: 'Jandari', sans-serif; font-size: 16px;
+            display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; z-index: 2; }
+        /* Ropes run from the sign up into the painted beam (gap = --rope of the sign's height, plus 9px of overlap
+           onto the beam) and end in a dark peg, so the sign reads as hung from the beam rather than floating. */
+        .sign::before, .sign::after { content: ''; position: absolute; top: calc(-1 * var(--rope) - 11px); height: calc(var(--rope) + 12px); width: 4px;
+            border-radius: 2px; background: linear-gradient(to bottom, #2B1D10 0 7px, #6B4A2B 7px 100%); box-shadow: 0 0 0 1px rgba(43, 29, 16, 0.35); }
+        .sign::before { left: 22%; } .sign::after { right: 22%; }
+        .sign:active { transform: translateY(2px); box-shadow: 0 2px 0 #4A3320, 0 6px 12px rgba(0, 0, 0, 0.25); }
+        .sign-left { left: var(--sign-inset); background: #5B3E22; color: #FFF3D6; }
+        .sign-right { right: var(--sign-inset); background: #FFF5DF; color: #3B2A18; }
+        .night .sign-right { box-shadow: 0 4px 0 #4A3320, 0 0 22px rgba(255, 214, 120, 0.55); }
+
+        /* Header and bottom tab bar stay out of the way on the first screen and appear once the page scrolls. */
+        .site-header { position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 28rem; z-index: 40;
+            transition: background-color .25s ease, box-shadow .25s ease, border-color .25s ease; background: transparent; border-bottom: 1px solid transparent; }
+        .site-header .brand-text { color: #111827; text-shadow: 0 0 6px rgba(255, 255, 255, 0.95), 0 0 2px rgba(255, 255, 255, 0.95); }
+        .site-header .globe { background: rgba(255, 255, 255, 0.85); box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12); color: #8B6B4A; }
+        .night .site-header:not(.scrolled) .brand-text { color: #FFF8E7; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
+        .night .site-header:not(.scrolled) .globe { background: rgba(255, 255, 255, 0.14); color: #FFF3D6; box-shadow: none; border: 1px solid rgba(255, 255, 255, 0.35); }
+        .night .site-header:not(.scrolled) .brand-logo { filter: invert(1) brightness(1.2); }
+        .site-header.scrolled { background: #fff; border-bottom-color: #F3F4F6; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04); }
+        .site-header.scrolled .brand-text { text-shadow: none; }
+        .site-header.scrolled .globe { background: transparent; box-shadow: none; }
+        .tabbar { transform: translate(-50%, 100%); transition: transform .3s ease; }
+        .tabbar.shown { transform: translate(-50%, 0); }
+
+        .scroll-cue { position: absolute; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 3; }
+        .scroll-cue svg { animation: cue 1.6s ease-in-out infinite; }
+        @keyframes cue { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+        @media (prefers-reduced-motion: reduce) { .scroll-cue svg { animation: none; } .scene img.art, .hero { transition: none; } }
+    </style>
+</head>
+<body>
+<div class="min-h-[100dvh] flex justify-center">
+    <div class="w-full max-w-md bg-[#FAFAFA] min-h-[100dvh] shadow-xl flex flex-col relative">
+
+        <header id="siteHeader" class="site-header px-6 pt-4 pb-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <img src="../assets/mjlogo.png" alt="만장일치 로고" class="brand-logo w-[1.2rem] h-auto">
+                <span class="brand-text text-[21px] leading-none mt-1" style="font-family: Jandari">만장일치</span>
+            </div>
+            <button class="globe w-9 h-9 rounded-full flex items-center justify-center" aria-label="언어 변경">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </button>
+        </header>
+
+        <section class="hero" aria-label="통인시장 입구">
+            <div class="scene">
+                <img class="art art-day" src="../assets/hero-gate-day.webp" alt="통인시장 입구 일러스트" draggable="false">
+                <img class="art art-night" src="../assets/hero-gate-night.webp" alt="" aria-hidden="true" draggable="false">
+                <a href="../map.html" class="sign sign-left">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        지도 보기
+                    </a>
+                    <a href="../markets.html" class="sign sign-right">
+                        <img src="../assets/yeopjeon-coin.webp" alt="" class="w-[18px] h-[18px]">
+                        엽전도시락
+                    </a>
+            </div>
+            <a href="#explore" class="scroll-cue w-10 h-10 flex items-center justify-center text-white/90" aria-label="아래로 둘러보기">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+            </a>
+        </section>
+
+        <section id="explore" class="px-6 pt-6 pb-8 bg-[#FAFAFA] space-y-4 scroll-mt-16">
+            <div class="text-center space-y-1">
+                <h3 class="text-lg font-extrabold text-gray-900 tracking-tight">통인시장 둘러보기</h3>
+                <div class="w-6 h-0.5 bg-[#A68A64]/40 mx-auto"></div>
+            </div>
+            <div class="w-full bg-white rounded-2xl shadow-md border border-gray-200/90 px-4 py-3 flex items-center gap-3">
+                <svg class="w-5 h-5 text-[#A68A64]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <span class="text-xs font-medium text-gray-400">어떤 먹거리나 점포를 찾으세요?</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="h-24 rounded-2xl bg-white border border-[#EFE8DC] flex items-center justify-center text-sm font-bold">대표 먹거리</div>
+                <div class="h-24 rounded-2xl bg-white border border-[#EFE8DC] flex items-center justify-center text-sm font-bold">주차 / 편의시설</div>
+                <div class="h-24 rounded-2xl bg-white border border-[#EFE8DC] flex items-center justify-center text-sm font-bold">오시는 길 · 지도</div>
+                <div class="h-24 rounded-2xl bg-white border border-[#EFE8DC] flex items-center justify-center text-sm font-bold">엽전 이용법</div>
+            </div>
+        </section>
+        <div class="h-2.5 bg-gray-100/90"></div>
+        <section class="px-6 py-8 bg-white space-y-3 pb-28">
+            <h3 class="text-lg font-extrabold text-gray-900">매장</h3>
+            <div class="flex gap-3 overflow-hidden">
+                <div class="w-36 h-44 shrink-0 rounded-2xl bg-gray-100"></div>
+                <div class="w-36 h-44 shrink-0 rounded-2xl bg-gray-100"></div>
+                <div class="w-36 h-44 shrink-0 rounded-2xl bg-gray-100"></div>
+            </div>
+            <div class="flex justify-center gap-2 pt-4" role="group" aria-label="시간대 미리보기">
+                <button data-mode="auto" class="mode-btn px-4 py-2 rounded-full text-xs font-bold border">자동</button>
+                <button data-mode="day" class="mode-btn px-4 py-2 rounded-full text-xs font-bold border">☀️ 낮</button>
+                <button data-mode="night" class="mode-btn px-4 py-2 rounded-full text-xs font-bold border">🌙 밤</button>
+            </div>
+            <p class="text-[11px] text-gray-400 pt-2 text-center">자동은 기기의 다크 모드 설정을 따릅니다 · 프로토타입 · 실제 홈 화면은 바뀌지 않았어요</p>
+        </section>
+
+        <nav id="tabbar" class="tabbar fixed bottom-0 left-1/2 w-full max-w-md bg-white border-t border-gray-100 flex justify-around py-2 text-[10px] font-bold text-gray-400 z-40">
+            <span class="text-[#A68A64]">홈</span><span>매장</span><span>지도</span><span>엽전도시락</span><span>편의시설</span>
+        </nav>
+    </div>
+</div>
+<script>
+    // Day/night: follows the device's dark mode unless a mode is picked (?mode=day|night or the buttons below).
+    const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    let mode = new URLSearchParams(location.search).get('mode') || 'auto';
+    const applyMode = () => {
+        const night = mode === 'night' || (mode === 'auto' && darkQuery.matches);
+        document.body.classList.toggle('night', night);
+        window.dispatchEvent(new Event('hero-mode')); // day and night art have different geometry
+        document.querySelectorAll('.mode-btn').forEach(b => {
+            const on = b.dataset.mode === mode;
+            b.className = 'mode-btn px-4 py-2 rounded-full text-xs font-bold border ' + (on ? 'bg-[#A68A64] text-white border-[#A68A64]' : 'bg-white text-gray-600 border-gray-200');
+        });
+    };
+    darkQuery.addEventListener('change', applyMode);
+    document.querySelectorAll('.mode-btn').forEach(b => b.onclick = () => { mode = b.dataset.mode; applyMode(); });
+    applyMode();
+
+    // Size the art: cover the screen, but never so large that the gate (key x-range) is cut at the sides, and keep
+    // the top of the arch below the header. If the art ends up shorter than the screen, the hero shrinks to the
+    // art's height (picture starts at the very top, the next section peeks in below); if taller, the bottom (crowd)
+    // is what gets cropped.
+    const hero = document.querySelector('.hero'), scene = document.querySelector('.scene');
+    const ART_W = 1024, ART_H = 1536;
+    const GEOMETRY = { day: { keyX: [0.10, 0.90], archTop: 0.20 }, night: { keyX: [0.13, 0.86], archTop: 0.155 } };
+    const layoutScene = () => {
+        const g = GEOMETRY[document.body.classList.contains('night') ? 'night' : 'day'];
+        const W = hero.clientWidth, headerH = document.getElementById('siteHeader').offsetHeight;
+        const viewH = Math.max(560, window.innerHeight);
+        const cover = Math.max(W / ART_W, viewH / ART_H);
+        const keyFit = W / ((g.keyX[1] - g.keyX[0]) * ART_W);
+        const k = Math.min(cover, keyFit);
+        const w = ART_W * k, h = ART_H * k;
+        const H = Math.min(viewH, h);
+        hero.style.height = H + 'px';
+        let top = H - h;
+        if (top + g.archTop * h < headerH + 6) top = headerH + 6 - g.archTop * h;
+        Object.assign(scene.style, { width: w + 'px', height: h + 'px', top: top + 'px', bottom: 'auto' });
+    };
+    new ResizeObserver(layoutScene).observe(hero.parentElement);
+    window.addEventListener('resize', layoutScene);
+    window.addEventListener('hero-mode', layoutScene);
+    layoutScene();
+
+    const header = document.getElementById('siteHeader');
+    const tabbar = document.getElementById('tabbar');
+    const sync = () => {
+        const scrolled = window.scrollY > 8;
+        header.classList.toggle('scrolled', scrolled);
+        tabbar.classList.toggle('shown', scrolled);
+    };
+    window.addEventListener('scroll', sync, { passive: true });
+    sync();
+    document.querySelector('.scroll-cue').addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById('explore').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+</script>
+</body>
+</html>

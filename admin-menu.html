@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+  <title>메뉴판 관리 · 만장일치</title>
+  <link rel="stylesheet" href="admin-menu.css">
+  <script src="admin-menu.js" defer></script>
+</head>
+<body>
+  <header><a class="brand" href="index.html">만장일치 <span>관리자</span></a><button id="logout" class="quiet" hidden>접속 종료</button></header>
+  <main>
+    <div class="intro"><p class="eyebrow">MENU STUDIO</p><h1>사진 한 장으로,<br>새로운 메뉴판.</h1><p>메뉴판을 올리고, 내용을 확인하면<br class="mobile"> 점포의 메뉴와 가격이 업데이트됩니다.</p></div>
+    <div id="status" role="status" aria-live="polite"></div>
+    <section id="login" class="card login">
+      <p class="step">관리자 접속</p><h2>메뉴 관리를 시작하세요</h2>
+      <p class="muted">관리자 접속 키는 이 화면이 열려 있는 동안에만 사용합니다.</p>
+      <form id="login-form"><label for="access-key">관리자 접속 키</label><div class="inline"><input id="access-key" type="password" autocomplete="off" required placeholder="접속 키를 입력해 주세요"><button class="primary" type="submit">접속하기</button></div></form>
+      <button id="demo" class="text-button">샘플로 화면 둘러보기 →</button>
+    </section>
+    <div id="workspace" hidden>
+      <div id="demo-banner" class="notice" hidden>샘플 체험 중입니다. 사진 인식과 시트 저장은 실행되지 않습니다.</div>
+      <div class="connection"><span class="dot"></span><span id="connection-text"></span></div>
+      <div class="layout">
+        <div class="source-column">
+          <section class="card"><p class="step">01 · 점포 선택</p><h2>어느 점포의 메뉴인가요?</h2><label for="store-search">점포 검색</label><input id="store-search" type="search" placeholder="점포명으로 검색"><label for="store-select">저장할 점포</label><select id="store-select"><option value="">점포를 선택해 주세요</option></select><p class="muted small">선택한 점포의 기존 메뉴 전체를 검토한 목록으로 교체합니다.</p></section>
+          <section class="card"><p class="step">02 · 메뉴판 사진</p><h2>글자가 선명한 사진을 올려 주세요</h2><label class="upload" for="photo"><span class="upload-icon">＋</span><strong>사진 촬영 또는 파일 선택</strong><span>JPG · PNG · WebP / 한 번에 한 장</span><input id="photo" type="file" accept="image/jpeg,image/png,image/webp"></label><p class="muted small">인식할 때 사진이 Google Gemini로 전송됩니다. 사진은 이 프로그램의 별도 보관함에 저장하지 않습니다.</p><div id="preview-wrap" hidden><img id="preview" alt="업로드한 메뉴판"><p id="photo-name" class="muted small"></p></div><div id="sample-photo" hidden><p class="eyebrow">체험용 메뉴판</p><h3>자미당</h3><p>꽈배기 3개 <b>2,500원</b></p><p>찹쌀도너츠 3개 <b>2,500원</b></p><p>팥도너츠 <b>2,000원</b></p><p>핫도그 <b>2,000원</b></p><p>치즈핫도그 <b>2,500원</b></p></div><button id="extract" class="primary full" disabled>메뉴·가격 인식하기</button><p class="muted small">여러 장이면 결과에 추가할 수 있습니다. 겹치는 메뉴는 저장 전에 정리해 주세요.</p></section>
+        </div>
+        <section class="card review"><div class="review-heading"><div><p class="step">03 · 확인 후 저장</p><h2>메뉴와 가격을 확인하세요</h2></div><span id="count" class="badge">0개 메뉴</span></div><p class="muted">사진과 비교해 오탈자, 수량, 크기, 가격을 수정해 주세요.</p>
+          <div id="warnings" class="notice" hidden></div>
+          <div id="empty" class="empty"><span>≡</span><h3>인식한 메뉴가 여기에 나타납니다</h3><p>점포와 사진을 선택한 다음<br>메뉴·가격 인식하기를 눌러 주세요.</p></div>
+          <div id="rows" aria-label="검토할 메뉴 목록"></div><button id="add" class="outline full">＋ 메뉴 직접 추가</button>
+          <details id="existing"><summary>현재 시트 내용과 비교</summary><div class="existing-grid"><div><label for="old-menu">현재 메뉴</label><textarea id="old-menu" readonly rows="6"></textarea></div><div><label for="old-price">현재 가격</label><textarea id="old-price" readonly rows="6"></textarea></div></div><button id="refresh" class="text-button">현재 시트 다시 읽기</button><p class="muted small">검토 중인 목록은 유지하고 비교할 원본만 갱신합니다.</p></details>
+          <div class="save-area"><label class="check"><input id="reviewed" type="checkbox"><span><b id="target-name">선택한 점포</b>의 메뉴명·가격을 확인했으며, 기존 메뉴 전체를 위 목록으로 교체합니다.</span></label><button id="save" class="primary full" disabled>확인한 메뉴를 구글 시트에 저장</button><p class="muted small">메뉴와 가격만 변경합니다. 다른 점포 정보와 엽전도시락 가격은 변경하지 않습니다.</p></div>
+        </section>
+      </div>
+    </div>
+    <footer>만장일치 · 통인시장 메뉴 관리</footer>
+  </main>
+</body>
+</html>

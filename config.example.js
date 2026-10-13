@@ -1,7 +1,5 @@
 const AppConfig = {
     GOOGLE_MAPS_API_KEY: "YOUR_GOOGLE_MAPS_API_KEY",
     MAP_ID: "YOUR_MAP_ID",
-    OPENAI_API_KEY: "",
-    OPENAI_MODEL: "gpt-5.5",
     SHEET_ID: "YOUR_GOOGLE_SHEET_ID"
 };

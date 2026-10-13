@@ -1,7 +1,10 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+// Node 22+; values already set by the host take precedence.
+if (typeof process.loadEnvFile === 'function' && fs.existsSync(path.join(__dirname, '.env'))) process.loadEnvFile(path.join(__dirname, '.env'));
 const recommendFunction = require('./netlify/functions/recommend.js');
+const adminMenuFunction = require('./netlify/functions/admin-menu.js');
 
 const root = __dirname;
 const port = Number(process.env.PORT || 8000);
@@ -29,7 +32,7 @@ const readBody = (req) => new Promise((resolve, reject) => {
     let body = '';
     req.on('data', (chunk) => {
         body += chunk;
-        if (body.length > 1024 * 1024) {
+        if (Buffer.byteLength(body) > 4_500_000) {
             req.destroy();
             reject(new Error('Request body too large'));
         }
@@ -38,10 +41,10 @@ const readBody = (req) => new Promise((resolve, reject) => {
     req.on('error', reject);
 });
 
-const handleFunction = async (req, res) => {
+const handleFunction = async (req, res, fn) => {
     try {
         const body = await readBody(req);
-        const result = await recommendFunction.handler({
+        const result = await fn.handler({
             httpMethod: req.method,
             headers: req.headers,
             body
@@ -56,11 +59,20 @@ const handleFunction = async (req, res) => {
 
 const handleStatic = (req, res) => {
     const url = new URL(req.url, `http://127.0.0.1:${port}`);
-    let pathname = decodeURIComponent(url.pathname);
+    let pathname;
+    try { pathname = decodeURIComponent(url.pathname); }
+    catch { sendText(res, 400, 'Bad request'); return; }
     if (pathname === '/') pathname = '/index.html';
+    // Mirrors _redirects: /shop/* -> /map.html
+    if (pathname.startsWith('/shop/')) pathname = '/map.html';
+
+    // Never expose local credentials, repository internals, or server source as static files.
+    if (pathname.split(/[\\/]/).some(part => part.startsWith('.') || /^(netlify|node_modules)$/i.test(part)) || /\.(?:env|pem|key|log|local)$/i.test(pathname)) {
+        sendText(res, 403, 'Forbidden'); return;
+    }
 
     let filePath = path.normalize(path.join(root, pathname));
-    if (!filePath.startsWith(root)) {
+    if (filePath !== root && !filePath.startsWith(root + path.sep)) {
         sendText(res, 403, 'Forbidden');
         return;
     }
@@ -88,9 +100,33 @@ const handleStatic = (req, res) => {
     });
 };
 
+// Stand-in for Netlify Forms: the "정보 수정 요청" dialog posts form-name=correction to "/".
+const CORRECTIONS_FILE = path.join(root, 'correction-requests.jsonl.local');
+const handleFormPost = async (req, res) => {
+    try {
+        const fields = Object.fromEntries(new URLSearchParams(await readBody(req)));
+        if (fields['form-name'] !== 'correction') { sendText(res, 404, 'Unknown form'); return; }
+        if (fields['bot-field']) { sendText(res, 200, 'OK'); return; }
+        const { target = '', page = '', lang = '', field = '', message = '', contact = '' } = fields;
+        if (!message.trim()) { sendText(res, 400, 'message is required'); return; }
+        const entry = { receivedAt: new Date().toISOString(), target, page, lang, field, message: message.slice(0, 1000), contact: contact.slice(0, 100) };
+        fs.appendFileSync(CORRECTIONS_FILE, JSON.stringify(entry) + '\n');
+        console.log('정보 수정 요청:', target, '-', field);
+        sendText(res, 200, 'OK');
+    } catch (error) {
+        sendText(res, 500, error.message || 'Form error');
+    }
+};
+
 const server = http.createServer((req, res) => {
-    if (req.url.startsWith('/.netlify/functions/recommend')) {
-        handleFunction(req, res);
+    const pathname = new URL(req.url, `http://127.0.0.1:${port}`).pathname;
+    if (req.method === 'POST' && pathname === '/') {
+        handleFormPost(req, res);
+        return;
+    }
+    const fn = { '/.netlify/functions/recommend': recommendFunction, '/.netlify/functions/admin-menu': adminMenuFunction }[pathname];
+    if (fn) {
+        handleFunction(req, res, fn);
         return;
     }
 

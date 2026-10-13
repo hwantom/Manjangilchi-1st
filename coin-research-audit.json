@@ -1,0 +1,1229 @@
+{
+  "scope": "local CSV unique store names; public-source search, not current onsite verification",
+  "researchedAt": "2026-09-09",
+  "totalStores": 80,
+  "searchedStores": 80,
+  "currentOfficialMembershipVerificationComplete": false,
+  "records": [
+    {
+      "name": "자미당",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"자미당\" 엽전 도시락 가맹 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "2026-09-01 시장 방문글은 그날 엽전을 이용하지 않았다고 밝힘. 꽈배기 현금가를 엽전 가격으로 사용하지 않음.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "고기백화점",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"고기백화점\" 엽전 도시락 가맹 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "서촌로또방",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"서촌로또방\" 엽전 도시락 가맹 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "용인야채가게",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"용인야채가게\" 엽전 도시락 가맹 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "삼화식당",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"삼화식당\" 엽전 도시락 가맹 가격"
+      ],
+      "status": "historical-nonparticipation-report",
+      "currentMembership": "unverified",
+      "note": "2015-03-11 현장 취재에 엽전을 받지 않는 집으로 명시. 11년 전 기록이므로 현재 비가맹으로 확정하지 않음.",
+      "evidence": [
+        {
+          "sourceUrl": "https://www.khan.co.kr/article/201503112143435/amp",
+          "sourceDate": "2015-03-11",
+          "dateMeaning": "게시일 (방문일과 다를 수 있음)",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": []
+    },
+    {
+      "name": "개화플로이죵",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"개화플로이죵\" 엽전 도시락 가맹 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "우리상회",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"우리상회\" 엽전 도시락 가맹 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "참괜찬소",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"참괜찬소\" 엽전 도시락 가맹 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "곰손카페",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"곰손카페\" 엽전 도시락 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "뜻밖의 조작가",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"뜻밖의 조작가\" 엽전 도시락 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "부여떡방앗간",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"부여떡방앗간\" 엽전 도시락 가격"
+      ],
+      "status": "historical-alias-unverified",
+      "currentMembership": "unverified",
+      "note": "2014년 가맹 명단에 부여방앗간. 현재 상호와 동일 점포인지 및 현재 가맹 여부 미확인. 당근 점포소개에는 상품권만 확인.",
+      "evidence": [
+        {
+          "sourceUrl": "https://bomfamily.tistory.com/32",
+          "sourceDate": "2014-03-10",
+          "dateMeaning": "게시일 (방문일과 다를 수 있음)",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": []
+    },
+    {
+      "name": "서촌와인상점",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"서촌와인상점\" 엽전 도시락 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "싱싱과일나라",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"싱싱과일나라\" 엽전 도시락 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "불란집",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"불란집\" 엽전 도시락 가격"
+      ],
+      "status": "quoted-payment-report",
+      "currentMembership": "unverified",
+      "note": "방문기 인용에서 떡볶이 4냥과 가맹 표지 언급. 인용 페이지에 2025-02-06 표시가 있으나 원문 날짜 및 주소(18/23) 차이 확인 필요.",
+      "evidence": [
+        {
+          "sourceUrl": "https://www.diningcode.com/profile.php?rid=VvkFXWMu9bPh",
+          "sourceDate": null,
+          "dateMeaning": "원문 게시일 미확인",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": [
+        {
+          "name": "떡볶이",
+          "coins": 4,
+          "portion": "맛보기 도시락 분량 · 중량 미기재",
+          "planningEligible": false,
+          "reason": "원문 날짜·주소 대조 필요"
+        }
+      ]
+    },
+    {
+      "name": "코코로레시피",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"코코로레시피\" 엽전 도시락 가격"
+      ],
+      "status": "acceptance-reported-price-unverified",
+      "currentMembership": "unverified",
+      "note": "상손의법칙 방문기 인용에 엽전·현금·카드 모두 가능 언급. 메뉴별 엽전 개수 미확인. 옛 주소와 새 주소 연결도 점검 필요.",
+      "evidence": [
+        {
+          "sourceUrl": "https://www.diningcode.com/profile.php?rid=J4QQ5NLUSXja",
+          "sourceDate": null,
+          "dateMeaning": "원문 게시일 미확인",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": []
+    },
+    {
+      "name": "중앙전주반찬",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"중앙전주반찬\" 엽전 도시락 가격"
+      ],
+      "status": "historical-payment-report",
+      "currentMembership": "unverified",
+      "note": "2024-08-17 직접 방문기: 잡채 4냥. 맛탕은 통상 4냥이라고 설명하나 잔여 1냥에 제공받은 특별 사례. 1냥을 정상 가격으로 쓰지 않음.",
+      "evidence": [
+        {
+          "sourceUrl": "https://bubumoney.com/서울-데이트-코스-통인시장-엽전-도시락으로-먹거리/",
+          "sourceDate": "2024-08-18",
+          "dateMeaning": "게시일 (방문일과 다를 수 있음)",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": [
+        {
+          "name": "잡채",
+          "coins": 4,
+          "portion": "도시락용 · 중량 미기재",
+          "planningEligible": false,
+          "reason": "2024년 기록"
+        },
+        {
+          "name": "맛탕",
+          "coins": 4,
+          "portion": "중량 미기재",
+          "planningEligible": false,
+          "reason": "통상가 전언; 실제 1냥 거래는 특별 제공"
+        }
+      ]
+    },
+    {
+      "name": "루루마켓",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"루루마켓\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "설야만두",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"설야만두\" 엽전 가격"
+      ],
+      "status": "historical-alias-unverified",
+      "currentMembership": "unverified",
+      "note": "2014년 가맹 명단의 설야 소문난 효자김밥과 현재 설야만두의 동일성 미확인. 2023년 서울시 소개 현금 가격을 엽전으로 환산하지 않음.",
+      "evidence": [
+        {
+          "sourceUrl": "https://bomfamily.tistory.com/32",
+          "sourceDate": "2014-03-10",
+          "dateMeaning": "게시일 (방문일과 다를 수 있음)",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": []
+    },
+    {
+      "name": "신앙촌상회",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"신앙촌상회\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "인왕산건강원",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"인왕산건강원\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "인타코 타코야끼",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"인타코 타코야끼\" 엽전 가격"
+      ],
+      "status": "identity-unverified-report",
+      "currentMembership": "unverified",
+      "note": "타지역 카페인타코 페이지에 통인시장 방문기가 잘못 연결되어 있음. 인용에 오리지널 2알+매콤 2알 6냥 언급. 원문 점포·날짜 검증 전에는 채택하지 않음.",
+      "evidence": [
+        {
+          "sourceUrl": "https://fms.purpleo.co.kr/view/42043",
+          "sourceDate": null,
+          "dateMeaning": "원문 게시일 미확인",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": [
+        {
+          "name": "타코야끼 (오리지널 2알+매콤 2알)",
+          "coins": 6,
+          "portion": "총 4알",
+          "planningEligible": false,
+          "reason": "타지역 점포 페이지에 수집된 인용; 원문 검증 필요"
+        }
+      ]
+    },
+    {
+      "name": "CHU CHU",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"CHU CHU\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "효자동닭꼬치",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"효자동닭꼬치\" 엽전 가격"
+      ],
+      "status": "dated-payment-report",
+      "currentMembership": "unverified",
+      "note": "2026-02-21 방문자의 와인치즈닭꼬치 결제 기록. 현금 판매분과 엽전 판매분의 양을 동일시하지 않음. 현재 공식 가격 보장 아님.",
+      "evidence": [
+        {
+          "sourceUrl": "https://row-sangsangin.tistory.com/6",
+          "sourceDate": "2026-02-26",
+          "dateMeaning": "게시일 (방문일과 다를 수 있음)",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": [
+        {
+          "name": "와인치즈닭꼬치",
+          "coins": 8,
+          "portion": "도시락용 1회 구매분",
+          "planningEligible": true,
+          "reason": "날짜 안내를 붙인 구성 연습만 허용"
+        }
+      ]
+    },
+    {
+      "name": "원조정할머니 기름떡볶이",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"원조정할머니 기름떡볶이\" 엽전 가격"
+      ],
+      "status": "dated-payment-report",
+      "currentMembership": "unverified",
+      "note": "전화 02-735-7289 점포. 2026-02-21 고추장맛 5개 직접 결제. 2024년 세트 16개 기록은 별도 과거 자료로 보관.",
+      "evidence": [
+        {
+          "sourceUrl": "https://row-sangsangin.tistory.com/6",
+          "sourceDate": "2026-02-26",
+          "dateMeaning": "게시일 (방문일과 다를 수 있음)",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": [
+        {
+          "name": "고추장맛 기름떡볶이",
+          "coins": 5,
+          "portion": "도시락용 1회 구매분",
+          "planningEligible": true,
+          "reason": "날짜 안내를 붙인 구성 연습만 허용"
+        },
+        {
+          "name": "고추장+간장 떡볶이+전 2개",
+          "coins": 16,
+          "portion": "세트",
+          "planningEligible": false,
+          "reason": "2024년 기록, 현재 조건 재확인 필요",
+          "sourceUrl": "https://bubumoney.com/서울-데이트-코스-통인시장-엽전-도시락으로-먹거리/",
+          "sourceDate": "2024-08-18"
+        }
+      ]
+    },
+    {
+      "name": "옛날통인감자탕",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"옛날통인감자탕\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "경복궁 떡 방앗간",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"경복궁 떡 방앗간\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "반찬하우스",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"반찬하우스\" 엽전 가격"
+      ],
+      "status": "historical-membership-report",
+      "currentMembership": "unverified",
+      "note": "2014년 이용기의 가맹점 명단에 상호 기재. 현재 가맹/메뉴별 수량 확인 근거로 사용할 수 없음.",
+      "evidence": [
+        {
+          "sourceUrl": "https://bomfamily.tistory.com/32",
+          "sourceDate": "2014-03-10",
+          "dateMeaning": "게시일 (방문일과 다를 수 있음)",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": []
+    },
+    {
+      "name": "우리동네",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"우리동네\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "동명이 많고 구절판 판매점과의 연결을 확인하지 못함. 상호를 추정하여 메뉴를 넣지 않음.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "원조할머니 기름떡볶이",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"원조할머니 기름떡볶이\" 엽전 가격"
+      ],
+      "status": "conflicting-price-reports",
+      "currentMembership": "unverified",
+      "note": "정할머니와 별도 점포. 날짜 미확인 방문기 인용은 기름/간장 각각 5개, 2025-03-08 글은 각각 4개. 사진으로 동일 매장 여부까지 재확인 전이므로 어느 쪽도 최신가로 확정하지 않음.",
+      "evidence": [
+        {
+          "sourceUrl": "https://www.diningcode.com/profile.php?rid=PytgRTe3Bf90",
+          "sourceDate": null,
+          "dateMeaning": "원문 게시일 미확인",
+          "accessedAt": "2026-09-09"
+        },
+        {
+          "sourceUrl": "https://www.a4b4.co.kr/m/78180",
+          "sourceDate": "2025-03-08",
+          "note": "상호 본문 4개, 매장사진 대조 미완료"
+        }
+      ],
+      "menuObservations": [
+        {
+          "name": "기름떡볶이",
+          "coins": 5,
+          "portion": "도시락용 · 중량 미기재",
+          "planningEligible": false,
+          "reason": "원문 날짜 미확인; 다른 글의 4개 기록과 상충"
+        },
+        {
+          "name": "간장떡볶이",
+          "coins": 5,
+          "portion": "도시락용 · 중량 미기재",
+          "planningEligible": false,
+          "reason": "원문 날짜 미확인; 다른 글의 4개 기록과 상충"
+        }
+      ]
+    },
+    {
+      "name": "체부동잔치집",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"체부동잔치집\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "점순이네반찬",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"점순이네반찬\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "띵굴마켓 김치 상품은 택배 판매가. 엽전도시락 가맹/소분 가격 근거 아님.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "효자떡집",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"효자떡집\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "반디수블",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"반디수블\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "하림생닭토종닭",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"하림생닭토종닭\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "육곳간축산물",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"육곳간축산물\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "여주상회",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"여주상회\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "호남상회",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"호남상회\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "개성상회",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"개성상회\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "상인 인터뷰의 시장 엽전 제도 소개는 해당 점포 엽전 결제 증거가 아님.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "푸른할인마트",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"푸른할인마트\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "송림정육점",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"송림정육점\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "푸른마트 청과코너",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"푸른마트 청과코너\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "푸른마트 야채코너",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"푸른마트 야채코너\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "송림사우나",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"송림사우나\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "피노키오 옷수선",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"피노키오 옷수선\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "서촌호떡",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"서촌호떡\" 엽전 가격"
+      ],
+      "status": "quoted-payment-report",
+      "currentMembership": "unverified",
+      "note": "방문기 인용에 씨앗호떡 4코인 표시. 인용 페이지에 2024-09-25 날짜가 있으나 원문 날짜 대조 전. 다른 호떡은 현금 가격만 확인되어 환산 금지.",
+      "evidence": [
+        {
+          "sourceUrl": "https://www.diningcode.com/profile.php?rid=mNZfBwQKUUfq",
+          "sourceDate": null,
+          "dateMeaning": "원문 게시일 미확인",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": [
+        {
+          "name": "씨앗호떡",
+          "coins": 4,
+          "portion": "1개",
+          "planningEligible": false,
+          "reason": "원문 날짜 미확인, 오래된 기록 가능"
+        }
+      ]
+    },
+    {
+      "name": "엄마손반찬",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"엄마손반찬\" 엽전 가격"
+      ],
+      "status": "historical-membership-report",
+      "currentMembership": "unverified",
+      "note": "2014년 이용기 가맹 명단에 상호 기재. 현재 공식 카카오채널은 점포 존재를 뒷받침하나 현재 엽전 가격까지 확인되지 않음.",
+      "evidence": [
+        {
+          "sourceUrl": "https://bomfamily.tistory.com/32",
+          "sourceDate": "2014-03-10",
+          "dateMeaning": "게시일 (방문일과 다를 수 있음)",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": []
+    },
+    {
+      "name": "정금이네 모두의 분식",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"정금이네 모두의 분식\" 엽전 가격"
+      ],
+      "status": "identity-unverified-report",
+      "currentMembership": "unverified",
+      "note": "정금이네김밥 2025-06-22 방문기 인용에 엽전도시락 이용. 현재 상호 연결과 메뉴별 수량 미확인.",
+      "evidence": [
+        {
+          "sourceUrl": "https://www.diningcode.com/profile.php?rid=zNzTUmFZVHe1",
+          "sourceDate": "2025-06-22",
+          "dateMeaning": "게시일 (방문일과 다를 수 있음)",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": []
+    },
+    {
+      "name": "명방앗간",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"명방앗간\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "충남방앗간",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"충남방앗간\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "우리농산물유통",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"우리농산물유통\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "서울수산물회센타",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"서울수산물회센타\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "서울수산물회센터 표기도 대조. 점포 소개 외 메뉴별 엽전 근거 미확보.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "체크인첸킨",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"체크인첸킨\" 엽전 가격"
+      ],
+      "status": "nonparticipation-reported-unverified",
+      "currentMembership": "unverified",
+      "note": "첸킨 검색으로 확장. 외부 게시물에 엽전 불가 명시. 현재 상호 연결·원문 날짜·점포 공식 확인이 없어 비가맹 확정 대신 재확인 대상으로 분류.",
+      "evidence": [
+        {
+          "sourceUrl": "https://pandarank.net/contents/6923112b25ccbb0e6a796e1c",
+          "sourceDate": null,
+          "dateMeaning": "원문 게시일 미확인",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": []
+    },
+    {
+      "name": "통인초록",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"통인초록\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "시장 소개 및 영상에 상호가 등장하지만 엽전 결제·개수 직접 근거 미확보.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "통인다방",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"통인다방\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "공식 방문 보도에 유자차 구매가 나오지만 엽전 사용 근거는 아님.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "티각태각",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"티각태각\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "온누리 가맹 목록은 있으나 엽전 사용 증거와 구별함.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "서촌의 진심",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"서촌의 진심\" 엽전 가격"
+      ],
+      "status": "historical-payment-report",
+      "currentMembership": "unverified",
+      "note": "2024-08-17 직접 방문기에서 식혜 구매와 엽전 4냥 명시. 구 서촌국수라는 상호 설명 있음. 현재 유지 여부 미확인.",
+      "evidence": [
+        {
+          "sourceUrl": "https://bubumoney.com/서울-데이트-코스-통인시장-엽전-도시락으로-먹거리/",
+          "sourceDate": "2024-08-18",
+          "dateMeaning": "게시일 (방문일과 다를 수 있음)",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": [
+        {
+          "name": "식혜",
+          "coins": 4,
+          "portion": "1회 구매분 · 용량 미기재",
+          "planningEligible": false,
+          "reason": "2024년 기록"
+        }
+      ]
+    },
+    {
+      "name": "이레해물칼국수",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"이레해물칼국수\" 엽전 가격"
+      ],
+      "status": "context-only",
+      "currentMembership": "unverified",
+      "note": "2022년 기사에서 엽전 물가를 언급하지만 해당 가게의 특정 메뉴·분량·가격으로 연결할 수 없어 미채택.",
+      "evidence": [
+        {
+          "sourceUrl": "https://www.viva100.com/20220901010000388",
+          "sourceDate": "2022-09-01",
+          "dateMeaning": "게시일 (방문일과 다를 수 있음)",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": []
+    },
+    {
+      "name": "BYC",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"BYC\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "손맛김밥",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"손맛김밥\" 엽전 가격"
+      ],
+      "status": "quoted-payment-report",
+      "currentMembership": "unverified",
+      "note": "뭉망뭉 방문기 인용에서 꼬마김밥 2줄 3개 결제. 2017년 경향신문에도 엽전도시락 제공 확인. 최신 원문 날짜 미확인.",
+      "evidence": [
+        {
+          "sourceUrl": "https://www.diningcode.com/profile.php?rid=9aC9T1pcBKQh",
+          "sourceDate": null,
+          "dateMeaning": "원문 게시일 미확인",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": [
+        {
+          "name": "기본 꼬마김밥",
+          "coins": 3,
+          "portion": "2줄",
+          "planningEligible": false,
+          "reason": "원문 날짜 미확인"
+        }
+      ]
+    },
+    {
+      "name": "박현순미용실",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"박현순미용실\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "도시락카페",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"도시락카페\" 엽전 가격"
+      ],
+      "status": "operator-confirmed-item-prices-unverified",
+      "currentMembership": "unverified",
+      "note": "공식 엽전도시락카페 채널 확인. 2014년 자료의 밥·국 현금가를 현재 엽전가로 환산하지 않음. 현재 메뉴별 개수 미확인.",
+      "evidence": [
+        {
+          "sourceUrl": "https://pf.kakao.com/_NUxhxhG",
+          "sourceDate": null,
+          "dateMeaning": "원문 게시일 미확인",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": []
+    },
+    {
+      "name": "도깨비한과강정",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"도깨비한과강정\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "현대식품",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"현대식품\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "알뜰옷수선전문점",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"알뜰옷수선전문점\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "서촌등대",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"서촌등대\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "검색되는 한옥 숙소 정보만으로 기존 시트의 엽전 가맹 표시를 뒷받침할 수 없음.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "신일참기름",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"신일참기름\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "소문난김구이",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"소문난김구이\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "효자365김밥",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"효자365김밥\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "상호 변형 검색에도 메뉴별 엽전 근거 미확보. 과거 소문난효자김밥과 임의로 합치지 않음.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "통인포차",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"통인포차\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "통인시장흑백사진관",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"통인시장흑백사진관\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "서촌주막",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"서촌주막\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "다듬이",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"다듬이\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "그릇∙혼수용품도소매",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"그릇∙혼수용품도소매\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "아빠김치찌개",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"아빠김치찌개\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "통인정",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"통인정\" 엽전 가격"
+      ],
+      "status": "acceptance-reported-price-unverified",
+      "currentMembership": "unverified",
+      "note": "외부 방문기 인용에 가맹점이라는 문구가 있으나 개별 엽전 메뉴·수량은 없음. 2026년 다른 글의 엽전 소분 언급은 효자동닭꼬치 부분이므로 통인정에 전용하지 않음.",
+      "evidence": [
+        {
+          "sourceUrl": "https://www.diningcode.com/profile.php?rid=s0WIcLnXq6Ba",
+          "sourceDate": null,
+          "dateMeaning": "원문 게시일 미확인",
+          "accessedAt": "2026-09-09"
+        }
+      ],
+      "menuObservations": []
+    },
+    {
+      "name": "나하나미용실",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"나하나미용실\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "보물창고",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"보물창고\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "효자청과마트",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"효자청과마트\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "효자지하생선",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"효자지하생선\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    },
+    {
+      "name": "현대정육점",
+      "checkedAt": "2026-09-09",
+      "searchQueries": [
+        "\"통인시장\" \"현대정육점\" 엽전 가격"
+      ],
+      "status": "no-public-evidence-found",
+      "currentMembership": "unverified",
+      "note": "점포명과 통인시장·엽전·가격을 조합하여 검색했으나 해당 점포의 엽전 결제와 메뉴별 수량을 뒷받침하는 자료를 확보하지 못했습니다. 비가맹 또는 가격 미공개 판정이 아닙니다.",
+      "evidence": [],
+      "menuObservations": []
+    }
+  ],
+  "limits": [
+    "공식 현행 전체 가맹명단과 모든 메뉴별 엽전 가격표는 확보하지 못함",
+    "폐업/이전/상호 변경 및 현장 가격 변동 가능",
+    "검색 결과 없음은 비가맹 또는 가격 미공개 증명이 아님",
+    "Google Sheet 및 배포 사이트 수정 없음"
+  ],
+  "unresolvedOutOfScopeStores": [
+    {
+      "name": "세종식당",
+      "sourceUrl": "https://bubumoney.com/서울-데이트-코스-통인시장-엽전-도시락으로-먹거리/",
+      "sourceDate": "2024-08-18",
+      "note": "2024-08-17 육전 1개 4냥, 삼색전 1개 3냥. 현 CSV 80곳과 상호 대응 미확인. 임의 점포 생성 안 함."
+    },
+    {
+      "name": "우리 전통쌈 구절판",
+      "sourceUrl": "https://www.a4b4.co.kr/m/78180",
+      "sourceDate": "2025-03-08",
+      "note": "기존 우리동네와 동일 점포 확인 전. 현금가를 엽전으로 환산하지 않음."
+    }
+  ]
+}

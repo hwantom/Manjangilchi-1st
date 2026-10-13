@@ -4,6 +4,8 @@
   "version": "1.0.0",
   "description": "A modern, interactive guide map for Tongin Market, as a single-file vanilla JS application.",
   "scripts": {
+    "dev": "node local-server.js",
+    "test:admin": "node --test test-admin-menu.cjs",
     "start": "echo \"Open index.html in your browser\"",
     "build:css": "tailwindcss -i input.css -o style.css",
     "watch:css": "tailwindcss -i input.css -o style.css --watch"

@@ -34,9 +34,37 @@
     <link rel="icon" type="image/png" href="assets/mjlogo.png" />
     <!-- External Resources -->
     <script src="config.js?v=4"></script>
+    <script src="menu-data.js"></script>
+    <script src="menu-utils.js"></script>
+    <script src="map-i18n.js"></script>
+    <script src="store-detail-utils.js"></script>
+    <script src="correction-request.js" defer></script>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     <link href="style.css" rel="stylesheet">
     <style>
+        /* Loading: the yeopjeon coin rolls in, keeps rolling while the map loads, and rolls out when it is ready.
+           The outer track moves sideways; the inner coin turns. 276px ≈ the coin's circumference (π × 88px),
+           so one full turn covers the slide distance and the coin doesn't look like it is skidding. */
+        .coin-loader { position: relative; width: 88px; height: 104px; }
+        .coin-loader__track { position: absolute; left: 0; top: 0; width: 88px; height: 88px;
+            animation: coin-slide-in 0.9s cubic-bezier(0.22, 0.9, 0.3, 1) both; }
+        .coin-loader__coin { width: 88px; height: 88px; display: block; user-select: none;
+            animation: coin-turn-in 0.9s cubic-bezier(0.22, 0.9, 0.3, 1) both, coin-spin 1.1s linear 0.9s infinite; }
+        .coin-loader__shadow { position: absolute; left: 14px; bottom: 0; width: 60px; height: 10px; border-radius: 50%;
+            background: rgba(120, 84, 20, 0.18); filter: blur(2px); animation: coin-shadow-in 0.9s cubic-bezier(0.22, 0.9, 0.3, 1) both; }
+        #loadingOverlay.is-leaving .coin-loader__track { animation: coin-slide-out 0.45s cubic-bezier(0.5, 0, 0.75, 0) forwards; }
+        #loadingOverlay.is-leaving .coin-loader__shadow { animation: coin-shadow-out 0.45s ease-in forwards; }
+        @keyframes coin-slide-in { from { transform: translateX(-276px); } to { transform: translateX(0); } }
+        @keyframes coin-turn-in { from { transform: rotate(-360deg); } to { transform: rotate(0deg); } }
+        @keyframes coin-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes coin-shadow-in { from { opacity: 0; transform: translateX(-276px) scaleX(0.6); } to { opacity: 1; transform: none; } }
+        @keyframes coin-slide-out { to { transform: translateX(276px); } }
+        @keyframes coin-shadow-out { to { opacity: 0; transform: translateX(276px) scaleX(0.6); } }
+        @media (prefers-reduced-motion: reduce) {
+            .coin-loader__track, .coin-loader__coin, .coin-loader__shadow,
+            #loadingOverlay.is-leaving .coin-loader__track, #loadingOverlay.is-leaving .coin-loader__shadow { animation: none; }
+        }
+
         /* 캐시 문제 우회 및 색상 강제 적용 */
         .nmap-marker.active::before {
             border: 4px solid #A68A64 !important;
@@ -87,10 +115,11 @@
     <!-- Loading Overlay -->
     <div id="loadingOverlay"
         class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-500">
-        <div class="relative w-24 h-24 mb-4">
-            <div class="absolute inset-0 border-4 border-gray-100 rounded-full"></div>
-            <div class="absolute inset-0 border-4 border-t-brand-main rounded-full animate-spin"></div>
-            <img src="assets/mjlogo.png" class="absolute inset-0 m-auto w-12 h-12 object-contain" alt="Loading..." />
+        <div class="coin-loader mb-4" role="img" aria-label="Loading...">
+            <div class="coin-loader__shadow"></div>
+            <div class="coin-loader__track">
+                <img src="assets/yeopjeon-coin.webp" class="coin-loader__coin" alt="" draggable="false" />
+            </div>
         </div>
         <p class="text-xs font-black text-gray-400 uppercase tracking-widest animate-pulse">Checking Ingredients...</p>
     </div>
@@ -207,6 +236,10 @@
                 ? `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv`
                 : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
             const MAP_CENTER = { lat: 37.58069307821511, lng: 126.96977251335169 };
+            // The 고객만족센터 restroom is inside this store; its label reads "도시락카페 | 🚻".
+            const RESTROOM_STORE = '도시락카페';
+            const markerLabelHtml = store => StoreMenus.escapeHTML(getStoreProp(store, 'name')) + (store.name === RESTROOM_STORE
+                ? '<span style="margin:0 6px;color:#D1D5DB">|</span><span role="img" aria-label="화장실">🚻</span>' : '');
             const CATEGORY_STYLES = {
                 '식당': { bg: 'bg-brand-food', icon: 'https://img.icons8.com/?size=100&id=59873&format=png&color=000000' },
                 '생활형': { bg: 'bg-brand-life', icon: 'https://img.icons8.com/?size=100&id=qbYyif5npmoi&format=png&color=000000' },
@@ -375,27 +408,7 @@
                         });
                 } catch (error) { console.error("Data fetch failed", error); }
             };
-            const parseCSV = (text) => {
-                if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
-                const rows = text.split('\n').filter(line => line.trim());
-                const parsedRows = rows.map(line => {
-                    const parts = []; let current = ''; let inQuote = false;
-                    for (let i = 0; i < line.length; i++) {
-                        const char = line[i];
-                        if (char === '"') { inQuote = !inQuote; continue; }
-                        if (char === ',' && !inQuote) { parts.push(current.trim()); current = ''; continue; }
-                        current += char;
-                    }
-                    parts.push(current.trim());
-                    return parts;
-                });
-                const header = parsedRows[0].map(h => h.replace(/\r/, '').trim());
-                return parsedRows.slice(1).map(row => {
-                    const obj = {};
-                    header.forEach((h, i) => { obj[h] = row[i]; });
-                    return obj;
-                });
-            };
+            const parseCSV = StoreMenus.parseCSV;
             const normalizeRow = (r) => {
                 const getVal = (row, keys) => {
                     for (const key of keys) {
@@ -419,6 +432,9 @@
                     hours: getVal(r, ['hours', '영업시간']), hours_en: getVal(r, ['hours_eng', 'hours_en']), hours_zh: getVal(r, ['hours_cn', 'hours_zh']), hours_ja: getVal(r, ['hours_jp', 'hours_ja']),
                     repre_image: getVal(r, ['repre_image', 'image']),
                     price: getVal(r, ['price', '가격']), price_en: getVal(r, ['price_eng', 'price_en']), price_zh: getVal(r, ['price_cn', 'price_zh']), price_ja: getVal(r, ['price_jp', 'price_ja']),
+                    sheetMenu: getVal(r, ['메뉴']),
+                        sheetPrice: getVal(r, ['가격']),
+                        menu: getVal(r, ['menu']),
                     coin: getVal(r, ['coin', '엽전']).toLowerCase() === 'o' ? 'o' : '',
                     lat: getVal(r, ['lat', '위도']), lng: getVal(r, ['lng', '경도']),
                     menuLink: getVal(r, ['menuLink']),
@@ -440,10 +456,13 @@
                 initGeolocation();
                 checkUrlParams();
 
-                // Hide loading overlay with a slight delay for smooth feel
+                // Hide loading overlay with a slight delay for smooth feel; the coin rolls out first.
                 setTimeout(() => {
-                    loadingOverlay.classList.add('opacity-0', 'pointer-events-none');
-                    setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
+                    loadingOverlay.classList.add('is-leaving');
+                    setTimeout(() => {
+                        loadingOverlay.classList.add('opacity-0', 'pointer-events-none');
+                        setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
+                    }, 300);
                 }, 800);
 
                 // Handle browser back button to close panels
@@ -458,7 +477,9 @@
                 return new Promise((resolve, reject) => {
                     if (window.google && window.google.maps) { resolve(); return; }
                     const script = document.createElement('script');
-                    script.src = `https://maps.googleapis.com/maps/api/js?key=${AppConfig.GOOGLE_MAPS_API_KEY}&libraries=marker&v=beta&map_ids=${AppConfig.MAP_ID}`;
+                    // Google's own map controls follow the saved language (set once per page load).
+                    const mapsLanguage = { ko: 'ko', en: 'en', zh: 'zh-CN', ja: 'ja' }[currentLang] || 'ko';
+                    script.src = `https://maps.googleapis.com/maps/api/js?key=${AppConfig.GOOGLE_MAPS_API_KEY}&libraries=marker&v=beta&map_ids=${AppConfig.MAP_ID}&language=${mapsLanguage}`;
                     script.async = true;
                     script.defer = true;
                     script.onload = resolve;
@@ -493,7 +514,15 @@
                     }
                 } else if (openName) {
                     const store = stores.find(s => s.name === openName);
-                    if (store) openDetailPanel(store);
+                    if (store) {
+                        openDetailPanel(store);
+                        // ?zoom=N (e.g. the 편의시설 restroom link) centers and zooms in on the store.
+                        const zoom = Number(params.get('zoom'));
+                        if (map && zoom && store.lat && store.lng) {
+                            map.panTo({ lat: parseFloat(store.lat), lng: parseFloat(store.lng) });
+                            map.setZoom(Math.min(22, zoom));
+                        }
+                    }
                 } else if (highlightNames) {
                     // Multiple shops to highlight
                     const names = highlightNames.split(',').map(n => n.trim());
@@ -598,6 +627,7 @@
                 searchInput.placeholder = UI_TRANSLATIONS[currentLang].searchPlaceholder;
                 const clearAllBtn = document.getElementById('clearAllFiltersBtn');
                 if(clearAllBtn) clearAllBtn.innerText = UI_TRANSLATIONS[currentLang].clearAllFilters;
+                MapI18n.translate(document.getElementById('globalNavBar'), currentLang);
             };
 
             const updateLocateBtnIcon = () => {
@@ -857,7 +887,7 @@
                     container.innerHTML = `
                     <div class="fav-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.5 3c1.373 0 2.652.55 3.585 1.516.933-.966 2.212-1.516 3.585-1.516 2.786 0 5.25 2.322 5.25 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001z"/></svg></div>
                     <div class="glyph-container"><div class="glyph" style="background-image: url('${CATEGORY_STYLES[store.category].icon}')"></div></div>
-                    <div class="shop-label ${labelClass}">${getStoreProp(store, 'name')}</div>
+                    <div class="shop-label ${labelClass}">${markerLabelHtml(store)}</div>
                 `;
 
                     const marker = new google.maps.marker.AdvancedMarkerElement({
@@ -1097,43 +1127,58 @@
                 });
             };
 
-            const updateMarkers = () => {
+            const setMarkerVisibility = (obj, visible, replay = false) => {
+                if (obj.filterVisible === visible && !replay) return;
+                obj.filterVisible = visible;
+                const version = obj.filterVersion = (obj.filterVersion || 0) + 1;
+                const el = obj.element;
+                const fromOpacity = obj.filterAnimation ? getComputedStyle(el).opacity : (obj.marker.map ? '1' : '0');
+                obj.filterAnimation?.cancel();
+                clearTimeout(obj.filterTimer);
+                el.style.pointerEvents = visible ? '' : 'none';
+                const finish = () => {
+                    if (obj.filterVersion !== version) return;
+                    clearTimeout(obj.filterTimer);
+                    obj.marker.map = visible ? map : null;
+                    obj.filterAnimation?.cancel();
+                    obj.filterAnimation = null;
+                    el.style.opacity = visible ? '1' : '0';
+                };
+                if (!el.animate || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+                    finish();
+                    return;
+                }
+                if (visible) obj.marker.map = map;
+                // Independent scale preserves the transform used for map zoom sizing.
+                obj.filterAnimation = el.animate(visible ? [
+                    {opacity: 0, scale: '0.35', offset: 0},
+                    {opacity: 1, scale: '1.16', offset: 0.65},
+                    {opacity: 1, scale: '0.96', offset: 0.85},
+                    {opacity: 1, scale: '1', offset: 1}
+                ] : [
+                    {opacity: fromOpacity, scale: '1'},
+                    {opacity: 0, scale: '0.65'}
+                ], {duration: visible ? 340 : 160, easing: 'ease-out', fill: 'both'});
+                obj.filterAnimation.onfinish = finish;
+                // Visibility still settles if the animation is interrupted by the browser.
+                obj.filterTimer = setTimeout(finish, visible ? 400 : 220);
+            };
+
+            const updateMarkers = (replayVisible = false) => {
                 const filteredStoreNames = getFilteredStoreNames();
 
-                // Show/Hide markers with animation
+                // Cancel stale transitions when filters change quickly.
                 markers.forEach((obj, name) => {
                     const store = stores.find(s => s.name === name);
                     const isVisible = filteredStoreNames.has(name);
                     const isSelected = selectedStore?.name === name;
                     const isFavorite = favorites.has(name);
-                    const wasVisible = obj.marker.map !== null;
-
-                    if (isVisible && !wasVisible) {
-                        // Appearing: add to map then pop-in
-                        obj.marker.map = map;
-                        obj.element.classList.remove('marker-hide');
-                        obj.element.classList.add('marker-show');
-                        // Remove animation class after it ends so the inline scale from updateMarkerSizes takes over
-                        obj.element.addEventListener('animationend', () => {
-                            obj.element.classList.remove('marker-show');
-                        }, { once: true });
-                    } else if (!isVisible && wasVisible) {
-                        // Disappearing: sink-out then remove from map
-                        obj.element.classList.remove('marker-show');
-                        obj.element.classList.add('marker-hide');
-                        const el = obj.element;
-                        const marker = obj.marker;
-                        const onEnd = () => {
-                            marker.map = null;
-                            el.classList.remove('marker-hide');
-                            el.removeEventListener('animationend', onEnd);
-                        };
-                        obj.element.addEventListener('animationend', onEnd, { once: true });
-                    }
+                    setMarkerVisibility(obj, isVisible, replayVisible && isVisible);
+                    obj.element.classList.remove('marker-hide', 'marker-show');
 
                     obj.element.classList.toggle('active', isSelected);
                     obj.element.classList.toggle('is-favorite', isFavorite);
-                    obj.label.innerText = getStoreProp(store, 'name');
+                    obj.label.innerHTML = markerLabelHtml(store);
                 });
 
                 if (map) {
@@ -1298,6 +1343,12 @@
                         if (cat) {
                             if (activeCategories.has(cat) && activeCategories.size === 1) {
                                 activeCategories.clear();
+                                // A second click restores the full initial store list.
+                                coinFilter = false;
+                                favoritesFilter = false;
+                                searchQuery = '';
+                                searchInput.value = '';
+                                clearSearchBtn.classList.add('hidden');
                             } else {
                                 activeCategories.clear();
                                 activeCategories.add(cat);
@@ -1308,18 +1359,9 @@
                             favoritesFilter = !favoritesFilter;
                         }
                         renderFilters();
-                        updateMarkers();
+                        updateMarkers(true);
 
-                        // Fit map bounds to filtered stores for smooth UX
-                        const filteredStoreNames = getFilteredStoreNames();
-                        if (cat && activeCategories.size > 0 && filteredStoreNames.size > 0 && map) {
-                            const matchingStores = stores.filter(s => filteredStoreNames.has(s.name));
-                            if (matchingStores.length > 0) {
-                                const bounds = new google.maps.LatLngBounds();
-                                matchingStores.forEach(s => bounds.extend({ lat: parseFloat(s.lat), lng: parseFloat(s.lng) }));
-                                map.fitBounds(bounds);
-                            }
-                        }
+                        // Filtering changes markers only; preserve center, zoom, heading and tilt.
                     };
                 });
             };
@@ -1607,17 +1649,8 @@
             
             let activeTab = 'home';
 
-            const getStorePhone = (name) => {
-                const phoneMap = {
-                    '자미당': '02-722-5532',
-                    '원조정할머니 기름떡볶이': '02-735-7789',
-                    '원조할머니 기름떡볶이': '02-725-4870',
-                    '효자동닭꼬치': '02-723-9288',
-                    '체부동잔치집': '02-730-5420',
-                    '뜻밖의 조작가': '02-722-1049'
-                };
-                return phoneMap[name] || '02-722-XXXX';
-            };
+            // Verified numbers live in store-detail-utils.js; '' means no 연락처 row.
+            const getStorePhone = (name) => StoreDetail.getStorePhone(name);
 
             const getStoreIntro = (store) => {
                 const name = getStoreProp(store, 'name');
@@ -1625,7 +1658,7 @@
                 const desc = getStoreProp(store, 'shortDesc') || '';
                 
                 if (name === '통인다방') {
-                    return "통인시장 한가운데 30년째 자리를 지켜온 다방. 옛 다방의 정취를 그대로 간직한 채, 직접 로스팅한 원두로 내리는 핸드드립과 옛날 쌍화차를 선보입니다. 사장님의 따뜻한 인심은 덤이에요.";
+                    return "통인시장 안의 로스터리 카페로, 윤경양품 통인다방이라는 이름으로도 알려져 있습니다. 커피와 차, 로스팅 원두를 판매합니다.";
                 }
                 if (name === '자미당') {
                     return "통인시장의 명물로 자리잡은 자미당. 겉은 바삭하고 속은 쫄깃한 명품 꽈배기와 찹쌀도너츠를 선보입니다. 매일 깨끗한 새 기름으로 정성껏 튀겨내어 식어도 맛있는 것이 비결이에요.";
@@ -1655,62 +1688,16 @@
                 }
             };
 
-            const getStoreMenuCards = (store) => {
-                const name = getStoreProp(store, 'name');
-                let item1 = { name: '대표 상품', desc: '이 상점의 인기 대표 메뉴', price: store.price || '시가', img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=200&q=80' };
-                let item2 = { name: '추천 상품', desc: '함께 곁들이기 좋은 메뉴', price: '가격 문의', img: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200&q=80' };
-                
-                if (name === '통인다방') {
-                    item1 = { name: '오늘의 커피', desc: '직접 로스팅한 원두로 내린 핸드드립', price: '2,500원', img: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200&q=80' };
-                    item2 = { name: '쌍화차', desc: '통인시장 30년 전통 레시피', price: '4,500원', img: 'https://images.unsplash.com/photo-1563822249548-9a72b6353cad?w=200&q=80' };
-                } else if (name === '자미당') {
-                    item1 = { name: '찹쌀꽈배기(3개)', desc: '옥수수 가루로 반죽해 더 고소하고 쫄깃한 대표 메뉴', price: '2,500원', img: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=200&q=80' };
-                    item2 = { name: '찹쌀도너츠(3개)', desc: '국산 찹쌀을 사용해 극강의 쫀득함을 자랑하는 도너츠', price: '2,500원', img: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=200&q=80' };
-                } else if (name === '원조정할머니 기름떡볶이' || name === '원조할머니 기름떡볶이') {
-                    item1 = { name: '고추장기름떡볶이', desc: '매콤달콤한 고추장 양념을 입혀 볶아낸 통인시장 명물', price: '5,000원', img: 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?w=200&q=80' };
-                    item2 = { name: '간장기름떡볶이', desc: '아이들도 먹기 좋은 짭조름하고 고소한 맛의 간장 떡볶이', price: '5,000원', img: 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=200&q=80' };
-                } else if (name === '효자동닭꼬치') {
-                    item1 = { name: '와인치즈닭꼬치', desc: '특제 와인소스에 고소한 치즈가 듬뿍 올라간 닭꼬치', price: '6,000원', img: 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=200&q=80' };
-                    item2 = { name: '소금구이닭꼬치', desc: '닭고기 본연의 담백한 맛을 느낄 수 있는 소금구이', price: '5,000원', img: 'https://images.unsplash.com/photo-1532636875304-0c8fe1197e14?w=200&q=80' };
-                } else if (name === '체부동잔치집') {
-                    item1 = { name: '잔치국수', desc: '진한 멸치 육수와 쫄깃한 소면의 조화가 예술인 국수', price: '4,000원', img: 'https://images.unsplash.com/photo-1616548315933-28f090d8a6ef?w=200&q=80' };
-                    item2 = { name: '들깨칼국수', desc: '들깨 가루를 아낌없이 넣어 고소하고 걸쭉한 웰빙 칼국수', price: '7,000원', img: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=200&q=80' };
-                }
-                
-                return `
-                    <div class="min-w-[145px] w-[145px] bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm flex flex-col shrink-0">
-                        <div class="h-28 bg-gray-200 w-full relative">
-                            <img src="${item1.img}" class="w-full h-full object-cover" onerror="this.src='${PLACEHOLDER_IMG}'" />
-                        </div>
-                        <div class="p-2.5 flex-1 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center gap-0.5 text-gray-800 font-bold text-[12.5px] mb-0.5">
-                                    ${store.coin === 'o' ? `<span class="inline-flex shrink-0 w-3.5 h-3.5 items-center justify-center rounded-full bg-[#FFFBEB] text-[#D97706] text-[8px] font-black border border-[#FEF3C7] shadow-sm">🪙</span>` : ''}
-                                    <span class="truncate">${item1.name}</span>
-                                </div>
-                                <p class="text-[10px] text-gray-400 line-clamp-2 mb-2 leading-tight">${item1.desc}</p>
-                            </div>
-                            <p class="text-[13px] font-black text-[#D97706]">${item1.price}</p>
-                        </div>
-                    </div>
-                    <div class="min-w-[145px] w-[145px] bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm flex flex-col shrink-0">
-                        <div class="h-28 bg-gray-200 w-full relative">
-                            <img src="${item2.img}" class="w-full h-full object-cover" onerror="this.src='${PLACEHOLDER_IMG}'" />
-                        </div>
-                        <div class="p-2.5 flex-1 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center gap-0.5 text-gray-800 font-bold text-[12.5px] mb-0.5">
-                                    ${store.coin === 'o' ? `<span class="inline-flex shrink-0 w-3.5 h-3.5 items-center justify-center rounded-full bg-[#FFFBEB] text-[#D97706] text-[8px] font-black border border-[#FEF3C7] shadow-sm">🪙</span>` : ''}
-                                    <span class="truncate">${item2.name}</span>
-                                </div>
-                                <p class="text-[10px] text-gray-400 line-clamp-2 mb-2 leading-tight">${item2.desc}</p>
-                            </div>
-                            <p class="text-[13px] font-black text-[#D97706]">${item2.price}</p>
-                        </div>
-                    </div>
-                `;
-            };
+            const getStoreMenuCards = (store) => StoreMenus.getItems(store).slice(0, 2).map(item => `
+                <div class="min-w-[145px] w-[145px] bg-white border border-gray-100 rounded-xl p-3 shrink-0">
+                    <div class="text-sm font-bold">${StoreMenus.escapeHTML(item.name)}</div>
+                    <p class="text-xs text-gray-500 my-2">${StoreMenus.escapeHTML(item.description)}</p>
+                    <p class="text-sm font-bold text-[#D97706]">${StoreMenus.escapeHTML(item.price)}</p>
+                </div>`).join('');
 
+const getStoreMenuItems = StoreMenus.getItems;
+
+            const translateDetailContent = element => MapI18n.translate(element, currentLang);
             const renderDetailPanel = () => {
                 if (!selectedStore) return;
                 const t = UI_TRANSLATIONS[currentLang];
@@ -1827,6 +1814,9 @@
                                 <!-- Tab Content -->
                                 <div id="tabContentContainer" class="flex-1 bg-white">
                                 </div>
+                                <div class="px-5 pb-8 text-center">
+                                    <button type="button" data-correction-target="${StoreMenus.escapeHTML(store.name)}" data-correction-page="지도 상세" class="text-xs font-bold text-gray-400 underline underline-offset-2 hover:text-gray-600">정보가 다른가요? 수정 요청하기</button>
+                                </div>
                             </div>
                         </div>
                         
@@ -1880,15 +1870,19 @@
                 const tabBtns = detailPanel.querySelectorAll('.tab-btn');
                 tabBtns.forEach(btn => {
                     btn.onclick = (e) => {
-                        activeTab = e.target.dataset.tab;
-                        renderDetailPanel(); // Re-render to update tab states and content
-                        // Restore expanded state and scroll to top of tabs
-                        sheetStage = 'EXPANDED';
-                        snapToStage('EXPANDED');
-                        const scrollContainer = detailPanel.querySelector('#sheetDetailBody');
-                        const imageArea = detailPanel.querySelector('#sheetImageArea');
-                        if (scrollContainer && imageArea) {
-                            scrollContainer.scrollTop = imageArea.offsetHeight; // Scroll past image so tabs stick to top
+                        const nextTab = btn.dataset.tab;
+                        if (nextTab === activeTab) return;
+                        const order = ['home', 'menu', 'info'];
+                        const direction = order.indexOf(nextTab) > order.indexOf(activeTab) ? 1 : -1;
+                        activeTab = nextTab;
+                        tabBtns.forEach(tab => { tab.className = tabClass(tab.dataset.tab) + ' flex-1 text-center'; });
+                        const content = detailPanel.querySelector('#tabContentContainer');
+                        content.getAnimations?.().forEach(animation => animation.cancel());
+                        content.innerHTML = renderTabContent(store, activeTab, t, keywords);
+                        translateDetailContent(content);
+                        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                            content.animate?.([{opacity: 0.4, transform: `translateX(${direction * 32}px)`},
+                                {opacity: 1, transform: 'translateX(0)'}], {duration: 230, easing: 'ease-out'});
                         }
                     };
                 });
@@ -1915,6 +1909,7 @@
                 }
 
                 setupBottomSheetEvents();
+                translateDetailContent(detailPanel);
                 // Initialize Stage
                 snapToStage(sheetStage);
             };
@@ -1929,12 +1924,9 @@
                                     <span class="text-base">✨</span>
                                     <span class="text-[14px] font-bold text-[#A78B71]">점포 이야기</span>
                                 </div>
-                                <p class="text-[13px] text-[#5C554F] leading-[1.6] mb-4">
-                                    ${getStoreIntro(store)}
+                                <p class="text-[13px] text-[#5C554F] leading-[1.6]">
+                                    ${currentLang === 'ko' ? getStoreIntro(store) : StoreMenus.escapeHTML(getStoreProp(store, 'shortDesc'))}
                                 </p>
-                                <a href="#" class="text-[12.5px] font-bold text-[#A78B71] hover:underline flex items-center gap-0.5">
-                                    더 알아보기 <svg class="w-3 h-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-                                </a>
                             </div>
 
                             <!-- Core Info (영업 시간, 사장님 픽, 위치, 연락처) -->
@@ -1956,7 +1948,7 @@
                                     <svg class="w-3.5 h-3.5 mt-0.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                     <div>
                                         <span class="text-[11px] font-bold text-gray-400 block mb-1">사장님 픽</span>
-                                        <span class="text-[13px] font-bold text-gray-800">${store.price ? store.price : '인기 메뉴 구성'}</span>
+                                        <span class="text-[13px] font-bold text-gray-800">${StoreMenus.escapeHTML(getStoreProp(store, 'price') || '인기 메뉴 구성')}</span>
                                     </div>
                                 </div>
                                 <!-- Row 3: 위치 -->
@@ -1967,14 +1959,15 @@
                                         <span class="text-[13px] text-gray-800 font-bold block leading-relaxed">통인시장 내 점포 · 서울 종로구 자하문로15길 18</span>
                                     </div>
                                 </div>
-                                <!-- Row 4: 연락처 -->
+                                <!-- Row 4: 연락처 (only when a verified number exists) -->
+                                ${getStorePhone(store.name) ? `
                                 <div class="flex gap-2.5">
                                     <svg class="w-3.5 h-3.5 mt-0.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                                     <div>
                                         <span class="text-[11px] font-bold text-gray-400 block mb-1">연락처</span>
-                                        <span class="text-[13px] font-bold text-gray-800">${getStorePhone(store.name)}</span>
+                                        <a href="tel:${getStorePhone(store.name).replace(/-/g, '')}" class="text-[13px] font-bold text-gray-800">${getStorePhone(store.name)}</a>
                                     </div>
-                                </div>
+                                </div>` : ''}
                             </div>
                             
                             <!-- Payment and Convenience (결제 · 편의) -->
@@ -2038,73 +2031,33 @@
                                                 🍱
                                             </div>
                                             <div>
-                                                <h4 class="text-[13px] font-bold text-gray-800">엽전도시락 카페</h4>
-                                                <p class="text-[11px] text-gray-400 font-medium">맛집</p>
+                                                <h4 class="text-[13px] font-bold text-gray-800">엽전도시락 카페 🚻</h4>
+                                                <p class="text-[11px] text-gray-400 font-medium">맛집 · 고객만족센터 화장실</p>
                                             </div>
                                         </div>
                                         <span class="text-[12px] font-bold text-gray-400">20m</span>
-                                    </div>
-                                    <!-- Facility 2 -->
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0 shadow-sm text-sm">
-                                                🚽
-                                            </div>
-                                            <div>
-                                                <h4 class="text-[13px] font-bold text-gray-800">통인시장 화장실</h4>
-                                                <p class="text-[11px] text-gray-400 font-medium">편의시설</p>
-                                            </div>
-                                        </div>
-                                        <span class="text-[12px] font-bold text-gray-400">35m</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     `;
                 } else if (tab === 'menu') {
+                    const menuItems = getStoreMenuItems(selectedStore);
                     return `
                         <div class="p-5 bg-white min-h-[400px]">
-                            <h3 class="font-bold text-gray-900 mb-4 text-sm">전체 메뉴 (4)</h3>
+                            <h3 class="font-bold text-gray-900 mb-4 text-sm">전체 메뉴 (${menuItems.length})</h3>
                             <div class="space-y-4">
-                                <!-- Menu Item Dummy 1 -->
-                                <div class="flex items-start justify-between border-b border-gray-100 pb-4">
-                                    <div class="flex-1 pr-4">
-                                        <div class="flex items-center gap-2 mb-1">
-                                            <h4 class="font-bold text-gray-900">오늘의 커피</h4>
-                                            <span class="px-1.5 py-0.5 bg-red-50 text-red-500 text-[10px] font-black rounded uppercase">Best</span>
+                                ${menuItems.map(item => `
+                                    <div class="flex items-start justify-between border-b border-gray-100 pb-4 gap-4">
+                                        <div class="min-w-0">
+                                            <h4 class="font-bold text-gray-900 mb-1">${StoreMenus.escapeHTML(item.name)}</h4>
+                                            ${item.description ? `<p class="text-xs text-gray-500 mb-2">${StoreMenus.escapeHTML(item.description)}</p>` : ''}
+                                            ${item.sourceUrl ? `<a class="text-xs text-gray-500 underline" href="${StoreMenus.escapeHTML(item.sourceUrl)}" target="_blank" rel="noopener noreferrer">정보 출처</a>` : ''}
                                         </div>
-                                        <p class="text-xs text-gray-500 mb-2 line-clamp-2">매일 직접 볶는 원두로 갓 내린 아메리카노</p>
-                                        <p class="font-bold text-gray-900 text-sm">2,500원</p>
+                                        <p class="font-bold text-[#D97706] text-sm shrink-0">${StoreMenus.escapeHTML(item.price)}</p>
                                     </div>
-                                    <div class="w-20 h-20 bg-gray-100 rounded-xl shrink-0 overflow-hidden">
-                                        <img src="https://images.unsplash.com/photo-1551030173-122aabc4489c?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover" />
-                                    </div>
-                                </div>
-                                <!-- Menu Item Dummy 2 -->
-                                <div class="flex items-start justify-between border-b border-gray-100 pb-4">
-                                    <div class="flex-1 pr-4">
-                                        <div class="flex items-center gap-2 mb-1">
-                                            <h4 class="font-bold text-gray-900">쌍화차</h4>
-                                            <span class="px-1.5 py-0.5 bg-yellow-50 text-yellow-600 text-[10px] font-black rounded uppercase">인기</span>
-                                        </div>
-                                        <p class="text-xs text-gray-500 mb-2 line-clamp-2">정성으로 직접 달인 깊은 맛의 한방차</p>
-                                        <p class="font-bold text-gray-900 text-sm">4,500원</p>
-                                    </div>
-                                    <div class="w-20 h-20 bg-gray-100 rounded-xl shrink-0 overflow-hidden">
-                                        <img src="https://images.unsplash.com/photo-1594910196238-7fba0b9a6b82?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover" />
-                                    </div>
-                                </div>
-                                <!-- Menu Item Dummy 3 -->
-                                <div class="flex items-start justify-between pb-4">
-                                    <div class="flex-1 pr-4">
-                                        <h4 class="font-bold text-gray-900 mb-1">옛날 모과차</h4>
-                                        <p class="text-xs text-gray-500 mb-2 line-clamp-2">가을빛을 담은 달콤한 수제 모과차</p>
-                                        <p class="font-bold text-gray-900 text-sm">3,500원</p>
-                                    </div>
-                                    <div class="w-20 h-20 bg-gray-100 rounded-xl shrink-0 overflow-hidden">
-                                        <img src="https://images.unsplash.com/photo-1563822249548-9a72b6353cad?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover" />
-                                    </div>
-                                </div>
+                                `).join('')}
+                                <p class="text-[10px] leading-relaxed text-gray-400">상품 구성과 가격은 점포 사정에 따라 변경될 수 있습니다.</p>
                             </div>
                         </div>
                     `;
@@ -2115,13 +2068,7 @@
                             <div>
                                 <h3 class="font-bold text-gray-900 mb-4 text-sm">영업시간 안내</h3>
                                 <div class="bg-gray-50 rounded-xl p-4 space-y-2 text-sm text-gray-600">
-                                    <div class="flex justify-between"><span>월요일</span><span class="font-medium">10:00 - 21:00</span></div>
-                                    <div class="flex justify-between text-black font-bold"><span>화요일</span><span>10:00 - 21:00</span></div>
-                                    <div class="flex justify-between"><span>수요일</span><span class="font-medium">10:00 - 21:00</span></div>
-                                    <div class="flex justify-between"><span>목요일</span><span class="font-medium">10:00 - 21:00</span></div>
-                                    <div class="flex justify-between"><span>금요일</span><span class="font-medium">10:00 - 22:00</span></div>
-                                    <div class="flex justify-between"><span>토요일</span><span class="font-medium">10:00 - 22:00</span></div>
-                                    <div class="flex justify-between text-red-500"><span>일요일</span><span class="font-medium">휴무</span></div>
+                                    <p class="whitespace-pre-line">${StoreMenus.escapeHTML(getStoreProp(store, 'hours') || t.detail_check)}</p>
                                 </div>
                             </div>
                             
@@ -2140,299 +2087,93 @@
                 return '';
             };
 
-            const setupBottomSheetEvents = () => {
-                const scrollContainer = detailPanel.querySelector('#sheetDetailBody');
-                const header = detailPanel.querySelector('#sheetSummaryHeader');
-                let animationFrameId = null;
-                let isNativeScrolling = false;
-                
-                // Track start height specifically to differentiate logic
-                let startMainHeight = 0;
-
-                detailPanel.addEventListener('touchstart', (e) => {
-                    if (window.innerWidth >= 640) return;
-                    startY = e.touches[0].clientY;
-                    currentY = startY;
-                    isDragging = true;
-                    isNativeScrolling = (sheetStage === 'EXPANDED' && scrollContainer && scrollContainer.scrollTop > 0);
-                    
-                    detailPanel.style.transition = 'none';
-                    startMainHeight = detailPanel.getBoundingClientRect().height;
-                    if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                }, { passive: true });
-
-                detailPanel.addEventListener('touchmove', (e) => {
-                    if (!isDragging || window.innerWidth >= 640) return;
-
-                    const y = e.touches[0].clientY;
-                    const deltaY = y - startY;
-
-                    const isDraggingHeader = e.target.closest('#sheetSummaryHeader') || e.target.closest('.sheet-handle-bar');
-
-                    if (!isDraggingHeader && sheetStage === 'EXPANDED') {
-                        if (!isNativeScrolling && scrollContainer && scrollContainer.scrollTop === 0 && deltaY < 0) {
-                            isNativeScrolling = true;
-                        }
-
-                        if (isNativeScrolling) {
-                            return; // Let native scroll handle this
-                        }
-                    }
-
-                    if (e.cancelable) e.preventDefault();
-                    currentY = y;
-
-                    if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                    animationFrameId = requestAnimationFrame(() => {
-                        const h = window.innerHeight;
-                        // Determine base translation for the container
-                        let baseTranslateY = 0;
-                        const headerHeight = header ? header.offsetHeight : 100;
-                        const handleHeight = 0; // handle bar is now inside header
-                        if (sheetStage === 'COLLAPSED') {
-                            baseTranslateY = h - headerHeight; 
-                        } else if (sheetStage === 'HALF') {
-                            const imageAreaHeight = 288; // 288px (h-72)
-                            baseTranslateY = h - headerHeight - imageAreaHeight;
-                            if (baseTranslateY < h * 0.1) baseTranslateY = h * 0.1;
-                        } else if (sheetStage === 'EXPANDED') {
-                            baseTranslateY = 0;
-                        }
-
-                        let newTranslateY = baseTranslateY + deltaY;
-                        if (newTranslateY < 0) newTranslateY = 0;
-
-                        detailPanel.style.transform = `translateY(${newTranslateY}px)`;
-                        
-                        // Crossover Animation Logic
-                        const imageArea = detailPanel.querySelector('#sheetImageArea');
-                        const halfY = h - headerHeight - (imageArea ? 288 : 0);
-                        let ratio = 0;
-                        if (newTranslateY <= halfY && halfY > 0) {
-                            ratio = 1 - (newTranslateY / halfY);
-                        } else if (newTranslateY < 0) {
-                            ratio = 1;
-                        }
-                        ratio = Math.max(0, Math.min(1, ratio));
-                        
-                        if (header) {
-                            header.style.transition = 'none';
-                            header.style.transform = `translateY(${ratio * 288}px)`; // 288 is imageAreaHeight
-                        }
-                        if (imageArea) {
-                            imageArea.style.transition = 'none';
-                            imageArea.style.transform = `translateY(-${ratio * headerHeight}px)`;
-                        }
-
-                        const sheetCloseBtn = document.getElementById('sheetCloseBtn');
-                        if (sheetCloseBtn) {
-                            sheetCloseBtn.style.transition = 'none';
-                            sheetCloseBtn.style.opacity = ratio;
-                            sheetCloseBtn.style.pointerEvents = ratio > 0.5 ? 'auto' : 'none';
-                        }
-                        const sheetLangBar = document.getElementById('sheetLangBar');
-                        if (sheetLangBar) {
-                            sheetLangBar.style.transition = 'none';
-                            sheetLangBar.style.opacity = ratio;
-                            sheetLangBar.style.pointerEvents = ratio > 0.5 ? 'auto' : 'none';
-                        }
-                        
-                        // Translate locate button dynamically during dragging
-                        const locateMeBtn = document.getElementById('locateMeBtn');
-                        if (locateMeBtn) {
-                            locateMeBtn.style.transition = 'none';
-                            let locateOffset = h - newTranslateY;
-                            if (sheetStage === 'HALF' || (sheetStage === 'COLLAPSED' && deltaY < 0)) {
-                                // If dragging towards HALF, constrain the button to not go above the image
-                                if (locateOffset > 288 - 48) locateOffset = 288 - 48;
-                            }
-                            locateMeBtn.style.transform = `translateY(${-locateOffset}px)`;
-                            if (newTranslateY < h * 0.3) {
-                                locateMeBtn.style.opacity = '0';
-                                locateMeBtn.style.pointerEvents = 'none';
-                            } else {
-                                locateMeBtn.style.opacity = '1';
-                                locateMeBtn.style.pointerEvents = 'auto';
-                            }
-                        }
-
-                        // Toggle overlay
-                        if (newTranslateY < h * 0.3) overlay.classList.remove('hidden');
-                        else overlay.classList.add('hidden');
-                    });
-                }, { passive: false });
-
-                detailPanel.addEventListener('touchend', (e) => {
-                    if (!isDragging || window.innerWidth >= 640) return;
-                    isDragging = false;
-                    isNativeScrolling = false;
-
-                    const deltaY = currentY - startY;
-                    const absDeltaY = Math.abs(deltaY);
-
-                    if (absDeltaY < 20) {
-                        snapToStage(sheetStage);
-                        return;
-                    }
-
-                    if (deltaY > 0) {
-                        // Swiping down
-                        if (sheetStage === 'EXPANDED') sheetStage = 'HALF';
-                        else if (sheetStage === 'HALF') sheetStage = 'COLLAPSED';
-                        else if (sheetStage === 'COLLAPSED' && absDeltaY > 40) {
-                            closeAllPanels();
-                            return;
-                        }
-                    } else {
-                        // Swiping up
-                        if (sheetStage === 'COLLAPSED') sheetStage = 'HALF';
-                        else if (sheetStage === 'HALF') sheetStage = 'EXPANDED';
-                    }
-
-                    snapToStage(sheetStage);
-                });
-            };
-
-            const snapToStage = (stage) => {
-                if (window.innerWidth >= 640) return;
+            let sheetEventsController;
+            const sheetStops = () => {
                 const h = window.innerHeight;
-                const scrollContainer = detailPanel.querySelector('#sheetDetailBody');
-                const imageArea = detailPanel.querySelector('#sheetImageArea');
-                const extendedArea = detailPanel.querySelector('#sheetExtendedArea');
                 const header = detailPanel.querySelector('#sheetSummaryHeader');
-                const closeBtn = detailPanel.querySelector('#expandedCloseBtn');
-                const tagsContainer = detailPanel.querySelector('#sheetTagsContainer');
-                const bottomBar = detailPanel.querySelector('#sheetBottomBar');
-                
-                let targetY = 0;
-                
-                // Set transition for everything
-                detailPanel.style.transition = 'transform 0.4s cubic-bezier(0.3, 0, 0.2, 1)';
-                
-                const headerHeight = header ? header.offsetHeight : 100;
-                const handleHeight = 0; // handle bar is now inside header
-
-                if (stage === 'COLLAPSED') {
-                    // In collapsed, hide image, hide extended, show only header
-                    if (imageArea) {
-                        imageArea.style.opacity = '0';
-                        setTimeout(() => { if(sheetStage === 'COLLAPSED') imageArea.classList.add('hidden'); }, 300);
-                    }
-                    if (extendedArea) extendedArea.classList.add('hidden');
-                    if (closeBtn) closeBtn.classList.add('hidden');
-                    if (tagsContainer) tagsContainer.classList.remove('hidden');
-                    if (bottomBar) bottomBar.classList.add('hidden');
-                    
-                    overlay.classList.add('hidden');
-                    if (scrollContainer) {
-                        scrollContainer.style.overflowY = 'hidden';
-                        scrollContainer.scrollTop = 0;
-                    }
-                    
-                    targetY = h - headerHeight;
-                    
-                } else if (stage === 'HALF') {
-                    // Show image, hide extended
-                    if (imageArea) {
-                        imageArea.classList.remove('hidden');
-                        setTimeout(() => { imageArea.style.opacity = '1'; }, 10);
-                    }
-                    if (extendedArea) extendedArea.classList.add('hidden');
-                    if (closeBtn) closeBtn.classList.add('hidden');
-                    if (tagsContainer) tagsContainer.classList.remove('hidden');
-                    if (bottomBar) bottomBar.classList.add('hidden');
-                    
-                    const imageAreaHeight = 288; // 288px (h-72)
-                    targetY = h - headerHeight - imageAreaHeight;
-                    if (targetY < h * 0.1) targetY = h * 0.1;
-                    
-                    overlay.classList.add('hidden');
-                    if (scrollContainer) {
-                        scrollContainer.style.overflowY = 'hidden';
-                        scrollContainer.scrollTop = 0;
-                    }
-                } else if (stage === 'EXPANDED') {
-                    // Show image, show extended, show close button
-                    if (imageArea) {
-                        imageArea.classList.remove('hidden');
-                        setTimeout(() => { imageArea.style.opacity = '1'; }, 10);
-                    }
-                    if (extendedArea) extendedArea.classList.remove('hidden');
-                    if (closeBtn) closeBtn.classList.remove('hidden');
-                    if (bottomBar) bottomBar.classList.remove('hidden');
-                    
-                    targetY = 0;
-                    overlay.classList.remove('hidden');
-                    if (scrollContainer) {
-                        scrollContainer.style.overflowY = 'auto';
-                    }
+                return {COLLAPSED: Math.max(0, h - (header?.offsetHeight || 130)),
+                    HALF: h * 0.48, EXPANDED: 0};
+            };
+            const nearestSheetStage = (y, velocity = 0) => {
+                const projected = y + Math.max(-1.5, Math.min(1.5, velocity)) * 130;
+                return Object.entries(sheetStops()).reduce((best, entry) =>
+                    Math.abs(entry[1] - projected) < Math.abs(best[1] - projected) ? entry : best)[0];
+            };
+            const setupBottomSheetEvents = () => {
+                sheetEventsController?.abort();
+                sheetEventsController = new AbortController();
+                const signal = sheetEventsController.signal;
+                const body = detailPanel.querySelector('#sheetDetailBody');
+                let drag = null;
+                detailPanel.addEventListener('touchstart', e => {
+                    if (window.innerWidth >= 640 || e.touches.length !== 1 ||
+                        e.target.closest('button, a, input')) return;
+                    const y = e.touches[0].clientY;
+                    const matrix = new DOMMatrixReadOnly(getComputedStyle(detailPanel).transform);
+                    drag = {start: y, last: y, time: performance.now(), velocity: 0,
+                        base: matrix.m42, position: matrix.m42, moved: false,
+                        header: !!e.target.closest('#sheetSummaryHeader, .sheet-handle-bar')};
+                }, {passive: true, signal});
+                detailPanel.addEventListener('touchmove', e => {
+                    if (!drag) return;
+                    const y = e.touches[0].clientY;
+                    const delta = y - drag.start;
+                    if (!drag.moved && !drag.header && sheetStage === 'EXPANDED' &&
+                        (body.scrollTop > 0 || delta < 0)) { drag = null; return; }
+                    if (Math.abs(delta) < 6 && !drag.moved) return;
+                    if (e.cancelable) e.preventDefault();
+                    drag.moved = true;
+                    const now = performance.now();
+                    drag.velocity = (y - drag.last) / Math.max(1, now - drag.time);
+                    drag.last = y; drag.time = now;
+                    drag.position = Math.max(0, Math.min(sheetStops().COLLAPSED, drag.base + delta));
+                    detailPanel.style.transition = 'none';
+                    detailPanel.style.transform = `translateY(${drag.position}px)`;
+                }, {passive: false, signal});
+                const release = cancelled => {
+                    if (!drag) return;
+                    const state = drag; drag = null;
+                    if (!state.moved) return;
+                    const velocity = performance.now() - state.time < 100 ? state.velocity : 0;
+                    snapToStage(cancelled ? sheetStage : nearestSheetStage(state.position, velocity));
+                };
+                detailPanel.addEventListener('touchend', () => release(false), {signal});
+                detailPanel.addEventListener('touchcancel', () => release(true), {signal});
+                window.addEventListener('resize', () => snapToStage(sheetStage), {signal});
+            };
+            const snapToStage = (stage) => {
+                sheetStage = ['COLLAPSED', 'HALF', 'EXPANDED'].includes(stage) ? stage : 'HALF';
+                const mobile = window.innerWidth < 640;
+                const body = detailPanel.querySelector('#sheetDetailBody');
+                // Keep one stable document order: summary, photo, tabs, content.
+                for (const id of ['sheetSummaryHeader', 'sheetImageArea', 'sheetExtendedArea']) {
+                    const el = detailPanel.querySelector('#' + id);
+                    if (!el) continue;
+                    el.classList.remove('hidden');
+                    el.style.transform = 'none';
+                    el.style.transition = 'none';
+                    el.style.opacity = '1';
                 }
-
-                detailPanel.style.transform = `translateY(${targetY}px)`;
-                
-                // Crossover Animation Logic for Snap
-                let crossoverRatio = (stage === 'EXPANDED') ? 1 : 0;
-                
-                if (header) {
-                    header.style.transition = 'transform 0.4s cubic-bezier(0.3, 0, 0.2, 1)';
-                    header.style.transform = `translateY(${crossoverRatio * 288}px)`;
+                if (body) {
+                    body.style.overflowY = !mobile || sheetStage === 'EXPANDED' ? 'auto' : 'hidden';
+                    if (sheetStage !== 'EXPANDED') body.scrollTop = 0;
                 }
-                if (imageArea) {
-                    imageArea.style.transition = 'transform 0.4s cubic-bezier(0.3, 0, 0.2, 1), opacity 0.3s';
-                    imageArea.style.transform = `translateY(-${crossoverRatio * headerHeight}px)`;
+                const bar = detailPanel.querySelector('#sheetBottomBar');
+                bar?.classList.toggle('hidden', mobile && sheetStage !== 'EXPANDED');
+                for (const id of ['sheetCloseBtn', 'sheetLangBar']) {
+                    const el = detailPanel.querySelector('#' + id);
+                    if (el) { el.style.opacity = '1'; el.style.pointerEvents = 'auto'; }
                 }
-
-                const sheetCloseBtn = document.getElementById('sheetCloseBtn');
-                if (sheetCloseBtn) {
-                    sheetCloseBtn.style.transition = 'opacity 0.4s ease';
-                    sheetCloseBtn.style.opacity = crossoverRatio;
-                    sheetCloseBtn.style.pointerEvents = crossoverRatio === 1 ? 'auto' : 'none';
-                }
-                const sheetLangBar = document.getElementById('sheetLangBar');
-                if (sheetLangBar) {
-                    sheetLangBar.style.transition = 'opacity 0.4s ease';
-                    sheetLangBar.style.opacity = crossoverRatio;
-                    sheetLangBar.style.pointerEvents = crossoverRatio === 1 ? 'auto' : 'none';
-                }
-
-                // Translate locate button with bottom sheet
-                const locateMeBtn = document.getElementById('locateMeBtn');
-                if (locateMeBtn) {
-                    locateMeBtn.style.transition = 'transform 0.4s cubic-bezier(0.3, 0, 0.2, 1), opacity 0.4s';
-                    let locateOffset = h - targetY;
-                    if (stage === 'HALF') {
-                        // In HALF state, we want it to float over the image area, not above the whole bottom sheet
-                        // The image area is at the bottom, so we only translate it up by a bit, or keep it at 0.
-                        // Since imageAreaHeight is 288, and we want it near the top of the image area:
-                        locateOffset = 288 - 48; 
-                    }
-                    locateMeBtn.style.transform = `translateY(${-locateOffset}px)`;
-                    if (stage === 'EXPANDED') {
-                        locateMeBtn.style.opacity = '0';
-                        locateMeBtn.style.pointerEvents = 'none';
-                    } else {
-                        locateMeBtn.style.opacity = '1';
-                        locateMeBtn.style.pointerEvents = 'auto';
-                    }
-                }
-
-                // Adjust map offset dynamically
-                if (map && selectedStore) {
-                    const storeLatLng = { lat: parseFloat(selectedStore.lat), lng: parseFloat(selectedStore.lng) };
-                    map.panTo(storeLatLng);
-
-                    if (window.__mapPanTimeout) clearTimeout(window.__mapPanTimeout);
-                    
-                    let mapOffset = 0;
-                    if (stage === 'COLLAPSED' || stage === 'HALF') {
-                        mapOffset = (h - targetY) / 2;
-                    } else if (stage === 'EXPANDED') {
-                        mapOffset = h * 0.4;
-                    }
-                    
-                    window.__mapPanTimeout = setTimeout(() => {
-                        map.panBy(0, mapOffset);
-                    }, 100);
+                if (!mobile) { detailPanel.style.transform = ''; return; }
+                const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                detailPanel.style.transition = reduced ? 'none' : 'transform 280ms cubic-bezier(0.22, 1, 0.36, 1)';
+                detailPanel.style.transform = `translateY(${sheetStops()[sheetStage]}px)`;
+                overlay.classList.toggle('hidden', sheetStage !== 'EXPANDED');
+                const locate = document.getElementById('locateMeBtn');
+                if (locate) {
+                    locate.style.opacity = sheetStage === 'EXPANDED' ? '0' : '1';
+                    locate.style.pointerEvents = sheetStage === 'EXPANDED' ? 'none' : 'auto';
+                    locate.style.transform = `translateY(-${window.innerHeight - sheetStops()[sheetStage]}px)`;
                 }
             };
 
@@ -2719,11 +2460,7 @@
                 return u;
             };
 
-            const parseKeywords = (raw) => {
-                if (!raw) return [];
-                // Support both space and comma separation
-                return raw.split(/[,\s]+/).map(k => k.trim()).filter(Boolean);
-            };
+            const parseKeywords = (raw) => MapI18n.keywords(raw);
 
             const getStoreProp = (store, prop) => {
                 if (!store) return '';
@@ -2731,6 +2468,7 @@
                 if (langMap[prop]) {
                     const langProp = `${prop}_${currentLang}`;
                     if (store[langProp]) return store[langProp];
+                    if (prop === 'hours') return MapI18n.hours(store.hours || '', currentLang);
                     
                     let fallbackStr = store[prop] || "-";
                     if (prop === 'price' && currentLang !== 'ko' && fallbackStr !== "-") {

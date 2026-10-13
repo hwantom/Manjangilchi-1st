@@ -62,10 +62,21 @@
     }
     </script>
     <script src="config.js?v=7"></script>
+    <script src="menu-data.js"></script>
+    <script src="menu-utils.js"></script>
+    <script src="coin-menu-data.js"></script>
+    <script src="coin-planner.js"></script>
+    <script src="map-i18n.js"></script>
+    <script src="store-detail-utils.js"></script>
+    <script src="ui-text.js"></script>
+    <script src="correction-request.js" defer></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <form name="correction" data-netlify="true" netlify-honeypot="bot-field" hidden>
+        <input name="target"><input name="page"><input name="lang"><input name="field"><textarea name="message"></textarea><input name="contact"><input name="bot-field">
+    </form>
     <div id="root"></div>
     <script type="text/babel" data-presets="react" data-type="module">
         import React, { useState, useCallback, useEffect } from 'react';
@@ -469,29 +480,7 @@
         const TOTAL_STEPS = 4;
 
         // --- Service ---
-        const parseCSV = (text) => {
-            if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
-            const rows = text.split('\n').filter(line => line.trim());
-            const parsedRows = rows.map(line => {
-                const parts = []; let current = ''; let inQuote = false;
-                for (let i = 0; i < line.length; i++) {
-                    const char = line[i];
-                    if (char === '"') { inQuote = !inQuote; continue; }
-                    if (char === ',' && !inQuote) { parts.push(current.trim()); current = ''; continue; }
-                    current += char;
-                }
-                parts.push(current.trim());
-                return parts;
-            });
-            const cleaned = parsedRows.map(row => row.map(cell => cell.replace(/\r/g, '').trim()));
-            const header = cleaned[0];
-            if (!header) return [];
-            return cleaned.slice(1).map(row => {
-                const obj = {};
-                header.forEach((h, i) => { obj[h] = row[i]; });
-                return obj;
-            });
-        };
+        const parseCSV = StoreMenus.parseCSV;
 
         const fetchWithTimeout = async (url, options = {}, timeoutMs = 1800) => {
             const controller = new AbortController();
@@ -536,6 +525,9 @@
 
                     return {
                         name: getVal(row, ['name', '점포명']),
+                        name_eng: getVal(row, ['name_eng', 'name_en']),
+                        name_cn: getVal(row, ['name_cn', 'name_zh']),
+                        name_jp: getVal(row, ['name_jp', 'name_ja']),
                         description: getVal(row, ['description', 'shortDesc', '설명']),
                         description_eng: getVal(row, ['shortDesc_eng']),
                         description_cn: getVal(row, ['shortDesc_cn']),
@@ -547,7 +539,21 @@
                         category: cat,
                         slug: getVal(row, ['slug', '슬러그']),
                         keyword: getVal(row, ['keyword', '키워드']),
+                        keyword_eng: getVal(row, ['keyword_eng', 'keyword_en']),
+                        keyword_cn: getVal(row, ['keyword_cn', 'keyword_zh']),
+                        keyword_jp: getVal(row, ['keyword_jp', 'keyword_ja']),
                         coin: getVal(row, ['coin', '엽전']),
+                        hours: getVal(row, ['hours', '영업시간']),
+                        hours_eng: getVal(row, ['hours_eng', 'hours_en']),
+                        hours_cn: getVal(row, ['hours_cn', 'hours_zh']),
+                        hours_jp: getVal(row, ['hours_jp', 'hours_ja']),
+                        price: getVal(row, ['price', '가격']),
+                        price_eng: getVal(row, ['price_eng', 'price_en']),
+                        price_cn: getVal(row, ['price_cn', 'price_zh']),
+                        price_jp: getVal(row, ['price_jp', 'price_ja']),
+                        sheetMenu: getVal(row, ['메뉴']),
+                        sheetPrice: getVal(row, ['가격']),
+                        menu: getVal(row, ['menu']),
                         repre_img: getVal(row, ['repre_img', 'repre_image', '대표이미지', 'image']),
                         recommendReason: getVal(row, ['recommendReason', 'recommend_reason', 'recommendDesc', 'recommend_desc', '추천이유', '추천 이유', '추천설명', '추천 설명']),
                         recommendReason_eng: getVal(row, ['recommendReason_eng', 'recommend_reason_eng', 'recommendDesc_eng']),
@@ -758,31 +764,68 @@
 
         // --- Components ---
 
+        // Current UI language for components that don't receive `t`; App provides it.
+        const LangContext = React.createContext('ko');
+        const useLang = () => React.useContext(LangContext);
+        const useUi = () => UiText.get(useLang());
+        const useStoreText = () => { const lang = useLang(); return (store, prop) => UiText.storeText(store, prop, lang); };
+        // Map-panel labels go through the map's dictionary so both pages use the same wording.
+        const useMapText = () => { const lang = useLang(); return value => MapI18n.text(value, lang); };
+
+        // Category chips styled like the map filters (map.html renderFilters): same icons, colors and font.
+        const CATEGORY_CHIPS = {
+            '식당': { color: '#F4AFA0', icon: 'https://img.icons8.com/?size=100&id=59873&format=png&color=000000', filter: 'brightness(0) saturate(100%) invert(82%) sepia(13%) saturate(1067%) hue-rotate(313deg) brightness(99%) contrast(94%)' },
+            '간식': { color: '#F6D267', icon: 'https://img.icons8.com/?size=100&id=vBj95fYekPO0&format=png&color=000000', filter: 'brightness(0) saturate(100%) invert(88%) sepia(28%) saturate(666%) hue-rotate(344deg) brightness(104%) contrast(93%)' },
+            '생활형': { color: '#A8D8C9', icon: 'https://img.icons8.com/?size=100&id=qbYyif5npmoi&format=png&color=000000', filter: 'brightness(0) saturate(100%) invert(86%) sepia(11%) saturate(1074%) hue-rotate(100deg) brightness(93%) contrast(86%)' }
+        };
+        const CategoryChip = ({ value, label, active, onClick }) => {
+            const style = CATEGORY_CHIPS[value];
+            return <button onClick={onClick} style={{ fontFamily: "'Jandari', 'HsJandari', sans-serif", ...(active ? { backgroundColor: style ? style.color : '#A68A64' } : {}) }}
+                className={`shrink-0 inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-1.5 rounded-full text-[13px] font-normal shadow-md transition-all border border-gray-100 ${active ? 'text-white' : 'bg-white text-gray-900'}`}>
+                {style && <img src={style.icon} alt="" className="w-4 h-4" style={{ filter: active ? 'brightness(0) invert(1)' : style.filter }} />}
+                <span>{label}</span>
+            </button>;
+        };
+
+        const FAV_FILTER = '__favorites';
+        // Mirrors the map's favorites chip (pink heart, pink when active).
+        const FavoriteChip = ({ label, active, onClick }) => (
+            <button onClick={onClick} style={{ fontFamily: "'Jandari', 'HsJandari', sans-serif" }}
+                className={`shrink-0 inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-1.5 rounded-full text-[13px] font-normal shadow-md transition-all border border-gray-100 ${active ? 'bg-pink-500 text-white' : 'bg-white text-gray-900'}`}>
+                <svg className={`w-4 h-4 ${active ? 'text-white' : 'text-pink-500'}`} fill={active ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                <span>{label}</span>
+            </button>
+        );
+
         const RenderStoresView = ({ stores = [], onNavigate, onOpenStoreDetail, t }) => {
             const [selectedCategory, setSelectedCategory] = useState('전체');
             const [searchQuery, setSearchQuery] = useState('');
+            const favs = useFavorites();
+            const ui = useUi();
+            const lang = useLang();
+            const st = useStoreText();
+            useEffect(() => { if (selectedCategory === FAV_FILTER && !favs.size) setSelectedCategory('전체'); }, [favs.size]);
 
             const categories = [
                 { label: t.catAll || '전체', value: '전체' },
-                { label: t.catRestaurant || '식당', value: '식당' },
-                { label: t.catSnack || '간식', value: '간식' },
-                { label: t.catLife || '생활형', value: '생활형' }
+                { label: ui.cat['식당'], value: '식당' },
+                { label: ui.cat['간식'], value: '간식' },
+                { label: ui.cat['생활형'], value: '생활형' }
             ];
 
             const filtered = stores.filter(store => {
-                const matchCat = selectedCategory === '전체' || store.category === selectedCategory;
-                const matchSearch = !searchQuery.trim() ||
-                    store.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    (store.description && store.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                    (store.keyword && store.keyword.toLowerCase().includes(searchQuery.toLowerCase()));
+                const matchCat = selectedCategory === '전체' || store.category === selectedCategory || (selectedCategory === FAV_FILTER && favs.has(store.name));
+                const q = searchQuery.trim().toLowerCase();
+                const matchSearch = !q || [store.name, store.description, store.keyword, st(store, 'name'), st(store, 'shortDesc'), st(store, 'keyword')]
+                    .some(v => v && v.toLowerCase().includes(q));
                 return matchCat && matchSearch;
             });
 
             return (
                 <div className="py-4 space-y-6">
                     <div className="text-center space-y-1">
-                        <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">통인시장 매장</h1>
-                        <p className="text-xs text-gray-500 font-medium">통인시장의 모든 점포를 한눈에 둘러보세요 ({filtered.length}개)</p>
+                        <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">{ui.storesTitle}</h1>
+                        <p className="text-xs text-gray-500 font-medium">{ui.storesSub(filtered.length)}</p>
                         <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto mt-2"></div>
                     </div>
 
@@ -806,15 +849,14 @@
                             )}
                         </div>
 
-                        <div className="flex gap-2 overflow-x-auto no-scrollbar pt-1 pb-1">
+                        <div className="flex gap-2 overflow-x-auto no-scrollbar px-1 pt-1 pb-2">
                             {categories.map(cat => (
-                                <button
-                                    key={cat.value}
-                                    onClick={() => setSelectedCategory(cat.value)}
-                                    className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all ${selectedCategory === cat.value ? 'bg-[#A68A64] text-white shadow-xs' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                                >
-                                    {cat.label} {cat.value === '전체' ? `(${stores.length})` : ''}
-                                </button>
+                                <React.Fragment key={cat.value}>
+                                    <CategoryChip value={cat.value} active={selectedCategory === cat.value} onClick={() => setSelectedCategory(cat.value)}
+                                        label={cat.value === '전체' ? `${cat.label} (${stores.length})` : cat.label} />
+                                    {cat.value === '전체' && favs.size > 0 && <FavoriteChip label={ui.favorites(favs.size)} active={selectedCategory === FAV_FILTER}
+                                        onClick={() => setSelectedCategory(selectedCategory === FAV_FILTER ? '전체' : FAV_FILTER)} />}
+                                </React.Fragment>
                             ))}
                         </div>
                     </div>
@@ -840,7 +882,7 @@
                                             {imgUrl ? (
                                                 <img
                                                     src={imgUrl}
-                                                    alt={store.name}
+                                                    alt={st(store, 'name')}
                                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                                     onError={(e) => {
                                                         e.target.style.display = 'none';
@@ -854,12 +896,12 @@
                                         </div>
                                         <div className="p-3 space-y-1 flex-1 flex flex-col justify-between">
                                             <div>
-                                                <div className="text-[10px] text-[#b5926b] font-bold">{store.category}</div>
-                                                <div className="font-bold text-[14px] text-gray-900 truncate">{store.name}</div>
-                                                <div className="text-[11px] text-gray-500 truncate">{store.description || store.summary || '상세보기'}</div>
+                                                <div className="text-[10px] text-[#b5926b] font-bold">{ui.cat[store.category] || store.category}</div>
+                                                <div className="font-bold text-[14px] text-gray-900 truncate">{st(store, 'name')}</div>
+                                                <div className="text-[11px] text-gray-500 truncate">{st(store, 'shortDesc') || store.summary || ui.detailsFallback}</div>
                                             </div>
                                             <div className="pt-2 text-[10px] text-[#A68A64] font-bold flex items-center gap-0.5">
-                                                위치 보기 <ChevronRight className="w-3 h-3" />
+                                                {ui.viewLocation} <ChevronRight className="w-3 h-3" />
                                             </div>
                                         </div>
                                     </div>
@@ -869,13 +911,13 @@
                     ) : (
                         <div className="py-16 text-center space-y-3 bg-gray-50 rounded-2xl border border-gray-100">
                             <span className="text-4xl">🔍</span>
-                            <h3 className="text-base font-bold text-gray-800">검색 조건에 맞는 점포가 없습니다</h3>
-                            <p className="text-xs text-gray-500">카테고리를 바꾸거나 다른 단어로 검색해보세요.</p>
+                            <h3 className="text-base font-bold text-gray-800">{ui.noResultTitle}</h3>
+                            <p className="text-xs text-gray-500">{ui.noResultDesc}</p>
                             <button
                                 onClick={() => { setSelectedCategory('전체'); setSearchQuery(''); }}
                                 className="px-4 py-2 bg-[#A68A64] text-white text-xs font-bold rounded-xl shadow-xs active:scale-95"
                             >
-                                전체 점포 보기
+                                {ui.showAllStores}
                             </button>
                         </div>
                     )}
@@ -883,24 +925,235 @@
             );
         };
 
+        // Compartment boxes (% of assets/lunchbox-tray.webp, 1294×985), in fill order.
+        const TRAY_SLOTS = [
+            { l: 5.4, t: 7.2, w: 30.5, h: 38.8 }, { l: 37.5, t: 7.2, w: 24.3, h: 38.8 }, { l: 63.4, t: 7.2, w: 31.3, h: 38.8 },
+            { l: 69.6, t: 46.5, w: 25.1, h: 46.2 }, { l: 5.4, t: 46.5, w: 62.6, h: 46.2 }
+        ];
+        const storeImageUrl = store => {
+            const raw = store.repre_img || store.repre_image || '';
+            const match = raw.includes('drive.google.com') && raw.match(/\/d\/([^/]+)/);
+            return match ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w200` : raw;
+        };
+
+        const CoinGuideCard = ({ guide }) => {
+            const ui = useUi();
+            // Korean guide text lives in COIN_MENU_DATA.guide; other languages override it from ui-text.js.
+            const g = ui.guide ? { ...guide, ...ui.guide } : guide;
+            return (
+            <section aria-label={ui.guideAria} className="rounded-2xl border border-[#E8DFCC] bg-white p-4 text-sm">
+                <h3 className="font-bold flex items-center gap-1.5"><Info className="w-4 h-4 text-[#A68A64]" />{ui.guideTitle}</h3>
+                <dl className="mt-3 grid grid-cols-[72px_1fr] gap-x-2 gap-y-2 text-xs leading-relaxed">
+                    <dt className="font-bold text-gray-500">{ui.gPrice}</dt>
+                    <dd>{ui.gPriceValue(g.coinPriceKrw.toLocaleString(), g.bundleSize, g.bundlePriceKrw.toLocaleString())}</dd>
+                    <dt className="font-bold text-gray-500">{ui.gPlace}</dt>
+                    <dd>{g.purchasePlace}</dd>
+                    <dt className="font-bold text-gray-500">{ui.gHours}</dt>
+                    <dd>{g.hours.map(h => <div key={h.label}>{h.label} {h.open} <span className="text-gray-500">({h.coinSales})</span></div>)}</dd>
+                    <dt className="font-bold text-gray-500">{ui.gClosed}</dt>
+                    <dd>{g.closed}</dd>
+                    <dt className="font-bold text-gray-500">{ui.gRefund}</dt>
+                    <dd>{g.refund}</dd>
+                </dl>
+                <a href={'tel:' + g.phone.replace(/-/g, '')} className="mt-3 flex items-center justify-center gap-1.5 rounded-xl border border-[#D8C8AB] py-2 text-xs font-bold text-[#7A6342]">
+                    {ui.gCall(g.phone)}
+                </a>
+                <p className="mt-2 text-[11px] text-gray-400">
+                    {ui.gSources(g.checkedAt.replace(/-/g, '.'))}
+                    {g.sources.map((s, i) => <React.Fragment key={s.url}>{i > 0 && ', '}<a href={s.url} target="_blank" rel="noopener noreferrer" className="underline">{g.sourceLabels?.[i] || s.label}</a></React.Fragment>)}
+                </p>
+            </section>
+            );
+        };
+
+        const LunchboxPlanner = ({ coinCount, setCoinCount, stores = [], onOpenStoreDetail }) => {
+            const guide = COIN_MENU_DATA.guide;
+            const ui = useUi();
+            const st = useStoreText();
+            const mt = useMapText();
+            const [items, setItems] = useState([]);
+            const [message, setMessage] = useState('');
+            const budgetRef = React.useRef(null);
+            const catalog = CoinPlanner.catalog();
+            const spent = CoinPlanner.used(items);
+            const remaining = coinCount - spent;
+            const counts = items.reduce((acc, item) => ({ ...acc, [item.id]: (acc[item.id] || 0) + 1 }), {});
+            const storeFor = name => stores.find(s => s.name === name);
+            const storeName = name => { const store = storeFor(name); return store ? st(store, 'name') : name; };
+            const catalogStores = [...new Set(catalog.map(item => item.storeName))].map(name => ({ name, menus: catalog.filter(item => item.storeName === name) }));
+            const [openStores, setOpenStores] = useState(() => catalogStores.slice(0, 1).map(s => s.name));
+            const distinct = Object.keys(counts).map(id => ({ ...items.find(x => x.id === id), count: counts[id] }));
+            const trayFills = distinct.slice(0, TRAY_SLOTS.length);
+            const overflow = Math.max(0, distinct.length - TRAY_SLOTS.length);
+
+            const changeBudget = value => {
+                const next = CoinPlanner.budget(value);
+                if (next < spent) { setMessage(ui.msgCantReduce); return; }
+                setCoinCount(next); setMessage('');
+            };
+            const addItem = item => {
+                if (item.coins > remaining) {
+                    setMessage(coinCount === 0 ? ui.msgSetFirst : ui.msgShort(item.coins - remaining));
+                    if (coinCount === 0) budgetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+                setItems(previous => CoinPlanner.add(previous, item.id, coinCount));
+                setMessage(ui.msgAdded(mt(item.name)));
+            };
+            const removeOne = id => {
+                setItems(previous => { const i = previous.map(x => x.id).lastIndexOf(id); return i < 0 ? previous : previous.filter((_, j) => j !== i); });
+                setMessage('');
+            };
+
+            const referenceItems = Object.values(COIN_MENU_DATA.stores).flatMap(store =>
+                store.items.filter(item => !item.planningEligible && Number.isSafeInteger(item.coins)).map(item => ({ ...item, storeName: store.name })));
+            const pendingStores = Object.values(COIN_MENU_DATA.stores).filter(store => store.membershipStatus !== 'payment-observed');
+
+            return <div className="relative pt-4 pb-20 space-y-5">
+                <div>
+                    <h2 className="text-[22px] font-bold text-gray-900 leading-tight">{ui.plannerTitle}</h2>
+                    <p className="text-xs text-gray-500 mt-1">{ui.plannerSub}</p>
+                </div>
+
+                {/* The window scrolls (not <main>), so a sticky bar would not stay put; float it above the bottom nav. */}
+                <div className="fixed bottom-[64px] left-0 right-0 z-[55] flex justify-center px-4 pointer-events-none">
+                    <button onClick={() => budgetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} aria-live="polite"
+                        className="pointer-events-auto w-full max-w-[calc(28rem-2rem)] rounded-xl bg-[#3F3426] text-white px-4 py-2.5 flex items-center justify-between text-sm shadow-lg">
+                        <span>{ui.barMenus(items.length)}</span>
+                        <span>{ui.remainingLabel} <strong className="text-amber-300 text-base">{remaining}</strong> / {coinCount}{ui.coinUnit}</span>
+                    </button>
+                </div>
+
+                <section ref={budgetRef} aria-label={ui.trayAria} className="rounded-2xl border-2 border-[#D8C8AB] bg-[#FAF7F0] p-4">
+                    <div className="flex items-center justify-between gap-2">
+                        <label htmlFor="lunchbox-budget" className="font-bold">{ui.budgetLabel}</label>
+                        <div className="flex items-center gap-2">
+                            <button aria-label={ui.decCoin} onClick={() => changeBudget(coinCount - 1)} className="w-9 h-9 rounded-full bg-white border text-lg font-bold">−</button>
+                            <input id="lunchbox-budget" type="number" inputMode="numeric" min={spent} max="999" step="1" value={coinCount}
+                                onChange={e => changeBudget(e.target.value)} className="w-14 rounded-lg border p-1.5 text-center font-bold" />
+                            <button aria-label={ui.incCoin} onClick={() => changeBudget(coinCount + 1)} className="w-9 h-9 rounded-full bg-white border text-lg font-bold">+</button>
+                        </div>
+                    </div>
+                    <p className="text-right text-[11px] text-gray-500 mt-1">{ui.budgetWon((coinCount * guide.coinPriceKrw).toLocaleString(), remaining)}</p>
+
+                    <div className="relative mt-3 select-none" style={{ aspectRatio: '1294 / 985' }}>
+                        <img src="assets/lunchbox-tray.webp" alt="" aria-hidden="true" className="absolute inset-0 w-full h-full" draggable="false" />
+                        <ul aria-label={ui.slotsAria}>
+                            {TRAY_SLOTS.map((slot, i) => {
+                                const fill = trayFills[i];
+                                return <li key={i} className="absolute p-[2.5%]" style={{ left: slot.l + '%', top: slot.t + '%', width: slot.w + '%', height: slot.h + '%' }}>
+                                    {fill
+                                        ? <div className={`relative h-full w-full rounded-lg flex flex-col items-center justify-center text-center px-1 pt-3 shadow-inner bg-[#F3E3C3]`}>
+                                            <span className="text-[11px] font-bold leading-tight line-clamp-2 text-gray-900">{mt(fill.name)}{fill.count > 1 ? ` ×${fill.count}` : ''}</span>
+                                            <span className="text-[10px] text-[#7A6342] mt-0.5">🪙 {fill.coins * fill.count}</span>
+                                            <button aria-label={ui.removeOne(mt(fill.name))} onClick={() => removeOne(fill.id)}
+                                                className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-black/60 text-white text-[10px] leading-none">×</button>
+                                        </div>
+                                        : <div className="h-full w-full flex items-center justify-center text-[10px] text-white/35">{i === 0 && !items.length ? ui.trayEmpty : ''}</div>}
+                                </li>;
+                            })}
+                        </ul>
+                    </div>
+                    {overflow > 0 && <p className="text-[11px] text-gray-500 mt-1 text-center">{ui.overflow(overflow)}</p>}
+
+                    <div className="flex justify-between mt-2 items-center min-h-[20px]">
+                        <p role="status" className="text-xs font-bold text-amber-900">{message}</p>
+                        {!!items.length && <button className="text-xs underline shrink-0 ml-2 text-gray-500" onClick={() => { setItems([]); setMessage(ui.msgCleared); }}>{ui.clearAll}</button>}
+                    </div>
+                </section>
+
+                <section>
+                    <h3 className="font-bold">{ui.verifiedTitle}</h3>
+                    <ul className="mt-3 space-y-3">
+                        {catalogStores.map(({ name, menus }) => {
+                            const store = storeFor(name);
+                            const thumb = store && storeImageUrl(store);
+                            const open = openStores.includes(name);
+                            const panelId = 'coin-store-' + menus[0].id;
+                            return <li key={name} className="rounded-2xl border border-gray-200 bg-white overflow-hidden">
+                                <button onClick={() => setOpenStores(prev => open ? prev.filter(n => n !== name) : [...prev, name])}
+                                    aria-expanded={open} aria-controls={panelId} className="w-full flex items-center gap-3.5 p-4 text-left active:bg-gray-50">
+                                    <span className="w-14 h-14 shrink-0 rounded-xl bg-gray-100 overflow-hidden flex items-center justify-center">
+                                        {thumb ? <img src={thumb} alt="" className="w-full h-full object-cover" loading="lazy" referrerPolicy="no-referrer" /> : <Store className="w-6 h-6 text-gray-300" />}
+                                    </span>
+                                    <span className="flex-1 min-w-0">
+                                        <strong className="block text-sm truncate">{storeName(name)}</strong>
+                                        <span className="block text-[11px] text-gray-500 mt-1">{ui.storeMeta(store?.category && (ui.cat[store.category] || store.category), menus.length, Math.min(...menus.map(m => m.coins)))}</span>
+                                    </span>
+                                    <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${open ? 'rotate-90' : ''}`} />
+                                </button>
+                                {open && <div id={panelId} className="bg-[#FAF7F0] border-t border-gray-100 px-4 py-4 space-y-3">
+                                    {menus.map(item => {
+                                        const short = item.coins - remaining;
+                                        return <div key={item.id} className="flex items-center gap-3 rounded-xl bg-white border px-4 py-3.5">
+                                            <div className="flex-1 min-w-0">
+                                                <div className="text-sm font-bold">{mt(item.name)}</div>
+                                            </div>
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-900 whitespace-nowrap">🪙 {ui.coins(item.coins)}</span>
+                                                <button aria-label={ui.addAria(mt(item.name))} onClick={() => addItem(item)}
+                                                    className={`rounded-lg px-3 py-1.5 text-xs font-bold whitespace-nowrap ${short > 0 ? 'bg-gray-100 text-gray-400' : 'bg-[#A68A64] text-white active:scale-95'}`}>
+                                                    {short > 0 ? ui.short(short) : (counts[item.id] ? `+1 (${counts[item.id]})` : ui.add)}
+                                                </button>
+                                            </div>
+                                        </div>;
+                                    })}
+                                    {store && onOpenStoreDetail && <button onClick={() => onOpenStoreDetail(store)} className="text-xs font-bold text-[#7A6342] underline">{ui.storeInfo}</button>}
+                                </div>}
+                            </li>;
+                        })}
+                    </ul>
+                </section>
+
+                {!!referenceItems.length && <section className="rounded-2xl bg-gray-50 p-4">
+                    <h3 className="font-bold text-sm">{ui.refTitle} <span className="font-normal text-gray-500">{ui.refExcluded}</span></h3>
+                    <p className="text-[11px] text-gray-500 mt-0.5">{ui.refDesc}</p>
+                    <ul className="mt-2 divide-y text-xs">
+                        {referenceItems.map(item => <li key={item.id} className="py-2 flex justify-between gap-2">
+                            <span><strong>{storeName(item.storeName)}</strong> · {mt(item.name)}{item.portion ? ` (${mt(item.portion)})` : ''}
+                                <span className="block text-[11px] text-gray-400">{item.sourceDate ? ui.refDate(item.sourceDate.replace(/-/g, '.')) : ui.refNoDate} · <a className="underline" href={item.sourceUrl} target="_blank" rel="noopener noreferrer">{ui.source}</a></span></span>
+                            <span className="whitespace-nowrap text-gray-500">{ui.approx(item.coins)}</span>
+                        </li>)}
+                    </ul>
+                </section>}
+
+                <CoinGuideCard guide={guide} />
+                <div className="text-center"><button type="button" data-correction-target="엽전도시락 정보" data-correction-label={ui.plannerTitle} data-correction-page="엽전도시락" className="text-xs font-bold text-gray-400 underline underline-offset-2 hover:text-gray-600">{ui.correctionLink}</button></div>
+
+                <details className="rounded-xl border p-4 bg-white">
+                    <summary className="font-bold text-sm cursor-pointer">{ui.researchSummary(COIN_MENU_DATA.surveyedStoreCount, pendingStores.length)}</summary>
+                    <p className="text-xs text-gray-500 mt-2">{ui.researchNote(COIN_MENU_DATA.researchedAt.replace(/-/g, '.'))}</p>
+                    {pendingStores.map(store => <div key={store.name} className="border-t mt-3 pt-3 text-xs">
+                        <strong>{storeName(store.name)}</strong><p className="text-gray-500 mt-1">{store.note}</p>
+                        {store.researchSource && <a className="underline text-gray-500" href={store.researchSource} target="_blank" rel="noopener noreferrer">{ui.researchSource}</a>}
+                    </div>)}
+                </details>
+            </div>;
+        };
+
+        // The 고객만족센터 restroom is inside 도시락카페; open the map zoomed in on that store.
+        const RESTROOM_MAP_URL = `map.html?open=${encodeURIComponent('도시락카페')}&zoom=21`;
+        const PARKING_MAP_URL = `https://map.naver.com/p/search/${encodeURIComponent('신교공영주차장')}`;
+
         const RenderMarketsView = ({ initialSubView = 'INPUT', onNavigate, onOpenStoreDetail, t, stores = [] }) => {
             const [subView, setSubView] = useState(initialSubView);
-            const [coinCount, setCoinCount] = useState(10);
-            const COIN_PRICE_KRW = 500;
+            const [coinCount, setCoinCount] = useState(0);
+            const ui = useUi();
 
             useEffect(() => {
                 setSubView(initialSubView);
             }, [initialSubView]);
 
+            if (subView !== 'FACILITIES') return <LunchboxPlanner coinCount={coinCount} setCoinCount={setCoinCount} stores={stores} onOpenStoreDetail={onOpenStoreDetail} />;
             if (subView === 'FACILITIES') {
                 return (
                     <div className="py-4 space-y-6">
                         <div>
                             <h2 className="text-[22px] font-bold text-gray-900 leading-tight">
-                                통인시장 편의시설 안내
+                                {ui.facTitle}
                             </h2>
                             <p className="text-xs text-gray-500 mt-1">
-                                화장실, 주차장, 고객만족센터 위치를 확인하세요
+                                {ui.facSub}
                             </p>
                         </div>
 
@@ -911,108 +1164,39 @@
                                         🚻
                                     </div>
                                     <div>
-                                        <h3 className="text-sm font-bold text-gray-900">고객만족센터 화장실</h3>
-                                        <p className="text-[11px] text-gray-500">시장 중앙 2층 (남/녀 구분)</p>
+                                        <h3 className="text-sm font-bold text-gray-900">{ui.restroomName}</h3>
+                                        <p className="text-[11px] text-gray-500">{ui.restroomDesc}</p>
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => onNavigate('MAP')}
+                                    onClick={() => { window.location.href = RESTROOM_MAP_URL; }}
                                     className="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-lg hover:bg-gray-200"
                                 >
-                                    위치 보기
+                                    {ui.viewLocation}
                                 </button>
                             </div>
 
-                            <div className="p-4 bg-white rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between">
+                            <a href={PARKING_MAP_URL} target="_blank" rel="noopener noreferrer" className="p-4 bg-white rounded-2xl border border-gray-100 shadow-xs flex items-center justify-between active:bg-gray-50">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
                                         🅿️
                                     </div>
                                     <div>
-                                        <h3 className="text-sm font-bold text-gray-900">신교 공영주차장</h3>
-                                        <p className="text-[11px] text-gray-500">도보 5분 · 5분당 250원</p>
+                                        <h3 className="text-sm font-bold text-gray-900">{ui.parkingName}</h3>
+                                        <p className="text-[11px] text-gray-500">{ui.parkingDesc}</p>
                                     </div>
                                 </div>
-                                <button
-                                    onClick={() => onNavigate('MAP')}
-                                    className="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-lg hover:bg-gray-200"
-                                >
-                                    위치 보기
-                                </button>
-                            </div>
+                                <span className="px-3 py-1.5 bg-[#03C75A] text-white text-xs font-bold rounded-lg">
+                                    {ui.naverMap}
+                                </span>
+                            </a>
                         </div>
+                        <div className="text-center"><button type="button" data-correction-target="편의시설 정보" data-correction-label={ui.facTitle} data-correction-page="편의시설" className="text-xs font-bold text-gray-400 underline underline-offset-2 hover:text-gray-600">{ui.correctionLink}</button></div>
                     </div>
                 );
             }
 
-            return (
-                <div className="py-4 flex flex-col justify-between min-h-[calc(100vh-180px)]">
-                    <div className="space-y-6">
-                        <div>
-                            <h2 className="text-[22px] font-bold text-gray-900 leading-tight">
-                                지금 가지고 있는 엽전이 몇 개인가요?
-                            </h2>
-                            <p className="text-xs text-gray-500 mt-1">
-                                방금 구매했든, 쓰다 남았든 현재 개수를 넣어주세요
-                            </p>
-                        </div>
-
-                        <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm flex flex-col items-center justify-center space-y-4">
-                            <div className="flex items-center justify-center gap-6 w-full">
-                                <button
-                                    onClick={() => setCoinCount(prev => Math.max(1, prev - 1))}
-                                    className="w-12 h-12 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-2xl font-bold text-gray-600 active:scale-95 transition-all hover:bg-gray-100"
-                                >
-                                    –
-                                </button>
-
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-5xl font-black text-gray-900 tracking-tight">
-                                        {coinCount}
-                                    </span>
-                                    <span className="text-lg font-bold text-gray-600">개</span>
-                                </div>
-
-                                <button
-                                    onClick={() => setCoinCount(prev => prev + 1)}
-                                    className="w-12 h-12 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-2xl font-bold text-gray-600 active:scale-95 transition-all hover:bg-gray-100"
-                                >
-                                    +
-                                </button>
-                            </div>
-
-                            <p className="text-xs font-semibold text-gray-400">
-                                = {(coinCount * COIN_PRICE_KRW).toLocaleString()}원 · 엽전 1개 500원
-                            </p>
-                        </div>
-
-                        <div>
-                            <p className="text-xs font-bold text-gray-400 mb-2.5">빠른 선택</p>
-                            <div className="grid grid-cols-6 gap-2">
-                                {[2, 4, 7, 10, 20, 30].map(cnt => (
-                                    <button
-                                        key={cnt}
-                                        onClick={() => setCoinCount(cnt)}
-                                        className={`py-2 rounded-xl text-xs font-bold border transition-all active:scale-95 ${coinCount === cnt ? 'bg-[#A68A64] text-white border-[#A68A64] shadow-xs' : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300'}`}
-                                    >
-                                        {cnt}개
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="pt-4">
-                        <button
-                            onClick={() => onNavigate('STORES')}
-                            className="w-full py-4 bg-[#A68A64] text-white font-bold text-base rounded-2xl shadow-md active:scale-[0.98] transition-all hover:bg-[#937754] flex items-center justify-center gap-2"
-                        >
-                            <Coins className="w-5 h-5" />
-                            <span>가맹점 둘러보기</span>
-                        </button>
-                    </div>
-                </div>
-            );
+            return null;
         };
 
         const Layout = ({ children, step, totalSteps, title, showProgress = true, lang, setLang, onBack, showBackButton = false, onOpenGuide, mainTab = 'HOME', switchTab }) => {
@@ -1047,7 +1231,7 @@
                                 )}
                                 {step === 0 ? (
                                     <div className="flex items-center gap-2">
-                                        <img src="assets/mjlogo.png" alt="만장일치 로고" className="w-[1.2rem] mt-0.5 h-auto object-contain" />
+                                        <img src="assets/mjlogo.png" alt={lang === 'ko' ? '만장일치 로고' : 'Manjangilchi logo'} className="w-[1.2rem] mt-0.5 h-auto object-contain" />
                                         <span className="text-[21px] text-gray-900 leading-none outline-none mt-1" style={{ fontFamily: 'Jandari', fontWeight: 'normal' }}>{title || '만장일치'}</span>
                                     </div>
                                 ) : (
@@ -1063,7 +1247,7 @@
                                     <button
                                         onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                                         className="p-1.5 rounded-full hover:bg-gray-100 transition-all active:scale-95 text-[#A68A64]"
-                                        aria-label="언어 변경"
+                                        aria-label={{ ko: '언어 변경', en: 'Change language', zh: '切换语言', ja: '言語を変更' }[lang] || '언어 변경'}
                                     >
                                         <Globe className="w-5.5 h-5.5 text-[#A68A64]" />
                                     </button>
@@ -1168,6 +1352,7 @@
         };
 
         const LandingCarousel = () => {
+            const lang = useLang();
             const images = ['assets/slide1.jpg', 'assets/slide2.jpg', 'assets/slide3.jpg', 'assets/slide4.jpg'];
             const extendedImages = [images[images.length - 1], ...images, images[0]];
             const scrollContainerRef = React.useRef(null);
@@ -1243,10 +1428,10 @@
                                 {/* 이미지 하단 텍스트 (더 크고 또렷하게, 검색창과 안겹치게 bottom-14 지정) */}
                                 <div className="absolute left-6 bottom-14 z-20 text-white pointer-events-none">
                                     <h2 className="text-3xl sm:text-4xl font-black tracking-tight drop-shadow-lg leading-tight">
-                                        통인시장
+                                        {UiText.get(lang).heroTitle}
                                     </h2>
                                     <p className="text-sm sm:text-base font-semibold text-white/95 mt-1.5 drop-shadow-md">
-                                        예술과 문화가 공존하는 전통시장
+                                        {UiText.get(lang).heroSub}
                                     </p>
                                 </div>
                             </div>
@@ -1446,6 +1631,7 @@
         };
 
         const AllStoresModal = ({ isOpen, onClose, storeList, initialCategory = '전체' }) => {
+            const lang = useLang();
             const [category, setCategory] = useState(initialCategory);
             const [search, setSearch] = useState('');
 
@@ -1485,15 +1671,9 @@
                         {/* Filter & Search Bar */}
                         <div className="px-5 pt-3 pb-3 space-y-3 bg-gray-50/50 border-b border-gray-100 shrink-0">
                             {/* Category Chips */}
-                            <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                            <div className="flex gap-2 overflow-x-auto no-scrollbar px-1 py-2">
                                 {categories.map(cat => (
-                                    <button
-                                        key={cat}
-                                        onClick={() => setCategory(cat)}
-                                        className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${category === cat ? 'bg-[#A68A64] text-white shadow-xs' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-100'}`}
-                                    >
-                                        {cat}
-                                    </button>
+                                    <CategoryChip key={cat} value={cat} label={cat === '전체' ? cat : UiText.get(lang).cat[cat]} active={category === cat} onClick={() => setCategory(cat)} />
                                 ))}
                             </div>
 
@@ -1569,198 +1749,256 @@
             );
         };
 
+const getStoreMenuItems = StoreMenus.getItems;
+
+        // Same tag colors and favorites storage as the map's store detail panel (map.html).
+        const CAT_TAG_STYLES = { '식당': 'bg-[#F4AFA0] text-white', '간식': 'bg-[#F6D267] text-[#2B2621]', '생활형': 'bg-[#A8D8C9] text-[#2B2621]' };
+        const STATUS_DOT_COLORS = { open: 'bg-emerald-500', break: 'bg-amber-400', ended: 'bg-gray-400', closed: 'bg-red-400' };
+        const STATUS_TEXT_COLORS = { open: 'text-emerald-600', break: 'text-amber-600', ended: 'text-gray-500', closed: 'text-red-500' };
+        const readFavs = () => { try { return new Set(JSON.parse(localStorage.getItem('tongin_favs') || '[]')); } catch { return new Set(); } };
+        const writeFavs = favs => {
+            try { localStorage.setItem('tongin_favs', JSON.stringify([...favs])); } catch { }
+            window.dispatchEvent(new Event('tongin-favs-change'));
+        };
+        const useFavorites = () => {
+            const [favs, setFavs] = useState(readFavs);
+            useEffect(() => {
+                const sync = () => setFavs(readFavs());
+                window.addEventListener('tongin-favs-change', sync);
+                window.addEventListener('storage', sync);
+                return () => { window.removeEventListener('tongin-favs-change', sync); window.removeEventListener('storage', sync); };
+            }, []);
+            return favs;
+        };
+        // map.html?open= works locally and on Netlify; the map then rewrites the address to /shop/<slug> itself.
+        const storeMapUrl = store => `map.html?open=${encodeURIComponent(store.name)}`;
+        const storeShareUrl = store => window.location.origin + '/' + (store.slug ? `shop/${encodeURIComponent(store.slug)}` : storeMapUrl(store));
+        const CoinSvg = ({ className }) => <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+        const InfoRow = ({ label, icon, children }) => (
+            <div className="flex gap-2.5">
+                <svg className="w-3.5 h-3.5 mt-0.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">{icon}</svg>
+                <div>
+                    <span className="text-[11px] font-bold text-gray-400 block mb-1">{label}</span>
+                    {children}
+                </div>
+            </div>
+        );
+        const AmenityChip = ({ label, icon, highlight }) => (
+            <div className={`flex items-center gap-2 px-3 py-2.5 rounded-xl ${highlight ? 'bg-[#FFFBEB] border border-[#FDE68A] text-[#D97706]' : 'bg-[#F8FAFC] border border-gray-100 text-gray-700'}`}>
+                <svg className={`w-4 h-4 shrink-0 ${highlight ? 'text-[#D97706]' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">{icon}</svg>
+                <span className="truncate">{label}</span>
+            </div>
+        );
+
         const StoreDetailModal = ({ store, onClose }) => {
-            if (!store) return null;
             const [activeTab, setActiveTab] = useState('home');
-            const [isFav, setIsFav] = useState(false);
+            const favs = useFavorites();
+            const lang = useLang();
+            const ui = useUi();
+            const st = useStoreText();
+            const mt = useMapText();
+            useEffect(() => { setActiveTab('home'); }, [store?.name]);
+            if (!store) return null;
 
-            const rawImg = store.repre_img || store.repre_image || '';
-            let imgUrl = rawImg;
-            if (rawImg.includes('drive.google.com')) {
-                const match = rawImg.match(/\/d\/([^/]+)/);
-                if (match && match[1]) {
-                    imgUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w600`;
-                }
-            }
+            const isFav = favs.has(store.name);
+            const isCoin = String(store.coin || '').toLowerCase() === 'o';
+            const name = st(store, 'name');
+            const catName = ui.cat[store.category] || store.category;
+            const shortDesc = st(store, 'shortDesc');
+            const keywords = MapI18n.keywords(st(store, 'keyword'));
+            const statusText = StoreDetail.STATUS_TEXTS[lang] || StoreDetail.STATUS_TEXT;
+            const status = StoreDetail.getOperatingStatus(store.hours || '', statusText);
+            const phone = StoreDetail.getStorePhone(store.name);
+            const menuItems = getStoreMenuItems(store);
+            const imgUrl = storeImageUrl(store).replace('&sz=w200', '&sz=w800');
 
-            const rawDesc = store.description || '';
-            // Check if description is a real sentence (>20 chars) vs just menu keywords
-            const isRealDesc = rawDesc && rawDesc.length > 20 && rawDesc !== store.category && !(/^[가-힣a-zA-Z0-9\s,·]+$/.test(rawDesc) && rawDesc.length < 25);
-            const descText = isRealDesc
-                ? rawDesc
-                : rawDesc && rawDesc.length > 1 && rawDesc !== store.category
-                    ? `${store.name}은(는) ${rawDesc} 등을 제공하는 통인시장의 인기 ${store.category} 상점입니다. 정성과 인심을 담아 고객을 맞이합니다.`
-                    : `${store.name}은(는) 통인시장의 정성과 인심을 담아 고객을 맞이하는 대표 ${store.category} 상점입니다. 신선한 재료와 정성스러운 서비스를 제공합니다.`;
-
-            const subText = rawDesc && rawDesc.length > 1 && rawDesc !== store.category
-                ? rawDesc
-                : `통인시장 대표 ${store.category} 상점`;
-
-            const keywordList = (store.keywords || store.description || '')
-                .split(/[,|\s]+/)
-                .filter(k => k && k.length >= 2 && k !== store.category);
-            
-            const displayKeywords = keywordList.length > 0 ? keywordList.slice(0, 5) : [store.category, '통인시장', '추천점포', '엽전가맹점'];
-
-            const catTagColor = store.category === '식당'
-                ? 'bg-[#F4AFA0] text-[#1A1A1B]'
-                : store.category === '간식'
-                    ? 'bg-[#F6D267] text-[#1A1A1B]'
-                    : 'bg-[#A8D8C9] text-[#1A1A1B]';
-
-            const handleShare = () => {
+            const toggleFav = () => {
+                const next = new Set(favs);
+                next.has(store.name) ? next.delete(store.name) : next.add(store.name);
+                writeFavs(next);
+            };
+            const handleShare = async () => {
+                const url = storeShareUrl(store);
+                const text = `[Tongin Market] ${name}\n${shortDesc}\n#TonginMarket #Seoul #Travel`;
                 if (navigator.share) {
-                    navigator.share({
-                        title: store.name,
-                        text: `${store.name} - 통인시장`,
-                        url: window.location.href
-                    }).catch(() => { });
+                    try { await navigator.share({ title: `Tongin Market - ${name}`, text, url }); } catch { }
                 } else {
-                    navigator.clipboard.writeText(window.location.href);
-                    alert('점포 링크가 복사되었습니다!');
+                    try { await navigator.clipboard.writeText(`${text}\n${url}`); alert(ui.linkCopied); } catch { }
                 }
             };
+            const goRoute = () => { window.location.href = storeMapUrl(store); };
+            const tabClass = id => activeTab === id
+                ? 'flex-1 text-center text-[#2B2621] font-bold border-b-2 border-[#2B2621] pt-3.5 pb-3 transition-colors'
+                : 'flex-1 text-center text-gray-400 pt-3.5 pb-3 border-b-2 border-transparent hover:text-gray-600 transition-colors';
+            const roundBtn = 'w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 text-gray-500 bg-white hover:bg-gray-50 active:scale-95 transition-all';
 
             return (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200" onClick={onClose}>
-                    <div className="bg-white w-full max-w-md max-h-[85vh] max-h-[85dvh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
-                        {/* Top Summary Header */}
-                        <div className="px-6 pt-4 pb-3.5 bg-white border-b border-gray-100 shrink-0">
-                            <div className="flex justify-between items-center mb-2">
-                                <div className="flex items-center gap-1.5">
-                                    <span className={`${catTagColor} px-2.5 py-0.5 rounded text-[11px] font-bold`}>
-                                        {store.category}
-                                    </span>
-                                    <span className="inline-flex items-center gap-1 bg-[#FFFBEB] border border-[#FDE68A] text-[#D97706] px-2 py-0.5 rounded text-[11px] font-bold">
-                                        <span>🪙 엽전 가맹점</span>
-                                    </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={handleShare}
-                                        className="w-8 h-8 rounded-full border border-gray-200 text-gray-500 bg-white hover:bg-gray-50 active:scale-95 flex items-center justify-center transition-all"
-                                        title="공유하기"
-                                    >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
-                                    </button>
-                                    <button
-                                        onClick={() => setIsFav(!isFav)}
-                                        className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all active:scale-95 ${isFav ? 'bg-pink-50 border-pink-200 text-pink-500' : 'bg-white border-gray-200 text-gray-400 hover:bg-gray-50'}`}
-                                        title="즐겨찾기"
-                                    >
-                                        <svg className="w-4 h-4" fill={isFav ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                                    </button>
-                                    <button
-                                        onClick={onClose}
-                                        className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold text-sm flex items-center justify-center hover:bg-gray-200 active:scale-95 transition-all"
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
-                            </div>
-                            <div>
-                                <h2 className="text-[22px] text-gray-900 leading-tight font-extrabold" style={{ fontFamily: 'Jandari, Pretendard, sans-serif' }}>{store.name}</h2>
-                                <p className="text-xs text-gray-500 mt-0.5 truncate">{subText}</p>
-                            </div>
-                        </div>
-
-                        {/* Scrollable Content Body - min-h-0 is mandatory for flex-1 scrolling */}
+                    <div className="bg-white w-full max-w-md max-h-[85vh] max-h-[85dvh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 animate-in zoom-in-95 duration-200 text-[#2B2621]" onClick={(e) => e.stopPropagation()}>
                         <div className="overflow-y-auto flex-1 min-h-0 no-scrollbar bg-white">
-                            {/* Image Banner */}
-                            <div className="relative w-full h-44 sm:h-48 bg-gray-100 shrink-0 overflow-hidden">
-                                {imgUrl ? (
-                                    <img
-                                        src={imgUrl}
-                                        alt={store.name}
-                                        className="w-full h-full object-cover"
-                                        onError={(e) => {
-                                            e.target.style.display = 'none';
-                                            if (e.target.nextElementSibling) e.target.nextElementSibling.style.display = 'flex';
-                                        }}
-                                    />
-                                ) : null}
-                                <div className={`w-full h-full flex items-center justify-center ${imgUrl ? 'hidden' : ''}`}>
-                                    <span className="text-5xl">{store.category === '식당' ? '🍲' : store.category === '간식' ? '🥨' : '🏪'}</span>
+                            {/* Header Info */}
+                            <div className="bg-white px-6 pt-5 pb-5">
+                                <div className="flex justify-between items-center mb-2.5">
+                                    <div className="flex items-center gap-1.5">
+                                        <span className={`${CAT_TAG_STYLES[store.category] || CAT_TAG_STYLES['생활형']} border border-transparent px-2.5 py-0.5 rounded text-[11px] font-bold`}>{catName}</span>
+                                        {isCoin && <span className="inline-flex items-center gap-1 bg-[#FFFBEB] border border-[#FDE68A] text-[#D97706] px-2 py-0.5 rounded text-[11px] font-bold">
+                                            <CoinSvg className="w-3 h-3 text-[#D97706]" /><span>{mt('엽전 가맹점')}</span>
+                                        </span>}
+                                    </div>
+                                    <div className="flex gap-2 shrink-0">
+                                        <button onClick={handleShare} aria-label={ui.share} className={roundBtn}>
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                                        </button>
+                                        <button onClick={toggleFav} aria-label={ui.favorite} className={`w-9 h-9 flex items-center justify-center rounded-full border ${isFav ? 'bg-pink-50 border-pink-200 text-pink-500 shadow-sm' : 'bg-white border-gray-200 text-gray-400'} hover:bg-gray-50 active:scale-95 transition-all`}>
+                                            <svg className="w-4 h-4" fill={isFav ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                                        </button>
+                                        <button onClick={goRoute} aria-label={ui.routeOnMap} className={roundBtn}>
+                                            <svg className="w-4 h-4 rotate-45 mt-0.5 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                                        </button>
+                                        <button onClick={onClose} aria-label={ui.close} className={roundBtn}>
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
+                                <h2 className="text-[24px] text-gray-900 leading-tight" style={{ fontFamily: 'Jandari, sans-serif', fontWeight: 'normal' }}>{name}</h2>
+                                <p className="text-xs text-gray-500 mt-1 truncate">{shortDesc || catName}</p>
                             </div>
 
-                            {/* Tabs Navigation */}
-                            <div className="sticky top-0 z-30 bg-white border-b border-gray-100 flex justify-between px-6 text-xs font-bold text-gray-500">
-                                <button onClick={() => setActiveTab('home')} className={`flex-1 py-3 text-center transition-colors ${activeTab === 'home' ? 'text-gray-900 border-b-2 border-gray-900 font-extrabold' : 'hover:text-gray-700'}`}>홈</button>
-                                <button onClick={() => setActiveTab('menu')} className={`flex-1 py-3 text-center transition-colors ${activeTab === 'menu' ? 'text-gray-900 border-b-2 border-gray-900 font-extrabold' : 'hover:text-gray-700'}`}>메뉴</button>
-                                <button onClick={() => setActiveTab('info')} className={`flex-1 py-3 text-center transition-colors ${activeTab === 'info' ? 'text-gray-900 border-b-2 border-gray-900 font-extrabold' : 'hover:text-gray-700'}`}>정보</button>
+                            {/* Image Area */}
+                            <div className="relative w-full h-60 bg-gray-100 select-none">
+                                {imgUrl
+                                    ? <img src={imgUrl} alt={name} className="w-full h-full object-cover" referrerPolicy="no-referrer" onError={(e) => { e.target.style.display = 'none'; }} />
+                                    : <div className="w-full h-full flex items-center justify-center text-sm text-gray-400">No Image</div>}
+                                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
                             </div>
 
-                            {/* Tab Body Content */}
-                            <div className="p-5 space-y-4">
-                                {activeTab === 'home' && (
-                                    <>
-                                        <div className="space-y-1.5 bg-[#FAF8F5] p-4 rounded-2xl border border-[#EFE8DC]">
-                                            <h4 className="text-xs font-extrabold text-[#8B6B4A]">상점 소개</h4>
-                                            <p className="text-xs text-gray-700 leading-relaxed font-medium">
-                                                {descText}
-                                            </p>
-                                        </div>
+                            {/* Tabs */}
+                            <div className="sticky top-0 z-30 bg-white border-b border-gray-100 flex justify-between px-6 text-sm w-full">
+                                <button className={tabClass('home')} onClick={() => setActiveTab('home')}>{mt('홈')}</button>
+                                <button className={tabClass('menu')} onClick={() => setActiveTab('menu')}>{mt('메뉴')}</button>
+                                <button className={tabClass('info')} onClick={() => setActiveTab('info')}>{mt('정보')}</button>
+                            </div>
 
-                                        <div className="space-y-1.5">
-                                            <h4 className="text-xs font-bold text-gray-400">대표 키워드</h4>
-                                            <div className="flex flex-wrap gap-1.5">
-                                                {displayKeywords.map((tag, idx) => (
-                                                    <span key={idx} className="bg-gray-100 text-gray-600 text-[11px] font-bold px-2.5 py-1 rounded-lg">
-                                                        #{tag}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </>
-                                )}
+                            {activeTab === 'home' && <div className="p-5 space-y-6 bg-white">
+                                {/* Store Intro (점포 이야기) */}
+                                <div className="bg-[#FEFBF6] border border-[#F5EBE0] p-5 rounded-2xl">
+                                    <div className="flex items-center gap-1.5 mb-3">
+                                        <span className="text-base">✨</span>
+                                        <span className="text-[14px] font-bold text-[#A78B71]">{mt('점포 이야기')}</span>
+                                    </div>
+                                    <p className="text-[13px] text-[#5C554F] leading-[1.6]">{lang === 'ko' ? StoreDetail.getStoreIntro(store) : shortDesc}</p>
+                                </div>
 
-                                {activeTab === 'menu' && (
+                                {/* Core Info (영업 시간, 사장님 픽, 위치, 연락처) */}
+                                <div className="bg-[#F8FAFC] p-5 rounded-2xl space-y-5">
+                                    <InfoRow label={mt('영업 시간')} icon={<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />}>
+                                        <div className="flex items-center text-[13px] font-bold text-gray-800">
+                                            <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${STATUS_DOT_COLORS[status.color]}`}></span>
+                                            <span className={`mr-1.5 ${STATUS_TEXT_COLORS[status.color]}`}>{status.label}</span>
+                                            <span className="font-normal text-gray-500">{status.detail}</span>
+                                        </div>
+                                    </InfoRow>
+                                    <InfoRow label={mt('사장님 픽')} icon={<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />}>
+                                        <span className="text-[13px] font-bold text-gray-800">{st(store, 'price') || mt('인기 메뉴 구성')}</span>
+                                    </InfoRow>
+                                    <InfoRow label={mt('위치')} icon={<><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></>}>
+                                        <span className="text-[13px] text-gray-800 font-bold block leading-relaxed">{mt('통인시장 내 점포 · 서울 종로구 자하문로15길 18')}</span>
+                                    </InfoRow>
+                                    {phone && <InfoRow label={mt('연락처')} icon={<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />}>
+                                        <a href={'tel:' + phone.replace(/-/g, '')} className="text-[13px] font-bold text-gray-800">{phone}</a>
+                                    </InfoRow>}
+                                </div>
+
+                                {/* Payment and Convenience (결제 · 편의) */}
+                                <div className="space-y-3">
+                                    <h3 className="text-[13.5px] font-bold text-gray-400">{mt('결제 · 편의')}</h3>
+                                    <div className="grid grid-cols-2 gap-2 text-[12px] font-bold">
+                                        <AmenityChip label={mt('카드 결제 가능')} icon={<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />} />
+                                        <AmenityChip label={mt('온누리 결제 가능')} icon={<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />} />
+                                        <div className={`flex items-center gap-2 px-3 py-2.5 rounded-xl ${isCoin ? 'bg-[#FFFBEB] border border-[#FDE68A] text-[#D97706]' : 'bg-[#F8FAFC] border border-gray-100 text-gray-400'}`}>
+                                            <CoinSvg className={`w-4 h-4 shrink-0 ${isCoin ? 'text-[#D97706]' : 'text-gray-400'}`} />
+                                            <span className="truncate">{mt('엽전 사용 가능')}</span>
+                                        </div>
+                                        <AmenityChip label={mt('무료 Wi-Fi')} icon={<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a9.9 9.9 0 0114.14 0M1.929 7.929a14 14 0 0119.828 0" />} />
+                                        <AmenityChip label={mt('휠체어 접근')} icon={<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />} />
+                                        <AmenityChip label={mt('영문 메뉴')} icon={<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 11.37 7.363 16.34 1 18" />} />
+                                    </div>
+                                </div>
+
+                                {/* Signature Menu (대표 메뉴) */}
+                                <div>
+                                    <div className="flex justify-between items-center mb-3">
+                                        <h3 className="font-bold text-gray-900 text-[14.5px]">{mt('대표 메뉴')}</h3>
+                                        <button onClick={() => setActiveTab('menu')} className="text-xs text-gray-400 flex items-center gap-0.5 font-medium hover:text-gray-600">
+                                            {mt('전체 보기')} <ChevronRight className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                    <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+                                        {menuItems.slice(0, 2).map((item, idx) => <div key={`${item.name}-${idx}`} className="min-w-[145px] w-[145px] bg-white border border-gray-100 rounded-xl p-3 shrink-0">
+                                            <div className="text-sm font-bold">{mt(item.name)}</div>
+                                            <p className="text-xs text-gray-500 my-2">{mt(item.description)}</p>
+                                            <p className="text-sm font-bold text-[#D97706]">{mt(item.price)}</p>
+                                        </div>)}
+                                    </div>
+                                </div>
+
+                                {/* Nearby Facilities (이 근처 시설) */}
+                                <div className="space-y-3">
+                                    <h3 className="text-[14.5px] font-bold text-gray-900">{mt('이 근처 시설')}</h3>
                                     <div className="space-y-3">
-                                        <h4 className="text-xs font-bold text-gray-700">대표 메뉴 목록</h4>
-                                        <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
-                                            <div>
-                                                <div className="text-xs font-bold text-gray-900">대표 메뉴 1</div>
-                                                <div className="text-[11px] text-gray-500">통인시장 정통 손맛</div>
+                                        {[{ icon: '🍱', name: '엽전도시락 카페 🚻', type: '맛집 · 고객만족센터 화장실', dist: '20m' }].map(f => <div key={f.name} className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0 shadow-sm text-sm">{f.icon}</div>
+                                                <div>
+                                                    <h4 className="text-[13px] font-bold text-gray-800">{mt(f.name)}</h4>
+                                                    <p className="text-[11px] text-gray-400 font-medium">{mt(f.type)}</p>
+                                                </div>
                                             </div>
-                                            <span className="text-xs font-bold text-[#D97706]">5,000원</span>
-                                        </div>
-                                        <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
-                                            <div>
-                                                <div className="text-xs font-bold text-gray-900">추천 메뉴 2</div>
-                                                <div className="text-[11px] text-gray-500">인기 시그니처 아이템</div>
-                                            </div>
-                                            <span className="text-xs font-bold text-[#D97706]">3,000원</span>
-                                        </div>
+                                            <span className="text-[12px] font-bold text-gray-400">{f.dist}</span>
+                                        </div>)}
                                     </div>
-                                )}
+                                </div>
+                            </div>}
 
-                                {activeTab === 'info' && (
-                                    <div className="space-y-2 text-xs text-gray-700 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                                        <p><strong className="text-gray-900">주소:</strong> 서울특별시 종로구 자하문로15길 18 (통인시장)</p>
-                                        <p><strong className="text-gray-900">영업시간:</strong> 11:00 - 17:00 (월요일 휴무)</p>
-                                        <p><strong className="text-gray-900">결제안내:</strong> 엽전, 카드, 현금 가능</p>
+                            {activeTab === 'menu' && <div className="p-5 bg-white min-h-[400px]">
+                                <h3 className="font-bold text-gray-900 mb-4 text-sm">{mt('전체 메뉴')} ({menuItems.length})</h3>
+                                <div className="space-y-4">
+                                    {menuItems.map((item, idx) => <div key={`${item.name}-${idx}`} className="flex items-start justify-between border-b border-gray-100 pb-4 gap-4">
+                                        <div className="min-w-0">
+                                            <h4 className="font-bold text-gray-900 mb-1">{mt(item.name)}</h4>
+                                            {item.description && <p className="text-xs text-gray-500 mb-2">{mt(item.description)}</p>}
+                                            {item.sourceUrl && <a className="text-xs text-gray-500 underline" href={item.sourceUrl} target="_blank" rel="noopener noreferrer">{mt('정보 출처')}</a>}
+                                        </div>
+                                        <p className="font-bold text-[#D97706] text-sm shrink-0">{mt(item.price)}</p>
+                                    </div>)}
+                                    <p className="text-[10px] leading-relaxed text-gray-400">{mt('상품 구성과 가격은 점포 사정에 따라 변경될 수 있습니다.')}</p>
+                                </div>
+                            </div>}
+
+                            {activeTab === 'info' && <div className="p-5 bg-white min-h-[400px] space-y-6">
+                                <div>
+                                    <h3 className="font-bold text-gray-900 mb-4 text-sm">{mt('영업시간 안내')}</h3>
+                                    <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm text-gray-600">
+                                        <p className="whitespace-pre-line">{st(store, 'hours') || statusText.detail_check}</p>
                                     </div>
-                                )}
-                            </div>
+                                </div>
+                                {!!keywords.length && <div>
+                                    <h3 className="font-bold text-gray-900 mb-3 text-sm">{mt('가게 키워드')}</h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {keywords.map(k => <span key={k} className="px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-100 text-gray-600 text-xs font-medium">#{k}</span>)}
+                                    </div>
+                                </div>}
+                            </div>}
+                            <div className="px-5 pb-6 text-center"><button type="button" data-correction-target={store.name} data-correction-label={name} data-correction-page="매장 상세" className="text-xs font-bold text-gray-400 underline underline-offset-2 hover:text-gray-600">{mt('정보가 다른가요? 수정 요청하기')}</button></div>
                         </div>
 
-                        {/* Bottom Action Buttons Bar */}
-                        <div className="p-4 bg-white border-t border-gray-100 flex gap-3 shrink-0">
-                            <button
-                                onClick={() => window.location.href = `map.html?open=${encodeURIComponent(store.name)}`}
-                                className="flex-1 h-12 bg-[#0F172A] hover:bg-[#1e293b] text-white font-bold text-[14.5px] rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-sm"
-                            >
-                                <MapPin className="w-4 h-4 text-white" />
-                                <span>지도에서 길찾기</span>
+                        {/* Sticky Bottom Bar */}
+                        <div className="bg-white border-t border-gray-100 p-4 flex gap-3 shrink-0">
+                            <button onClick={toggleFav} aria-label={ui.favorite} className={`w-12 h-12 flex items-center justify-center rounded-full border ${isFav ? 'bg-pink-50 border-pink-200 text-pink-500 shadow-sm' : 'bg-white border-gray-200 text-gray-400'} hover:bg-gray-50 active:scale-95 transition-all shrink-0`}>
+                                <svg className="w-5 h-5" fill={isFav ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                             </button>
-                            <button
-                                onClick={() => window.location.href = 'markets.html'}
-                                className="px-4 h-12 bg-[#FAF5ED] hover:bg-[#F5EFE4] text-[#8B6B4A] border border-[#E8DEC9] font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all shrink-0"
-                            >
-                                <Coins className="w-4 h-4" />
-                                <span>엽전도시락</span>
+                            <button onClick={goRoute} className="flex-1 h-12 bg-[#0F172A] text-white font-bold text-[14.5px] rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all shadow-sm">
+                                <span>{mt('길찾기')}</span>
                             </button>
                         </div>
                     </div>
@@ -1958,9 +2196,9 @@
             const renderLanding = () => {
                 const categories = [
                     { value: '전체', label: t.catAll },
-                    { value: '식당', label: t.catRestaurant },
-                    { value: '간식', label: t.catSnack },
-                    { value: '생활형', label: t.catLife }
+                    { value: '식당', label: UiText.get(lang).cat['식당'] },
+                    { value: '간식', label: UiText.get(lang).cat['간식'] },
+                    { value: '생활형', label: UiText.get(lang).cat['생활형'] }
                 ];
                 const filteredStores = storeList.filter(s => selectedCategory === '전체' || s.category === selectedCategory).slice(0, 5);
 
@@ -2108,15 +2346,9 @@
                                 </div>
 
                                 {/* Category Chips */}
-                                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                                <div className="flex gap-2 overflow-x-auto no-scrollbar px-1 pt-1 pb-2">
                                     {categories.map(cat => (
-                                        <button
-                                            key={cat.value}
-                                            onClick={() => setSelectedCategory(cat.value)}
-                                            className={`shrink-0 px-4 py-1.5 rounded-full text-[13px] font-bold transition-all ${selectedCategory === cat.value ? 'bg-[#A68A64] text-white shadow-xs' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                                        >
-                                            {cat.label}
-                                        </button>
+                                        <CategoryChip key={cat.value} value={cat.value} label={cat.label} active={selectedCategory === cat.value} onClick={() => setSelectedCategory(cat.value)} />
                                     ))}
                                 </div>
 
@@ -2137,7 +2369,7 @@
                                                     {imgUrl ? (
                                                         <img
                                                             src={imgUrl}
-                                                            alt={store.name}
+                                                            alt={UiText.storeText(store, 'name', lang)}
                                                             className="w-full h-full object-cover"
                                                             onError={(e) => {
                                                                 e.target.style.display = 'none';
@@ -2150,9 +2382,9 @@
                                                     </div>
                                                 </div>
                                                 <div className="p-3 space-y-1">
-                                                    <div className="text-[10px] text-[#b5926b] font-bold">{store.category}</div>
-                                                    <div className="font-bold text-[13.5px] text-gray-900 truncate">{store.name}</div>
-                                                    <div className="text-[11px] text-gray-500 truncate">{store.description || store.keywords}</div>
+                                                    <div className="text-[10px] text-[#b5926b] font-bold">{UiText.get(lang).cat[store.category] || store.category}</div>
+                                                    <div className="font-bold text-[13.5px] text-gray-900 truncate">{UiText.storeText(store, 'name', lang)}</div>
+                                                    <div className="text-[11px] text-gray-500 truncate">{getLocalizedDescription(store, lang)}</div>
                                                 </div>
                                             </div>
                                         );
@@ -2185,7 +2417,7 @@
                                 <div className="space-y-4">
                                     {/* Brand Header */}
                                     <div className="flex items-center gap-2">
-                                        <img src="assets/mjlogo.png" alt="만장일치 로고" className="w-4 h-auto object-contain opacity-80" />
+                                        <img src="assets/mjlogo.png" alt={lang === 'ko' ? '만장일치 로고' : 'Manjangilchi logo'} className="w-4 h-auto object-contain opacity-80" />
                                         <span className="font-bold text-gray-800 text-sm" style={{ fontFamily: 'Jandari' }}>만장일치 (萬場一致)</span>
                                     </div>
 
@@ -2205,6 +2437,8 @@
                                             <button onClick={() => switchTab && switchTab('YEOPJEON')} className="hover:text-[#A68A64] transition-colors">{t.footerLinkGuide}</button>
                                             <span>·</span>
                                             <button onClick={() => switchTab && switchTab('FACILITIES')} className="hover:text-[#A68A64] transition-colors">{t.footerLinkFacility}</button>
+                                            <span>·</span>
+                                            <button type="button" data-correction-target="만장일치 정보" data-correction-page="푸터" className="hover:text-[#A68A64] transition-colors">{UiText.get(lang).correctionFooter}</button>
                                         </div>
                                         <p className="text-[10px] text-gray-400">© 2026 만장일치 (Manjanilchi). All rights reserved.</p>
                                     </div>
@@ -2422,6 +2656,7 @@
             };
 
             return (
+                <LangContext.Provider value={lang}>
                 <Layout
                     step={step}
                     totalSteps={TOTAL_STEPS}
@@ -2453,6 +2688,7 @@
                     <GuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} lang={lang} setLang={setLang} />
                     <StoreDetailModal store={selectedStore} onClose={() => setSelectedStore(null)} />
                 </Layout>
+                </LangContext.Provider>
             );
         };
 
