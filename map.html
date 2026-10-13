@@ -865,6 +865,14 @@
                 map.addListener('heading_changed', () => {
                     updateLabelOrientation();
                 });
+
+                // Tapping empty map closes the selected store, like Naver/Kakao maps. A marker/label tap can also
+                // reach the map as a click, so ignore clicks right after a panel was opened.
+                map.addListener('click', () => {
+                    if (!selectedStore || Date.now() - lastPanelOpenTime < 300) return;
+                    window.mjTrack?.('map_empty_click_close', { store_name: selectedStore.name || '' });
+                    closeAllPanels();
+                });
                 // Initial call
                 updateLabelOrientation();
             };
