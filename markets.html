@@ -998,8 +998,9 @@
                     return;
                 }
                 setItems(previous => CoinPlanner.add(previous, item.id, coinCount));
-                setMessage(ui.msgAdded(mt(item.name)));
+                setMessage(ui.msgAdded(itemLabel(item)));
             };
+            const itemLabel = item => item.portion && item.portion.length <= 10 ? `${mt(item.name)} · ${mt(item.portion)}` : mt(item.name);
             const removeOne = id => {
                 setItems(previous => { const i = previous.map(x => x.id).lastIndexOf(id); return i < 0 ? previous : previous.filter((_, j) => j !== i); });
                 setMessage('');
@@ -1007,7 +1008,8 @@
 
             const referenceItems = Object.values(COIN_MENU_DATA.stores).flatMap(store =>
                 store.items.filter(item => !item.planningEligible && Number.isSafeInteger(item.coins)).map(item => ({ ...item, storeName: store.name })));
-            const pendingStores = Object.values(COIN_MENU_DATA.stores).filter(store => store.membershipStatus !== 'payment-observed');
+            const SETTLED = ['payment-observed', 'site-confirmed', 'confirmed-non-member'];
+            const pendingStores = Object.values(COIN_MENU_DATA.stores).filter(store => !SETTLED.includes(store.membershipStatus));
 
             return <div className="relative pt-4 pb-20 space-y-5">
                 <div>
@@ -1044,9 +1046,9 @@
                                 return <li key={i} className="absolute p-[2.5%]" style={{ left: slot.l + '%', top: slot.t + '%', width: slot.w + '%', height: slot.h + '%' }}>
                                     {fill
                                         ? <div className={`relative h-full w-full rounded-lg flex flex-col items-center justify-center text-center px-1 pt-3 shadow-inner bg-[#F3E3C3]`}>
-                                            <span className="text-[11px] font-bold leading-tight line-clamp-2 text-gray-900">{mt(fill.name)}{fill.count > 1 ? ` ×${fill.count}` : ''}</span>
+                                            <span className="text-[11px] font-bold leading-tight line-clamp-2 text-gray-900">{itemLabel(fill)}{fill.count > 1 ? ` ×${fill.count}` : ''}</span>
                                             <span className="text-[10px] text-[#7A6342] mt-0.5">🪙 {fill.coins * fill.count}</span>
-                                            <button aria-label={ui.removeOne(mt(fill.name))} onClick={() => removeOne(fill.id)}
+                                            <button aria-label={ui.removeOne(itemLabel(fill))} onClick={() => removeOne(fill.id)}
                                                 className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-black/60 text-white text-[10px] leading-none">×</button>
                                         </div>
                                         : <div className="h-full w-full flex items-center justify-center text-[10px] text-white/35">{i === 0 && !items.length ? ui.trayEmpty : ''}</div>}
@@ -1087,11 +1089,12 @@
                                         const short = item.coins - remaining;
                                         return <div key={item.id} className="flex items-center gap-3 rounded-xl bg-white border px-4 py-3.5">
                                             <div className="flex-1 min-w-0">
-                                                <div className="text-sm font-bold">{mt(item.name)}</div>
+                                                <div className="text-sm font-bold">{itemLabel(item)}</div>
+                                                {item.evidenceType === 'site-won-converted' && <div className="text-[11px] text-gray-400 mt-0.5">{ui.convertedFrom(item.priceKrw.toLocaleString())}</div>}
                                             </div>
                                             <div className="flex items-center gap-2 shrink-0">
                                                 <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-900 whitespace-nowrap">🪙 {ui.coins(item.coins)}</span>
-                                                <button aria-label={ui.addAria(mt(item.name))} onClick={() => addItem(item)}
+                                                <button aria-label={ui.addAria(itemLabel(item))} onClick={() => addItem(item)}
                                                     className={`rounded-lg px-3 py-1.5 text-xs font-bold whitespace-nowrap ${short > 0 ? 'bg-gray-100 text-gray-400' : 'bg-[#A68A64] text-white active:scale-95'}`}>
                                                     {short > 0 ? ui.short(short) : (counts[item.id] ? `+1 (${counts[item.id]})` : ui.add)}
                                                 </button>

@@ -20,6 +20,65 @@
 총 4알|4 pieces total|共4颗|計4個
 2줄|2 rolls|2条|2本
 1개|1 piece|1个|1個
+타코야끼|Takoyaki|章鱼烧|たこ焼き
+2알|2 pieces|2颗|2個
+씨앗 꿀 호떡|Seed & honey hotteok|坚果蜂蜜糖饼|種入り蜂蜜ホットク
+오레오 호떡|Oreo hotteok|奥利奥糖饼|オレオホットク
+뿌링클 호떡|Cheese-powder hotteok|芝士粉糖饼|チーズパウダーホットク
+흑임자 호떡|Black sesame hotteok|黑芝麻糖饼|黒ごまホットク
+인절미 호떡|Soybean-powder hotteok|黄豆粉糖饼|きな粉ホットク
+잡채 호떡|Japchae hotteok|杂菜糖饼|チャプチェホットク
+아이스크림 호떡|Ice cream hotteok|冰淇淋糖饼|アイスクリームホットク
+7가지 맛 선택|Choice of 7 flavors|7种口味可选|7種の味から選択
+멘보샤|Menbosha (shrimp toast)|面包虾|メンボシャ（エビトースト）
+러스크|Rusk|面包干|ラスク
+대(L)|Large|大份|大
+소(S)|Small|小份|小
+크림치즈볼|Cream cheese balls|奶油芝士球|クリームチーズボール
+콜팝|Chicken pop (cola + chicken)|可乐鸡块杯|コーラチキンカップ
+피카츄|Pikachu (fried fish cake)|皮卡丘炸鱼饼|ピカチュウ（揚げ練り物）
+새우튀김|Fried shrimp|炸虾|エビフライ
+음료수|Soft drink|饮料|ソフトドリンク
+생수|Bottled water|瓶装水|ミネラルウォーター
+슬러시|Slushie|冰沙|スラッシュ
+생맥주|Draft beer|生啤|生ビール
+꿀꺽 라거|Ggul Ggeok Lager|Ggul Ggeok 拉格啤酒|クルコク・ラガー
+스밈 에일|Smimm Ale|Smimm 艾尔啤酒|スミム・エール
+콜라·스프라이트|Coke / Sprite|可乐·雪碧|コーラ・スプライト
+김치말이|Kimchi-mari (cold kimchi noodles)|泡菜冷面|キムチマリ（冷やしキムチ麺）
+냉열무국수|Cold young-radish kimchi noodles|凉拌萝卜缨泡菜面|冷やしヨルムキムチ麺
+만두국|Dumpling soup|饺子汤|マンドゥスープ
+케냐AA|Kenya AA|肯尼亚AA|ケニアAA
+바닐라 라떼|Vanilla latte|香草拿铁|バニララテ
+유자에이드|Citron ade|柚子汽水|ゆずエード
+레몬차|Lemon tea|柠檬茶|レモンティー
+레몬에이드|Lemonade|柠檬汽水|レモネード
+목욕 요금 (남)|Bath fee (men)|浴池费（男）|入浴料（男性）
+목욕 요금 (여)|Bath fee (women)|浴池费（女）|入浴料（女性）
+목욕 요금 (소인, 7세 미만)|Bath fee (children under 7)|浴池费（7岁以下儿童）|入浴料（7歳未満）
+호주식 소고기 미트파이|Australian-style beef meat pie|澳式牛肉馅饼|オーストラリア風ビーフミートパイ
+수제 크림치킨 소스와 닭다리살|Homemade cream chicken sauce with thigh meat|自制奶油鸡肉酱配鸡腿肉|自家製クリームチキンソースと鶏もも肉
+매콤한 옥수수 소스와 새우|Shrimp with spicy corn sauce|香辣玉米酱配虾|ピリ辛コーンソースとエビ
+호주식 양고기 미트파이|Australian-style lamb meat pie|澳式羊肉馅饼|オーストラリア風ラムミートパイ
+페퍼로니, 모짜렐라, 라구소스|Pepperoni, mozzarella, ragù sauce|意式辣香肠、马苏里拉、肉酱|ペパロニ、モッツァレラ、ラグーソース
+크림치즈 두부와 베이컨, 머쉬룸 소스|Cream-cheese tofu, bacon, mushroom sauce|奶油芝士豆腐、培根、蘑菇酱|クリームチーズ豆腐、ベーコン、マッシュルームソース
+핫·아이스|Hot / iced|热·冰|ホット・アイス
+가게에서 직접 로스팅한 원두|Beans roasted in-house|店内自家烘焙咖啡豆|店内焙煎の豆
+원두 케냐 AA|Coffee beans: Kenya AA|咖啡豆：肯尼亚AA|コーヒー豆：ケニアAA
+원두 콜롬비아 수프리모|Coffee beans: Colombia Supremo|咖啡豆：哥伦比亚苏帕摩|コーヒー豆：コロンビア・スプレモ
+원두 예가체프|Coffee beans: Yirgacheffe|咖啡豆：耶加雪菲|コーヒー豆：イルガチェフェ
+원두 과테말라|Coffee beans: Guatemala|咖啡豆：危地马拉|コーヒー豆：グアテマラ
+원두 에티오피아 시다모|Coffee beans: Ethiopia Sidamo|咖啡豆：埃塞俄比亚西达摩|コーヒー豆：エチオピア・シダモ
+원두 온두라스|Coffee beans: Honduras|咖啡豆：洪都拉斯|コーヒー豆：ホンジュラス
+원두 인도네시아 만델링|Coffee beans: Indonesia Mandheling|咖啡豆：印尼曼特宁|コーヒー豆：インドネシア・マンデリン
+원두 브라질 옐로우 버번|Coffee beans: Brazil Yellow Bourbon|咖啡豆：巴西黄波旁|コーヒー豆：ブラジル・イエローブルボン
+원두 엘살바도르|Coffee beans: El Salvador|咖啡豆：萨尔瓦多|コーヒー豆：エルサルバドル
+원두 브라질 산토스|Coffee beans: Brazil Santos|咖啡豆：巴西山度士|コーヒー豆：ブラジル・サントス
+원두 예멘 모카 마타리 (스페셜티)|Coffee beans: Yemen Mocha Mattari (specialty)|咖啡豆：也门摩卡马塔里（精品）|コーヒー豆：イエメン・モカマタリ（スペシャルティ）
+원두 파푸아뉴기니 블루마운틴 (스페셜티)|Coffee beans: Papua New Guinea Blue Mountain (specialty)|咖啡豆：巴布亚新几内亚蓝山（精品）|コーヒー豆：パプアニューギニア・ブルーマウンテン（スペシャルティ）
+원두 아리차 예가체프 G1 (스페셜티)|Coffee beans: Aricha Yirgacheffe G1 (specialty)|咖啡豆：阿里查耶加雪菲G1（精品）|コーヒー豆：アリチャ・イルガチェフェG1（スペシャルティ）
+원두 과테말라 메디나 (스페셜티)|Coffee beans: Guatemala Medina (specialty)|咖啡豆：危地马拉梅迪纳（精品）|コーヒー豆：グアテマラ・メディナ（スペシャルティ）
+원두 예가체프 하라수케 G1 (스페셜티)|Coffee beans: Yirgacheffe Harusuke G1 (specialty)|咖啡豆：耶加雪菲哈拉苏克G1（精品）|コーヒー豆：イルガチェフェ・ハラスケG1（スペシャルティ）
 공개 플랫폼별|Across public listings:|公开平台分别为|公開サイト別に
 으로 상이| (conflicting prices)|（价格不一致）|（価格相違）
 매장 확인 필요|Check with the shop|请向店铺确认|店舗に要確認

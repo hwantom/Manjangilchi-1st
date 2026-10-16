@@ -797,6 +797,59 @@
     for (const [name, update] of Object.entries(researchUpdates)) {
         stores[name] = {...(stores[name] || {name, membershipStatus:'unverified', items:[]}), ...update};
     }
+
+    // On-site price boards photographed by the team on 2026-10-15 (메뉴사진 folder; file names below).
+    // 'site-price-board': the board prints the 엽전 price. 'site-won-converted': the board shows won only and the team
+    // asked to assume 1냥 = 500원, so coins = won / 500 (priceKrw keeps the original). Store membership was confirmed
+    // by the team for these stores. When a store prints its own 엽전 menu, only that menu is used (no conversion).
+    const SITE_DATE = '2026-10-15';
+    const photo = n => `KakaoTalk_20261015_164017606${n ? '_' + String(n).padStart(2, '0') : ''}.jpg`;
+    const onBoard = (store, file) => (key, name, coins, portion = '') => ({id: `site-${store}-${key}`, name, coins, portion,
+        sourceDate: SITE_DATE, sourcePhoto: file, evidenceType: 'site-price-board', planningEligible: true,
+        note: '가게 가격표에 엽전 가격이 직접 표시됨'});
+    const fromWon = (store, file) => (key, name, priceKrw, portion = '') => ({id: `site-${store}-${key}`, name, coins: priceKrw / 500, priceKrw, portion,
+        sourceDate: SITE_DATE, sourcePhoto: file, evidenceType: 'site-won-converted', planningEligible: true,
+        note: `가격표의 ${priceKrw.toLocaleString('ko-KR')}원을 1냥=500원으로 환산(팀 기준)`});
+    const site = (note, items) => ({membershipStatus: 'site-confirmed', siteCheckedAt: SITE_DATE, note, items});
+
+    const ire = onBoard('ire', photo(2));
+    const hotteok = onBoard('hotteok', photo(15)), menbosha = onBoard('hotteok', photo(14)), rusk = onBoard('hotteok', photo(15));
+    const jgBoard = onBoard('jg', photo(9)), jg = fromWon('jg', photo(8)), jgDrinks = fromWon('jg', photo(11)), jgBeer = fromWon('jg', photo(10));
+    const dabang = fromWon('dabang', photo(3)), chenkin = fromWon('chenkin', photo(6));
+    const siteSurvey = {
+        '이레해물칼국수': site('2026-10-15 현장 엽전 메뉴판 확인. 팥죽은 크기별 두 가지 가격.', [
+            ire('janchi', '잔치국수', 4), ire('kimchimari', '김치말이', 4), ire('kongguksu', '콩국수', 6),
+            ire('yeolmu', '냉열무국수', 5), ire('patjuk-s', '팥죽', 4, '소(S)'), ire('patjuk-l', '팥죽', 7, '대(L)'),
+            ire('odeng-1', '오뎅', 2, '1개'), ire('odeng-2', '오뎅', 4, '2개'), ire('mandu', '만두국', 3)]),
+        '서촌호떡': site('2026-10-15 현장 가격표에 엽전 가격(Coin/냥) 표시. 가려져 읽을 수 없는 카드 1장은 제외.', [
+            hotteok('seed', '씨앗 꿀 호떡', 4), hotteok('oreo', '오레오 호떡', 5), hotteok('ppurinkle', '뿌링클 호떡', 5),
+            hotteok('sesame', '흑임자 호떡', 6), hotteok('injeolmi', '인절미 호떡', 6), hotteok('japchae', '잡채 호떡', 6),
+            hotteok('icecream', '아이스크림 호떡', 11, '7가지 맛 선택'), menbosha('menbosha-1', '멘보샤', 4, '1개'),
+            menbosha('menbosha-3', '멘보샤', 10, '3개'), rusk('rusk', '러스크', 2)]),
+        '정금이네 모두의 분식': site('2026-10-15 현장 확인. 떡볶이는 엽전 9개가 직접 표시되어 있고, 나머지는 원화 가격을 1냥=500원으로 환산. 음료 기계·생맥주도 이 가게 메뉴(팀 확인).', [
+            jgBoard('tteokbokki', '떡볶이', 9, '1인분'), jg('sundae', '순대', 5000, '1인분'), jg('twigim', '튀김', 4000, '1인분'),
+            jg('gangjeong-l', '닭강정', 10000, '대(L)'), jg('gangjeong-s', '닭강정', 8000, '소(S)'), jg('skewer', '닭꼬치', 4000, '1개'),
+            jg('sotteok', '소떡소떡', 3000, '1개'), jg('cheeseball', '크림치즈볼', 2000), jg('colpop', '콜팝', 3000, '1개'),
+            jg('pikachu', '피카츄', 2500, '1개'), jg('kkoma-3', '꼬마김밥', 3000, '3개'), jg('kkoma-6', '꼬마김밥', 6000, '6개'),
+            jg('shrimp', '새우튀김', 3000, '3개'), jg('sikhye', '식혜', 4000), jg('drink', '음료수', 2000), jg('water', '생수', 1000),
+            jgDrinks('slush', '슬러시', 2500), jgBeer('beer', '생맥주', 3000, '300cc')]),
+        '인타코 타코야끼': site('2026-10-15 현장 가격표에 "타코야끼 2알 엽전 3냥" 표시(팀이 점포 확인).', [
+            onBoard('intaco', photo(0))('takoyaki-2', '타코야끼', 3, '2알')]),
+        '통인다방': site('2026-10-15 현장 메뉴판(원화)을 1냥=500원으로 환산. 메뉴는 핫·아이스 공통.', [
+            dabang('americano', '아메리카노', 2500), dabang('kenya', '케냐AA', 3000), dabang('latte', '카페라떼', 3500),
+            dabang('cappuccino', '카푸치노', 3500), dabang('vanilla', '바닐라 라떼', 4000), dabang('greentea', '녹차', 2500),
+            dabang('ginger', '생강차', 3000), dabang('yuja', '유자차', 3000), dabang('yuja-ade', '유자에이드', 3500),
+            dabang('lemontea', '레몬차', 3000), dabang('lemonade', '레몬에이드', 3500)]),
+        '체크인첸킨': site('2026-10-15 현장 가격표(원화)를 1냥=500원으로 환산.', [
+            chenkin('pie', '첸킨 파이', 7000), chenkin('chicken', '첸킨 치킨', 7000), chenkin('shrimp', '쉬림프라임', 7000),
+            chenkin('lamb', '양갈비 파이', 7500), chenkin('ragu', '라구 파이', 7000), chenkin('bacon', '베이컨 크림치즈 파이', 7000),
+            chenkin('lager', '꿀꺽 라거', 6500), chenkin('ale', '스밈 에일', 6500), chenkin('soda', '콜라·스프라이트', 2000)]),
+        '송림사우나': {membershipStatus: 'confirmed-non-member', siteCheckedAt: SITE_DATE, items: [],
+            note: '엽전 가맹점이 아님(팀 확인, 2026-10-15). 목욕 요금은 일반 메뉴 정보에만 반영.'}
+    };
+    for (const [name, update] of Object.entries(siteSurvey)) {
+        stores[name] = {...(stores[name] || {name}), ...update};
+    }
     // Usage info from public sources (checked 2026-10-11). Sources disagree on the cafe's weekly closing day.
     const guide = {
         checkedAt: '2026-10-11',

@@ -1420,53 +1420,62 @@ window.STORE_MENU_DATA = {
     "items": [
       {
         "name": "첸킨 파이",
-        "price": "6,500원",
-        "description": "",
+        "price": "7,000원",
+        "description": "호주식 소고기 미트파이",
         "image": ""
       },
       {
         "name": "첸킨 치킨",
-        "price": "6,500원",
-        "description": "",
+        "price": "7,000원",
+        "description": "수제 크림치킨 소스와 닭다리살",
         "image": ""
       },
       {
         "name": "쉬림프라임",
-        "price": "6,500원",
-        "description": "",
+        "price": "7,000원",
+        "description": "매콤한 옥수수 소스와 새우",
         "image": ""
       },
       {
         "name": "양갈비 파이",
         "price": "7,500원",
-        "description": "",
+        "description": "호주식 양고기 미트파이",
         "image": ""
       },
       {
         "name": "라구 파이",
-        "price": "6,500원",
-        "description": "",
+        "price": "7,000원",
+        "description": "페퍼로니, 모짜렐라, 라구소스",
         "image": ""
       },
       {
         "name": "베이컨 크림치즈 파이",
+        "price": "7,000원",
+        "description": "크림치즈 두부와 베이컨, 머쉬룸 소스",
+        "image": ""
+      },
+      {
+        "name": "꿀꺽 라거",
         "price": "6,500원",
-        "description": "",
+        "description": "맥주",
         "image": ""
       },
       {
-        "name": "맥주",
-        "price": "6,000원",
-        "description": "",
+        "name": "스밈 에일",
+        "price": "6,500원",
+        "description": "맥주",
         "image": ""
       },
       {
-        "name": "탄산음료",
+        "name": "콜라·스프라이트",
         "price": "2,000원",
         "description": "",
         "image": ""
       }
-    ]
+    ],
+    "sourceType": "independent-research",
+    "sourceDate": "2026-10-15",
+    "sourceNote": "현장 가격표 사진(KakaoTalk_20261015_164017606_06.jpg)"
   },
   "통인초록": {
     "rawMenu": "구절판식혜 등 한식전국 전통주",
@@ -1499,86 +1508,164 @@ window.STORE_MENU_DATA = {
     "researchedAt": "2026-09-09",
     "items": [
       {
-        "name": "오늘의 커피",
+        "name": "아메리카노",
         "price": "2,500원",
-        "description": "2021.04.21 게시 자료 기준 · 현재 가격 확인 필요",
-        "image": "",
-        "sourceUrl": "https://blog.naver.com/arege/222317879511",
-        "sourceDate": "2021-04-21"
+        "description": "핫·아이스",
+        "image": ""
       },
       {
-        "name": "케냐 AA",
+        "name": "케냐AA",
         "price": "3,000원",
-        "description": "2021.04.21 게시 자료 기준 · 현재 가격 확인 필요",
-        "image": "",
-        "sourceUrl": "https://blog.naver.com/arege/222317879511",
-        "sourceDate": "2021-04-21"
+        "description": "핫·아이스",
+        "image": ""
       },
       {
         "name": "카페라떼",
-        "price": "3,000원",
-        "description": "2021.04.21 게시 자료 기준 · 현재 가격 확인 필요",
-        "image": "",
-        "sourceUrl": "https://blog.naver.com/arege/222317879511",
-        "sourceDate": "2021-04-21"
+        "price": "3,500원",
+        "description": "핫·아이스",
+        "image": ""
       },
       {
         "name": "카푸치노",
-        "price": "3,000원",
-        "description": "2021.04.21 게시 자료 기준 · 현재 가격 확인 필요",
-        "image": "",
-        "sourceUrl": "https://blog.naver.com/arege/222317879511",
-        "sourceDate": "2021-04-21"
-      },
-      {
-        "name": "핫초코",
         "price": "3,500원",
-        "description": "2021.04.21 게시 자료 기준 · 현재 가격 확인 필요",
-        "image": "",
-        "sourceUrl": "https://blog.naver.com/arege/222317879511",
-        "sourceDate": "2021-04-21"
+        "description": "핫·아이스",
+        "image": ""
       },
       {
-        "name": "쌍화차",
-        "price": "2,500원",
-        "description": "2021.04.21 게시 자료 기준 · 현재 가격 확인 필요",
-        "image": "",
-        "sourceUrl": "https://blog.naver.com/arege/222317879511",
-        "sourceDate": "2021-04-21"
-      },
-      {
-        "name": "생강차",
-        "price": "2,500원",
-        "description": "2021.04.21 게시 자료 기준 · 현재 가격 확인 필요",
-        "image": "",
-        "sourceUrl": "https://blog.naver.com/arege/222317879511",
-        "sourceDate": "2021-04-21"
+        "name": "바닐라 라떼",
+        "price": "4,000원",
+        "description": "핫·아이스",
+        "image": ""
       },
       {
         "name": "녹차",
         "price": "2,500원",
-        "description": "2021.04.21 게시 자료 기준 · 현재 가격 확인 필요",
-        "image": "",
-        "sourceUrl": "https://blog.naver.com/arege/222317879511",
-        "sourceDate": "2021-04-21"
+        "description": "핫·아이스",
+        "image": ""
       },
       {
-        "name": "온두라스 원두 100g",
-        "price": "4,000원",
-        "description": "2021.04.21 게시 자료 기준 · 현재 가격 확인 필요",
-        "image": "",
-        "sourceUrl": "https://blog.naver.com/arege/222317879511",
-        "sourceDate": "2021-04-21"
+        "name": "생강차",
+        "price": "3,000원",
+        "description": "핫·아이스",
+        "image": ""
       },
       {
         "name": "유자차",
-        "price": "현재 가격 확인 필요",
-        "description": "2026.02.09 판매 확인 · 금액은 확인되지 않았습니다.",
-        "image": "",
-        "sourceUrl": "https://www.korea.kr/briefing/presidentView.do?newsId=148959306",
-        "sourceDate": "2026-02-09"
+        "price": "3,000원",
+        "description": "핫·아이스",
+        "image": ""
+      },
+      {
+        "name": "유자에이드",
+        "price": "3,500원",
+        "description": "핫·아이스",
+        "image": ""
+      },
+      {
+        "name": "레몬차",
+        "price": "3,000원",
+        "description": "핫·아이스",
+        "image": ""
+      },
+      {
+        "name": "레몬에이드",
+        "price": "3,500원",
+        "description": "핫·아이스",
+        "image": ""
+      },
+      {
+        "name": "원두 케냐 AA",
+        "price": "5,500원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 콜롬비아 수프리모",
+        "price": "4,500원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 예가체프",
+        "price": "5,500원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 과테말라",
+        "price": "5,500원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 에티오피아 시다모",
+        "price": "4,500원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 온두라스",
+        "price": "4,500원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 인도네시아 만델링",
+        "price": "5,000원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 브라질 옐로우 버번",
+        "price": "5,500원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 엘살바도르",
+        "price": "5,000원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 브라질 산토스",
+        "price": "5,000원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 예멘 모카 마타리 (스페셜티)",
+        "price": "8,000원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 파푸아뉴기니 블루마운틴 (스페셜티)",
+        "price": "6,000원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 아리차 예가체프 G1 (스페셜티)",
+        "price": "6,000원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 과테말라 메디나 (스페셜티)",
+        "price": "6,000원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
+      },
+      {
+        "name": "원두 예가체프 하라수케 G1 (스페셜티)",
+        "price": "6,000원 (100g)",
+        "description": "가게에서 직접 로스팅한 원두",
+        "image": ""
       }
-    ]
+    ],
+    "sourceDate": "2026-10-15",
+    "sourceNote": "현장 가격표 사진(KakaoTalk_20261015_164017606_03.jpg, _04.jpg)"
   },
   "티각태각": {
     "rawMenu": "황금어포 150g부각믹스 220g김부각 80g황금어묵깡 70g선물세트 1호",
@@ -2169,6 +2256,31 @@ window.STORE_MENU_DATA = {
       {
         "name": "정육·축산물로 추정",
         "price": "부위·등급·중량별 상이정확한 상호 확인 필요",
+        "description": "",
+        "image": ""
+      }
+    ]
+  },
+  "송림사우나": {
+    "sourceType": "independent-research",
+    "sourceDate": "2026-10-15",
+    "sourceNote": "현장 요금표 사진(KakaoTalk_20261015_164017606_17.jpg). 엽전 가맹점 아님.",
+    "items": [
+      {
+        "name": "목욕 요금 (남)",
+        "price": "11,000원",
+        "description": "",
+        "image": ""
+      },
+      {
+        "name": "목욕 요금 (여)",
+        "price": "11,000원",
+        "description": "",
+        "image": ""
+      },
+      {
+        "name": "목욕 요금 (소인, 7세 미만)",
+        "price": "9,500원",
         "description": "",
         "image": ""
       }
