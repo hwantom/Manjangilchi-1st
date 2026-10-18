@@ -30,7 +30,7 @@
         gCall: phone => `방문 전 전화로 확인하기 ${phone}`, gSources: d => `공개 자료 기준(${d} 확인) · 운영 정보는 바뀔 수 있어요 · `,
         guide: null, // Korean guide text lives in COIN_MENU_DATA.guide
         facTitle: '통인시장 편의시설 안내', facSub: '화장실, 주차장, 고객만족센터 위치를 확인하세요',
-        restroomName: '도시락카페 🚻', restroomDesc: '고객만족센터 화장실 · 남/녀 구분',
+        restroomName: '도시락카페 🚻', restroomDesc: '고객만족센터 화장실 · 시설개선 공사 중(2026.9.29~2027.1.30 예정)이라 이용이 어려울 수 있어요',
         parkingName: '신교 공영주차장', parkingDesc: '도보 5분 · 5분당 250원', naverMap: '네이버 지도'
     };
 
@@ -69,7 +69,7 @@
             sourceLabels: ['Seoul Media Hub 2025.05', 'Mom-mom 2025.04', 'Visit blog 2026.02', 'Contact number', 'Market notice 2026.10']
         },
         facTitle: 'Tongin Market Facilities', facSub: 'Find restrooms, parking and the customer center',
-        restroomName: 'Dosirak Cafe 🚻', restroomDesc: 'Customer center restrooms · separate for men and women',
+        restroomName: 'Dosirak Cafe 🚻', restroomDesc: 'Customer center restrooms · may be unavailable during renovation (Sep 29, 2026 – Jan 30, 2027, planned)',
         parkingName: 'Singyo Public Parking', parkingDesc: '5 min walk · ₩250 per 5 min', naverMap: 'Naver Map'
     };
 
@@ -108,7 +108,7 @@
             sourceLabels: ['首尔市媒体中心 2025.05', 'Mom-mom 2025.04', '探访博客 2026.02', '咨询电话', '市场公告 2026.10']
         },
         facTitle: '通仁市场便利设施', facSub: '查看洗手间、停车场和顾客服务中心位置',
-        restroomName: '便当咖啡馆 🚻', restroomDesc: '顾客服务中心洗手间 · 男女分开',
+        restroomName: '便当咖啡馆 🚻', restroomDesc: '顾客服务中心洗手间 · 设施改造施工期间（2026.9.29~2027.1.30 预计）可能无法使用',
         parkingName: '新桥公营停车场', parkingDesc: '步行5分钟 · 每5分钟250韩元', naverMap: 'Naver 地图'
     };
 
@@ -147,7 +147,7 @@
             sourceLabels: ['ソウル市メディアハブ 2025.05', 'Mom-mom 2025.04', '訪問ブログ 2026.02', '問い合わせ番号', '市場の案内 2026.10']
         },
         facTitle: '通仁市場の施設案内', facSub: 'トイレ・駐車場・お客様センターの場所を確認',
-        restroomName: '弁当カフェ 🚻', restroomDesc: 'お客様センターのトイレ · 男女別',
+        restroomName: '弁当カフェ 🚻', restroomDesc: 'お客様センターのトイレ · 改修工事中（2026.9.29〜2027.1.30予定）のため利用できない場合があります',
         parkingName: '新橋公営駐車場', parkingDesc: '徒歩5分 · 5分ごとに250ウォン', naverMap: 'NAVERマップ'
     };
 

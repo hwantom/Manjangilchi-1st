@@ -2,6 +2,7 @@
     const rows = `부위·등급·중량별 상이|Varies by cut, grade and weight|按部位、等级、重量而异|部位・等級・重量により異なる
 당일 시세|Daily market price|当日时价|当日の相場
 정보가 다른가요? 수정 요청하기|Something wrong? Suggest an edit|信息有误？申请修改|情報が違いますか？修正をリクエスト
+고객만족센터 화장실 (공사 중)|Customer center restrooms (under renovation)|顾客服务中心洗手间（施工中）|お客様センターのトイレ（工事中）
 고객만족센터 화장실|Customer center restrooms|顾客服务中心洗手间|お客様センターのトイレ
 와인치즈닭꼬치|Wine & cheese chicken skewer|红酒芝士鸡肉串|ワインチーズ焼き鳥
 고추장맛 기름떡볶이|Gochujang oil-fried tteokbokki|辣酱味油炒年糕|コチュジャン味の油炒めトッポッキ
