@@ -62,11 +62,11 @@
         gPlace: 'Buy at', gHours: 'Hours', gClosed: 'Closed', gRefund: 'Leftovers',
         gCall: phone => `Call before visiting ${phone}`, gSources: d => `Based on public sources (checked ${d}) · details may change · `,
         guide: {
-            purchasePlace: 'Dosirak Cafe, 2F',
+            purchasePlace: 'Tongin Delivery Center (pop-up) — moved during customer-center renovation (Sep 29, 2026 – Jan 30, 2027, planned)',
             hours: [{label: 'Weekdays', open: '11:00–16:00', coinSales: 'coins sold until 15:00'}, {label: 'Weekends', open: '11:00–17:00', coinSales: 'coins sold until 16:00'}],
-            closed: 'Market closed on the 3rd Sunday of each month. Sources differ on the cafe’s weekly day off (Monday or Tuesday).',
+            closed: 'Every Monday and the 3rd Sunday of the month (market notice)',
             refund: 'Leftover coins can reportedly be refunded. Ask on site about conditions for each payment method.',
-            sourceLabels: ['Seoul Media Hub 2025.05', 'Mom-mom 2025.04', 'Visit blog 2026.02', 'Contact number']
+            sourceLabels: ['Seoul Media Hub 2025.05', 'Mom-mom 2025.04', 'Visit blog 2026.02', 'Contact number', 'Market notice 2026.10']
         },
         facTitle: 'Tongin Market Facilities', facSub: 'Find restrooms, parking and the customer center',
         restroomName: 'Dosirak Cafe 🚻', restroomDesc: 'Customer center restrooms · separate for men and women',
@@ -101,11 +101,11 @@
         gPlace: '购买地点', gHours: '营业', gClosed: '休息', gRefund: '剩余铜钱',
         gCall: phone => `出发前电话确认 ${phone}`, gSources: d => `依据公开资料（${d}确认）· 运营信息可能变动 · `,
         guide: {
-            purchasePlace: '便当咖啡馆 2楼',
+            purchasePlace: '通仁配送中心（快闪店）——顾客中心施工期间临时搬迁（2026.9.29~2027.1.30 预计）',
             hours: [{label: '工作日', open: '11:00–16:00', coinSales: '铜钱售卖至15:00'}, {label: '周末', open: '11:00–17:00', coinSales: '铜钱售卖至16:00'}],
-            closed: '每月第三个周日市场休息。咖啡馆每周休息日各资料不同（周一或周二）。',
+            closed: '每周一及每月第三个周日（市场公告）',
             refund: '据介绍剩余铜钱可以退款，不同支付方式的条件请在现场确认。',
-            sourceLabels: ['首尔市媒体中心 2025.05', 'Mom-mom 2025.04', '探访博客 2026.02', '咨询电话']
+            sourceLabels: ['首尔市媒体中心 2025.05', 'Mom-mom 2025.04', '探访博客 2026.02', '咨询电话', '市场公告 2026.10']
         },
         facTitle: '通仁市场便利设施', facSub: '查看洗手间、停车场和顾客服务中心位置',
         restroomName: '便当咖啡馆 🚻', restroomDesc: '顾客服务中心洗手间 · 男女分开',
@@ -140,11 +140,11 @@
         gPlace: '購入場所', gHours: '営業', gClosed: '休業', gRefund: '残ったヨプジョン',
         gCall: phone => `訪問前に電話で確認 ${phone}`, gSources: d => `公開資料に基づく（${d}確認）· 営業情報は変わる場合があります · `,
         guide: {
-            purchasePlace: '弁当カフェ 2階',
+            purchasePlace: '通仁配送センター（ポップアップストア）— お客様センター工事のため臨時移転（2026.9.29〜2027.1.30予定）',
             hours: [{label: '平日', open: '11:00–16:00', coinSales: 'ヨプジョン販売は15:00まで'}, {label: '週末', open: '11:00–17:00', coinSales: 'ヨプジョン販売は16:00まで'}],
-            closed: '毎月第3日曜日は市場が休業。カフェの定休日は資料により月曜または火曜と異なります。',
+            closed: '毎週月曜日と第3日曜日（市場の案内）',
             refund: '残ったヨプジョンは払い戻しできるとの案内があります。支払い方法ごとの条件は現地で確認してください。',
-            sourceLabels: ['ソウル市メディアハブ 2025.05', 'Mom-mom 2025.04', '訪問ブログ 2026.02', '問い合わせ番号']
+            sourceLabels: ['ソウル市メディアハブ 2025.05', 'Mom-mom 2025.04', '訪問ブログ 2026.02', '問い合わせ番号', '市場の案内 2026.10']
         },
         facTitle: '通仁市場の施設案内', facSub: 'トイレ・駐車場・お客様センターの場所を確認',
         restroomName: '弁当カフェ 🚻', restroomDesc: 'お客様センターのトイレ · 男女別',

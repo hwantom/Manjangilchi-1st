@@ -20,6 +20,59 @@
 총 4알|4 pieces total|共4颗|計4個
 2줄|2 rolls|2条|2本
 1개|1 piece|1个|1個
+우리쌀 100%|100% Korean rice|100%国产大米|国産米100%
+쑥 인절미|Mugwort injeolmi|艾草黄豆糕|よもぎインジョルミ
+떡국떡|Rice cakes for tteokguk|年糕汤用年糕|トックク用餅
+들깨가루|Perilla seed powder|紫苏籽粉|エゴマ粉
+미숫가루|Misutgaru (roasted grain powder)|五谷杂粮粉|ミスッカル（穀物粉）
+날콩가루|Raw bean powder|生豆粉|生豆粉
+찹쌀가루|Glutinous rice flour|糯米粉|もち米粉
+엿기름|Malted barley|麦芽|麦芽（ヨッキルム）
+옥수수|Corn (for tea)|玉米（茶用）|とうもろこし（茶用）
+큰 봉지|Large bag|大袋|大袋
+2팩|2 packs|2包|2パック
+약과|Yakgwa (honey cookie)|药果|薬菓（ヤックァ）
+경단|Gyeongdan (rice balls)|琼团|キョンダン（団子）
+보리|Barley (for tea)|大麦（茶用）|麦（茶用）
+미니전|Mini pancakes|迷你煎饼|ミニチヂミ
+미니튀김|Mini fritters|迷你炸物|ミニ天ぷら
+수제 막걸리|Handmade makgeolli|手工马格利酒|手作りマッコリ
+막걸리|Makgeolli|马格利酒|マッコリ
+한 잔|1 glass|1杯|1杯
+제육볶음|Spicy stir-fried pork|辣炒猪肉|豚肉の辛炒め
+소시지전|Sausage pancake|香肠煎饼|ソーセージチヂミ
+비엔나|Vienna sausages|维也纳香肠|ウインナー
+볶은 김치|Stir-fried kimchi|炒泡菜|炒めキムチ
+치즈 토스트|Cheese toast|芝士吐司|チーズトースト
+토스트|Toast|吐司|トースト
+치즈 핫도그|Cheese hot dog|芝士热狗|チーズホットドッグ
+치즈&소시지 핫도그|Cheese & sausage hot dog|芝士香肠热狗|チーズ＆ソーセージホットドッグ
+소시지 핫도그|Sausage hot dog|香肠热狗|ソーセージホットドッグ
+감자 소시지|Potato sausage|土豆香肠|ポテトソーセージ
+국물 떡볶이|Soupy tteokbokki|汤炒年糕|汁気たっぷりトッポッキ
+아이스 믹스 커피|Iced instant coffee|冰速溶咖啡|アイスミックスコーヒー
+아이스 아메리카노|Iced americano|冰美式咖啡|アイスアメリカーノ
+치즈호떡|Cheese hotteok|芝士糖饼|チーズホットク
+뿌링클치즈호떡|Cheese-powder cheese hotteok|芝士粉芝士糖饼|チーズパウダーチーズホットク
+포도|Grape|葡萄|ぶどう
+오렌지|Orange|橙子|オレンジ
+새콤짱|Saekomjjang (sour candy)|酸糖|セコムチャン（酸っぱいキャンディ）
+달고나|Dalgona (honeycomb toffee)|椪糖|タルゴナ（カルメ焼き）
+츄파춥스|Chupa Chups|珍宝珠棒棒糖|チュッパチャプス
+불티나 우산 별사탕|Umbrella star-candy|雨伞星星糖|傘型金平糖
+와다닥|Wadadak (popping candy)|跳跳糖|ワダダック（パチパチキャンディ）
+아폴로|Apollo (straw candy)|阿波罗吸管糖|アポロ（ストローキャンディ）
+미니멈 콜라|Mini cola candy|迷你可乐糖|ミニコーラキャンディ
+추억의 쫀드기|Old-school jjondeugi (chewy snack)|怀旧软糖条|昔ながらのチョンドゥギ
+먹태구이|Grilled dried pollock|烤干明太鱼|干しスケトウダラ焼き
+버터오징어|Butter squid|黄油鱿鱼|バターイカ
+컵식혜|Sikhye (cup)|杯装甜米露|カップシッケ
+살얼음 식혜|Slushy sikhye|冰沙甜米露|シャーベットシッケ
+통인 떡튀김|Tongin fried rice cakes|通仁炸年糕|通仁揚げ餅
+간장·양념|Soy or spicy sauce|酱油·甜辣酱|醤油・ヤンニョム
+한강 떡볶이|Hangang tteokbokki|汉江炒年糕|漢江トッポッキ
+순한·중간매운|Mild or medium spicy|微辣·中辣|マイルド・中辛
+눈꽃치즈 추가|Extra snow cheese|加雪花芝士|スノーチーズ追加
 타코야끼|Takoyaki|章鱼烧|たこ焼き
 2알|2 pieces|2颗|2個
 씨앗 꿀 호떡|Seed & honey hotteok|坚果蜂蜜糖饼|種入り蜂蜜ホットク

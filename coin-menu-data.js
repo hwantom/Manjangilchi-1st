@@ -850,16 +850,73 @@
     for (const [name, update] of Object.entries(siteSurvey)) {
         stores[name] = {...(stores[name] || {name}), ...update};
     }
-    // Usage info from public sources (checked 2026-10-11). Sources disagree on the cafe's weekly closing day.
+
+    // Second batch: photos taken 2026-10-16 (KakaoTalk_20261016_164708624*.jpg), same rules as above.
+    const SITE_DATE2 = '2026-10-16';
+    const photo2 = n => `KakaoTalk_20261016_164708624${n ? '_' + String(n).padStart(2, '0') : ''}.jpg`;
+    const dated = make => (store, file) => (...args) => ({...make(store, file)(...args), sourceDate: SITE_DATE2});
+    const onBoard2 = dated(onBoard), fromWon2 = dated(fromWon);
+    const site2 = (note, items) => ({membershipStatus: 'site-confirmed', siteCheckedAt: SITE_DATE2, note, items});
+    const sinil = (n, file = photo2(n)) => onBoard2('sinil', file), sinilWon = fromWon2('sinil', photo2(2));
+    const gim = n => onBoard2('gimgui', photo2(n));
+    const tongin = onBoard2('tonginjeong', photo2(9));
+    const jungang = onBoard2('jungang', photo2(12));
+    const cocoro = onBoard2('cocoro', photo2(13));
+    const kitchen = onBoard2('uridongne', photo2(10)), kitchenWon = fromWon2('uridongne', photo2(10));
+    const buyeo = n => fromWon2('buyeo', photo2(n));
+    const siteSurvey2 = {
+        '신일참기름': site2('2026-10-16 현장 "추억의 주전부리" 매대(계산은 신일참기름). 엽전 가격 표시, 히트상품 2종만 원화 환산.', [
+            sinil(1)('slush-grape', '슬러시', 4, '포도'), sinil(1)('slush-orange', '슬러시', 4, '오렌지'),
+            sinil(2)('saekomjjang', '새콤짱', 2, '1개'), sinil(2)('dalgona', '달고나', 1), sinil(2)('chupa', '츄파춥스', 1),
+            sinil(2)('byeolsatang', '불티나 우산 별사탕', 3), sinil(3)('wadadak', '와다닥', 3, '1개'), sinil(3)('apollo', '아폴로', 2),
+            sinil(3)('minimum-cola', '미니멈 콜라', 2), sinil(3)('jjondigi', '추억의 쫀드기', 5, '1개'),
+            sinilWon('meoktae', '먹태구이', 4000), sinilWon('butter-squid', '버터오징어', 3500)]),
+        '소문난김구이': site2('2026-10-16 현장 엽전 가격 표시(장난감·사탕 매대와 식혜, 팀 확인).', [
+            gim(0)('apollo', '아폴로', 2), gim(4)('cup-sikhye', '컵식혜', 4), gim(4)('slush-sikhye', '살얼음 식혜', 6)]),
+        '통인정': site2('2026-10-16 현장 엽전 메뉴 표시. 일반 식사 메뉴는 엽전 가격이 없어 제외.', [
+            tongin('tteoktwigim', '통인 떡튀김', 10, '간장·양념'), tongin('hangang', '한강 떡볶이', 10, '순한·중간매운'),
+            tongin('cheese', '눈꽃치즈 추가', 4)]),
+        '중앙전주반찬': site2('2026-10-16 현장 "엽전도시락카페 메뉴" 표시.', [
+            jungang('gangjeong', '닭강정', 5), jungang('jeyuk', '제육볶음', 5), jungang('kimchijeon', '김치전', 5),
+            jungang('japchae', '잡채', 5), jungang('skewer', '닭꼬치', 4, '2개'), jungang('mattang', '맛탕', 4),
+            jungang('gyeranmari', '계란말이', 2, '2개'), jungang('hobakjeon', '호박전', 2, '2개'),
+            jungang('sausagejeon', '소시지전', 2, '2개'), jungang('vienna', '비엔나', 2, '4개'), jungang('kimchi', '볶은 김치', 2)]),
+        '코코로레시피': site2('2026-10-16 현장 코인 표시.', [
+            cocoro('mini-jeon', '미니전', 5), cocoro('mini-fried', '미니튀김', 3),
+            cocoro('makgeolli-glass', '막걸리', 5, '한 잔'), cocoro('makgeolli-handmade', '수제 막걸리', 9)]),
+        '우리동네': site2('2026-10-16 현장 "Little Kichen" 메뉴판(팀 확인: 우리동네). 엽전 가격 표시, 생맥주만 원화 환산.', [
+            kitchen('cheese-toast', '치즈 토스트', 8), kitchen('toast', '토스트', 6), kitchen('cheese-hotdog', '치즈 핫도그', 8),
+            kitchen('cheese-sausage', '치즈&소시지 핫도그', 6), kitchen('sausage-hotdog', '소시지 핫도그', 6),
+            kitchen('potato-sausage', '감자 소시지', 8), kitchen('tteokbokki', '떡볶이', 4), kitchen('soup-tteokbokki', '국물 떡볶이', 8),
+            kitchen('drink', '음료수', 4), kitchen('iced-mix', '아이스 믹스 커피', 5), kitchen('iced-americano', '아이스 아메리카노', 5),
+            kitchenWon('beer-500', '생맥주', 4500, '500cc'), kitchenWon('beer-300', '생맥주', 3000, '300cc')]),
+        '경복궁 떡 방앗간': site2('2026-10-16 현장 식혜 엽전 가격 표시(팀 확인).', [
+            onBoard2('gyeongbok', photo2(11))('sikhye', '식혜', 4)]),
+        '부여떡방앗간': site2('2026-10-16 현장 원화 가격표를 1냥=500원으로 환산(팀 확인: 전 상품). 이름을 읽을 수 없는 1,500원 낱개 떡은 제외.', [
+            buyeo(17)('yakgwa', '약과', 3000), buyeo(17)('songpyeon', '송편', 3000), buyeo(17)('gyeongdan', '경단', 4000),
+            buyeo(17)('ssuk-injeolmi', '쑥 인절미', 1000), buyeo(17)('tteokguk', '떡국떡', 5000, '우리쌀 100%'),
+            buyeo(16)('deulkkae', '들깨가루', 2000), buyeo(16)('misut-1', '미숫가루', 1000, '1팩'),
+            buyeo(16)('misut-2', '미숫가루', 1500, '2팩'), buyeo(16)('misut-large', '미숫가루', 5000, '큰 봉지'),
+            buyeo(18)('yeotgireum', '엿기름', 2000), buyeo(18)('corn', '옥수수', 2000), buyeo(18)('barley', '보리', 2000),
+            buyeo(18)('raw-bean', '날콩가루', 2000), buyeo(18)('glutinous', '찹쌀가루', 2000)])
+    };
+    for (const [name, update] of Object.entries(siteSurvey2)) {
+        stores[name] = {...(stores[name] || {name}), ...update};
+    }
+    // 서촌호떡: two extra cards on the 2026-10-16 window (won only, converted).
+    stores['서촌호떡'].items.push(fromWon2('hotteok', photo2(20))('cheese', '치즈호떡', 3000),
+        fromWon2('hotteok', photo2(20))('ppurinkle-cheese', '뿌링클치즈호떡', 3500));
+    // Usage info: public sources plus the market's own notices photographed on 2026-10-16
+    // (coin sales moved during the customer-center renovation; closed Mondays and the 3rd Sunday).
     const guide = {
-        checkedAt: '2026-10-11',
+        checkedAt: '2026-10-16',
         coinPriceKrw: 500, bundleSize: 10, bundlePriceKrw: 5000,
-        purchasePlace: '도시락카페 2층',
+        purchasePlace: '통인 배송센터(팝업스토어) — 고객센터 공사로 임시 이전(2026.9.29~2027.1.30 예정)',
         hours: [
             {label: '평일', open: '11:00–16:00', coinSales: '엽전 판매 15:00까지'},
             {label: '주말', open: '11:00–17:00', coinSales: '엽전 판매 16:00까지'}
         ],
-        closed: '매달 셋째 주 일요일 시장 휴무. 카페 정기휴무 요일은 자료마다 월요일·화요일로 달라요.',
+        closed: '매주 월요일과 셋째 주 일요일 (시장 안내문 기준)',
         refund: '남은 엽전은 환불할 수 있다는 안내가 있어요. 결제 수단별 조건은 현장에서 확인해 주세요.',
         phone: '02-722-0911',
         cafeExtras: [{id: 'cafe-rice', name: '밥', coins: 2}, {id: 'cafe-soup', name: '국', coins: 2}],
@@ -868,7 +925,8 @@
             {label: '서울시 미디어허브 2025.05', url: 'https://mediahub.seoul.go.kr/archives/2014553'},
             {label: '맘맘 2025.04', url: 'https://mom-mom.net/travel/places/651cc3f4caa4390924c21e61'},
             {label: '방문기 2026.02', url: 'https://row-sangsangin.tistory.com/6'},
-            {label: '문의 번호', url: 'https://www.ivisitkorea.com/tongin-market/'}
+            {label: '문의 번호', url: 'https://www.ivisitkorea.com/tongin-market/'},
+            {label: '시장 안내문 2026.10', url: null}
         ]
     };
     root.COIN_MENU_DATA = {researchedAt:'2026-09-09', defaultBudget:0, surveyedStoreCount:80, currentOfficialVerificationComplete:false, stores, guide};

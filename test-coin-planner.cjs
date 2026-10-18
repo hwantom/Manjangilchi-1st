@@ -6,7 +6,7 @@ assert.equal(COIN_MENU_DATA.defaultBudget, 0);
 assert.equal(Object.keys(COIN_MENU_DATA.stores).length, 80);
 assert.equal(COIN_MENU_DATA.surveyedStoreCount, 80);
 assert.equal(COIN_MENU_DATA.currentOfficialVerificationComplete, false);
-assert.equal(planner.catalog().length, 60);
+assert.equal(planner.catalog().length, 123);
 assert.equal(planner.budget(-2), 0);
 assert.equal(planner.budget('bad'), 0);
 assert.equal(planner.budget(5.8), 5);
@@ -30,13 +30,16 @@ for (const item of planner.catalog()) {
     assert(ELIGIBLE[store.membershipStatus].includes(item.evidenceType), item.id);
     assert(item.sourceDate, item.id);
     if (item.evidenceType === 'first-person-payment-report') assert(item.sourceUrl && item.visitDate, item.id);
-    else assert(/^KakaoTalk_20261015_164017606(_\d{2})?\.jpg$/.test(item.sourcePhoto), item.id);
+    else assert(/^KakaoTalk_2026101(5_164017606|6_164708624)(_\d{2})?\.jpg$/.test(item.sourcePhoto), item.id);
     // won-only boards: 1냥 = 500원, and the original won price is kept
     if (item.evidenceType === 'site-won-converted') assert.equal(item.coins * 500, item.priceKrw, item.id);
 }
 assert.equal(new Set(planner.catalog().map(item => item.id)).size, planner.catalog().length);
 assert.equal(byId('site-jg-tteokbokki').coins, 9);
 assert.equal(byId('site-intaco-takoyaki-2').coins, 3);
+assert.equal(byId('site-jungang-hobakjeon').coins, 2);
+assert.equal(byId('site-sinil-dalgona').coins, 1);
+assert.equal(COIN_MENU_DATA.guide.closed.includes('월요일'), true);
 assert.equal(COIN_MENU_DATA.stores['송림사우나'].membershipStatus, 'confirmed-non-member');
 for (const name of ['송림사우나', '명방앗간']) assert(!planner.catalog().some(item => item.storeName === name), name);
 const fs = require('node:fs');
@@ -51,7 +54,8 @@ for (const file of ['index.html','stores.html','markets.html']) {
 const guide = COIN_MENU_DATA.guide;
 assert.equal(guide.coinPriceKrw, 500);
 assert.equal(guide.bundleSize * guide.coinPriceKrw, guide.bundlePriceKrw);
-assert(guide.sources.length && guide.sources.every(s => s.url.startsWith('https://')));
+// Web sources must be https; on-site notices (photos) have a label and no link.
+assert(guide.sources.length && guide.sources.every(s => s.url ? s.url.startsWith('https://') : s.label));
 assert(guide.cafeExtras.every(x => Number.isSafeInteger(x.coins) && x.coins > 0));
 assert(!planner.catalog().some(item => guide.cafeExtras.some(x => x.id === item.id)), 'cafe rice/soup stays out of the verified catalog');
 console.log('0-coin budget, explicit evidence gate, unaffordable/unknown rejection, totals, page wiring: PASS');
