@@ -932,6 +932,9 @@
         '손맛김밥': sheetListed('시트 메뉴 가격 환산(현장 엽전 가격 미확인). 가격 범위는 높은 가격 기준.', [
             sonmat('sonmat', '손맛김밥', 3500), sonmat('cheese', '치즈김밥', 4500), sonmat('tuna', '참치김밥', 4500)])
     };
+    // Removed from the 엽전 가맹점 list by the team (2026-10-19); the sheet's coin flag was cleared too.
+    sheetSurvey['뜻밖의 조작가'] = {membershipStatus: 'confirmed-non-member', sheetCheckedAt: SHEET_DATE, items: [],
+        note: '엽전 가맹점이 아님(팀 확인, 2026-10-19).'};
     for (const [name, update] of Object.entries(sheetSurvey)) {
         stores[name] = {...(stores[name] || {name}), ...update};
     }

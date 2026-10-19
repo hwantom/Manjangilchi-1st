@@ -42,6 +42,7 @@ assert.equal(byId('site-jungang-hobakjeon').coins, 2);
 assert.equal(byId('site-sinil-dalgona').coins, 1);
 assert.equal(COIN_MENU_DATA.guide.closed.includes('월요일'), true);
 assert.equal(COIN_MENU_DATA.stores['송림사우나'].membershipStatus, 'confirmed-non-member');
+assert.equal(COIN_MENU_DATA.stores['뜻밖의 조작가'].membershipStatus, 'confirmed-non-member');
 for (const name of ['송림사우나', '명방앗간']) assert(!planner.catalog().some(item => item.storeName === name), name);
 const fs = require('node:fs');
 for (const file of ['index.html','stores.html','markets.html']) {
