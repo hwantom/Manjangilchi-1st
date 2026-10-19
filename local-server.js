@@ -57,8 +57,16 @@ const handleFunction = async (req, res, fn) => {
     }
 };
 
+// A request path like "//x" reads as a host-relative URL and makes new URL() throw; collapse leading slashes
+// and treat anything still unparsable as a bad request instead of crashing the server.
+const parseUrl = rawUrl => {
+    try { return new URL(String(rawUrl || '/').replace(/^\/+/, '/'), `http://127.0.0.1:${port}`); }
+    catch { return null; }
+};
+
 const handleStatic = (req, res) => {
-    const url = new URL(req.url, `http://127.0.0.1:${port}`);
+    const url = parseUrl(req.url);
+    if (!url) { sendText(res, 400, 'Bad request'); return; }
     let pathname;
     try { pathname = decodeURIComponent(url.pathname); }
     catch { sendText(res, 400, 'Bad request'); return; }
@@ -119,7 +127,9 @@ const handleFormPost = async (req, res) => {
 };
 
 const server = http.createServer((req, res) => {
-    const pathname = new URL(req.url, `http://127.0.0.1:${port}`).pathname;
+    const url = parseUrl(req.url);
+    if (!url) { sendText(res, 400, 'Bad request'); return; }
+    const pathname = url.pathname;
     if (req.method === 'POST' && pathname === '/') {
         handleFormPost(req, res);
         return;

@@ -547,6 +547,10 @@
                             map.setHeading(-90);
                         }
                     }
+                } else if (params.get('search')?.trim()) {
+                    // The home page's search box links here with ?search=; run it through the map's own search box.
+                    searchInput.value = params.get('search').trim();
+                    searchInput.dispatchEvent(new Event('input'));
                 }
                 
                 const categoryParam = params.get('category');

@@ -815,9 +815,12 @@
 
             const filtered = stores.filter(store => {
                 const matchCat = selectedCategory === '전체' || store.category === selectedCategory || (selectedCategory === FAV_FILTER && favs.has(store.name));
-                const q = searchQuery.trim().toLowerCase();
-                const matchSearch = !q || [store.name, store.description, store.keyword, st(store, 'name'), st(store, 'shortDesc'), st(store, 'keyword')]
-                    .some(v => v && v.toLowerCase().includes(q));
+                // Same matching as the 엽전도시락 search: spaces ignored, store info plus menu names in both languages.
+                const norm = v => String(v || '').toLowerCase().replace(/\s+/g, '');
+                const q = norm(searchQuery);
+                const matchSearch = !q || [store.name, store.description, store.keyword, st(store, 'name'), st(store, 'shortDesc'), st(store, 'keyword'),
+                    ...getStoreMenuItems(store).flatMap(item => [item.name, MapI18n.text(item.name, lang)])]
+                    .some(v => v && norm(v).includes(q));
                 return matchCat && matchSearch;
             });
 
@@ -1067,7 +1070,15 @@
                             })}
                         </ul>
                     </div>
-                    {overflow > 0 && <p className="text-[11px] text-gray-500 mt-1 text-center">{ui.overflow(overflow)}</p>}
+                    {overflow > 0 && <div className="mt-2">
+                        <p className="text-[11px] text-gray-500 text-center">{ui.overflow(overflow)}</p>
+                        <ul className="mt-1.5 flex flex-wrap justify-center gap-1.5">
+                            {distinct.slice(TRAY_SLOTS.length).map(fill => <li key={fill.id} className="flex items-center gap-1 rounded-full bg-[#F3E3C3] pl-2.5 pr-1 py-0.5 text-[11px] font-bold text-gray-900">
+                                {itemLabel(fill)}{fill.count > 1 ? ` ×${fill.count}` : ''} <span className="text-[#7A6342] font-normal">🪙 {fill.coins * fill.count}</span>
+                                <button aria-label={ui.removeOne(itemLabel(fill))} onClick={() => removeOne(fill.id)} className="w-4 h-4 rounded-full bg-black/60 text-white text-[10px] leading-none">×</button>
+                            </li>)}
+                        </ul>
+                    </div>}
 
                     <div className="flex justify-between mt-2 items-center min-h-[20px]">
                         <p role="status" className="text-xs font-bold text-amber-900">{message}</p>
@@ -1820,6 +1831,13 @@ const getStoreMenuItems = StoreMenus.getItems;
             const st = useStoreText();
             const mt = useMapText();
             useEffect(() => { setActiveTab('home'); }, [store?.name]);
+            useEffect(() => {
+                if (!store) return;
+                // Esc closes the modal, unless the correction-request dialog on top of it is open (that handles Esc itself).
+                const onKey = e => { if (e.key === 'Escape' && !document.getElementById('correctionDialog')?.open) onClose(); };
+                document.addEventListener('keydown', onKey);
+                return () => document.removeEventListener('keydown', onKey);
+            }, [store, onClose]);
             if (!store) return null;
 
             const isFav = favs.has(store.name);
