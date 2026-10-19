@@ -1388,6 +1388,21 @@
             );
         };
 
+        // Home section banners (assets/home-bg-*.webp, wide strips with art at both ends and a blank middle).
+        // Shown at full width across the top of the section, bottom edge faded into the section colour.
+        // The section needs `relative isolate`; the banner sits at z-index -1 so the content stays on top.
+        const SECTION_BANNERS = {
+            explore: { ratio: '1536 / 266', color: '#FBF4E8' },
+            yeopjeon: { ratio: '1536 / 244', color: '#30261B' },
+            stores: { ratio: '1536 / 243', color: '#FDF8EE' },
+            course: { ratio: '1536 / 254', color: '#F9F1E6' }
+        };
+        const SectionBanner = ({ name }) => (
+            <div aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 pointer-events-none bg-no-repeat"
+                style={{ aspectRatio: SECTION_BANNERS[name].ratio, backgroundImage: `url('assets/home-bg-${name}.webp')`, backgroundSize: '100% 100%',
+                    WebkitMaskImage: 'linear-gradient(to bottom, #000 70%, transparent)', maskImage: 'linear-gradient(to bottom, #000 70%, transparent)' }} />
+        );
+
         const LandingCarousel = () => {
             const lang = useLang();
             const images = ['assets/slide1.jpg', 'assets/slide2.jpg', 'assets/slide3.jpg', 'assets/slide4.jpg'];
@@ -2307,7 +2322,8 @@ const getStoreMenuItems = StoreMenus.getItems;
                             <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* 4 Quick Icons Grid Section (Gwangjang Market Style) */}
-                            <div className="-mx-6 px-6 py-6 bg-white space-y-4">
+                            <div className="-mx-6 px-6 py-6 space-y-4 relative isolate" style={{ backgroundColor: SECTION_BANNERS.explore.color }}>
+                                <SectionBanner name="explore" />
                                 <div className="text-center space-y-1">
                                     <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionExplore}</h3>
                                     <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto"></div>
@@ -2347,9 +2363,8 @@ const getStoreMenuItems = StoreMenus.getItems;
                             <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* Full-bleed Tongin Market Story / Yeopjeon Banner Section (Gwangjang Market Story Style) */}
-                            <div className="-mx-6 px-6 py-8 bg-[#2C251E] text-white space-y-4 relative overflow-hidden shadow-inner">
-                                {/* Background pattern tint */}
-                                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#A68A64_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                            <div className="-mx-6 px-6 py-8 text-white space-y-4 relative isolate overflow-hidden shadow-inner" style={{ backgroundColor: SECTION_BANNERS.yeopjeon.color }}>
+                                <SectionBanner name="yeopjeon" />
 
                                 <div className="relative z-10 text-center space-y-1">
                                     <h3 className="text-xl font-extrabold tracking-tight text-amber-100">{t.sectionYeopjeon}</h3>
@@ -2374,7 +2389,8 @@ const getStoreMenuItems = StoreMenus.getItems;
                             <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* Store Showcase Section */}
-                            <div className="-mx-6 px-6 py-6 bg-white space-y-4">
+                            <div className="-mx-6 px-6 py-6 space-y-4 relative isolate" style={{ backgroundColor: SECTION_BANNERS.stores.color }}>
+                                <SectionBanner name="stores" />
                                 <div className="flex justify-between items-center relative">
                                     <div className="flex-1 text-center space-y-1 pl-12">
                                         <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionStore}</h3>
@@ -2442,7 +2458,8 @@ const getStoreMenuItems = StoreMenus.getItems;
                             <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* 통인시장 근처 코스 Section (인스타그램 연동 & 슬라이드 썸네일) */}
-                            <div className="-mx-6 px-6 py-6 bg-white space-y-4">
+                            <div className="-mx-6 px-6 py-6 space-y-4 relative isolate" style={{ backgroundColor: SECTION_BANNERS.course.color }}>
+                                <SectionBanner name="course" />
                                 <div className="text-center space-y-1">
                                     <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionCourse}</h3>
                                     <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto"></div>
