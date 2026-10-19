@@ -1388,20 +1388,33 @@
             );
         };
 
-        // Home section banners (assets/home-bg-*.webp, wide strips with art at both ends and a blank middle).
-        // Shown at full width across the top of the section, bottom edge faded into the section colour.
-        // The section needs `relative isolate`; the banner sits at z-index -1 so the content stays on top.
+        // Home section banners (assets/home-bg-*.webp: wide strips with art at both ends and a blank middle).
+        // Shown as a taller band than the strip's own proportions allow: the left half shows the image's left end and
+        // the right half its right end, both scaled to the band height, so the art is larger and part of the blank
+        // middle is dropped. Inner edges and the bottom fade into the section colour; the title overlaps the faded part.
         const SECTION_BANNERS = {
-            explore: { ratio: '1536 / 266', color: '#FBF4E8' },
-            yeopjeon: { ratio: '1536 / 244', color: '#30261B' },
-            stores: { ratio: '1536 / 243', color: '#FDF8EE' },
-            course: { ratio: '1536 / 254', color: '#F9F1E6' }
+            explore: { height: 130, color: '#FBF4E8' },
+            yeopjeon: { height: 120, color: '#30261B' },
+            stores: { height: 124, color: '#FDF8EE' },
+            course: { height: 130, color: '#F9F1E6' }
         };
-        const SectionBanner = ({ name }) => (
-            <div aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 pointer-events-none bg-no-repeat"
-                style={{ aspectRatio: SECTION_BANNERS[name].ratio, backgroundImage: `url('assets/home-bg-${name}.webp')`, backgroundSize: '100% 100%',
-                    WebkitMaskImage: 'linear-gradient(to bottom, #000 70%, transparent)', maskImage: 'linear-gradient(to bottom, #000 70%, transparent)' }} />
-        );
+        const BANNER_TITLE_OVERLAP = -46;
+        const SectionBanner = ({ name }) => {
+            const { height, color } = SECTION_BANNERS[name];
+            const half = side => ({
+                backgroundImage: `url('assets/home-bg-${name}.webp')`, backgroundRepeat: 'no-repeat',
+                backgroundSize: 'auto 100%', backgroundPosition: `${side} top`,
+                WebkitMaskImage: `linear-gradient(to ${side === 'left' ? 'right' : 'left'}, #000 78%, transparent)`,
+                maskImage: `linear-gradient(to ${side === 'left' ? 'right' : 'left'}, #000 78%, transparent)`
+            });
+            return (
+                <div aria-hidden="true" className="relative -mx-6 pointer-events-none overflow-hidden" style={{ height }}>
+                    <div className="absolute left-0 top-0 h-full w-1/2" style={half('left')} />
+                    <div className="absolute right-0 top-0 h-full w-1/2" style={half('right')} />
+                    <div className="absolute inset-x-0 bottom-0 h-1/2" style={{ background: `linear-gradient(to bottom, transparent, ${color})` }} />
+                </div>
+            );
+        };
 
         const LandingCarousel = () => {
             const lang = useLang();
@@ -2318,39 +2331,37 @@ const getStoreMenuItems = StoreMenus.getItems;
                                 </button>
                             </div>
 
-                            {/* Section Divider Bar */}
-                            <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* 4 Quick Icons Grid Section (Gwangjang Market Style) */}
-                            <div className="-mx-6 px-6 py-6 space-y-4 relative isolate" style={{ backgroundColor: SECTION_BANNERS.explore.color }}>
+                            <div className="-mx-6 px-6 pb-6 space-y-4" style={{ backgroundColor: SECTION_BANNERS.explore.color }}>
                                 <SectionBanner name="explore" />
-                                <div className="text-center space-y-1">
+                                <div className="relative text-center space-y-1" style={{ marginTop: BANNER_TITLE_OVERLAP }}>
                                     <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionExplore}</h3>
                                     <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto"></div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <button onClick={() => switchTab('STORES')} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-[#FAF8F5] border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all space-y-2 group">
+                                    <button onClick={() => switchTab('STORES')} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white shadow-sm border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all space-y-2 group">
                                         <span className="text-[14.5px] font-extrabold text-gray-900 group-hover:text-[#A68A64] transition-colors">{t.iconFood}</span>
                                         <div className="w-12 h-12 rounded-full bg-[#F4EFE6] border border-[#E8DEC9] text-[#8B6B4A] group-hover:bg-[#A68A64] group-hover:text-white group-hover:border-[#A68A64] flex items-center justify-center transition-all shadow-2xs">
                                             <Utensils className="w-6 h-6" />
                                         </div>
                                     </button>
 
-                                    <button onClick={() => switchTab('FACILITIES')} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-[#FAF8F5] border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all space-y-2 group">
+                                    <button onClick={() => switchTab('FACILITIES')} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white shadow-sm border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all space-y-2 group">
                                         <span className="text-[14.5px] font-extrabold text-gray-900 group-hover:text-[#A68A64] transition-colors">{t.iconFacilities}</span>
                                         <div className="w-12 h-12 rounded-full bg-[#F4EFE6] border border-[#E8DEC9] text-[#8B6B4A] group-hover:bg-[#A68A64] group-hover:text-white group-hover:border-[#A68A64] flex items-center justify-center transition-all shadow-2xs">
                                             <Users className="w-6 h-6" />
                                         </div>
                                     </button>
 
-                                    <button onClick={() => switchTab('MAP')} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-[#FAF8F5] border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all space-y-2 group">
+                                    <button onClick={() => switchTab('MAP')} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white shadow-sm border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all space-y-2 group">
                                         <span className="text-[14.5px] font-extrabold text-gray-900 group-hover:text-[#A68A64] transition-colors">{t.iconMap}</span>
                                         <div className="w-12 h-12 rounded-full bg-[#F4EFE6] border border-[#E8DEC9] text-[#8B6B4A] group-hover:bg-[#A68A64] group-hover:text-white group-hover:border-[#A68A64] flex items-center justify-center transition-all shadow-2xs">
                                             <MapPin className="w-6 h-6" />
                                         </div>
                                     </button>
 
-                                    <button onClick={() => setIsGuideOpen(true)} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-[#FAF8F5] border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all space-y-2 group">
+                                    <button onClick={() => setIsGuideOpen(true)} className="flex flex-col items-center justify-center p-4 rounded-2xl bg-white shadow-sm border border-[#EFE8DC] hover:border-[#A68A64] active:scale-[0.98] transition-all space-y-2 group">
                                         <span className="text-[14.5px] font-extrabold text-gray-900 group-hover:text-[#A68A64] transition-colors">{t.iconCoin}</span>
                                         <div className="w-12 h-12 rounded-full bg-[#F4EFE6] border border-[#E8DEC9] text-[#8B6B4A] group-hover:bg-[#A68A64] group-hover:text-white group-hover:border-[#A68A64] flex items-center justify-center transition-all shadow-2xs">
                                             <Coins className="w-6 h-6" />
@@ -2359,14 +2370,12 @@ const getStoreMenuItems = StoreMenus.getItems;
                                 </div>
                             </div>
 
-                            {/* Section Divider Bar */}
-                            <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* Full-bleed Tongin Market Story / Yeopjeon Banner Section (Gwangjang Market Story Style) */}
-                            <div className="-mx-6 px-6 py-8 text-white space-y-4 relative isolate overflow-hidden shadow-inner" style={{ backgroundColor: SECTION_BANNERS.yeopjeon.color }}>
+                            <div className="-mx-6 px-6 pb-8 text-white space-y-4 relative overflow-hidden shadow-inner" style={{ backgroundColor: SECTION_BANNERS.yeopjeon.color }}>
                                 <SectionBanner name="yeopjeon" />
 
-                                <div className="relative z-10 text-center space-y-1">
+                                <div className="relative z-10 text-center space-y-1" style={{ marginTop: BANNER_TITLE_OVERLAP }}>
                                     <h3 className="text-xl font-extrabold tracking-tight text-amber-100">{t.sectionYeopjeon}</h3>
                                     <div className="w-6 h-0.5 bg-amber-400/60 mx-auto"></div>
                                 </div>
@@ -2385,30 +2394,28 @@ const getStoreMenuItems = StoreMenus.getItems;
                                 </button>
                             </div>
 
-                            {/* Section Divider Bar */}
-                            <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* Store Showcase Section */}
-                            <div className="-mx-6 px-6 py-6 space-y-4 relative isolate" style={{ backgroundColor: SECTION_BANNERS.stores.color }}>
+                            <div className="-mx-6 px-6 pb-6 space-y-4" style={{ backgroundColor: SECTION_BANNERS.stores.color }}>
                                 <SectionBanner name="stores" />
-                                <div className="flex justify-between items-center relative">
-                                    <div className="flex-1 text-center space-y-1 pl-12">
-                                        <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionStore}</h3>
-                                        <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto"></div>
-                                    </div>
-                                    <button
-                                        onClick={() => switchTab('STORES')}
-                                        className="text-xs text-[#A68A64] font-bold hover:underline flex items-center gap-0.5 shrink-0"
-                                    >
-                                        {t.storeMore} <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-                                    </button>
+                                <div className="relative text-center space-y-1" style={{ marginTop: BANNER_TITLE_OVERLAP }}>
+                                    <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionStore}</h3>
+                                    <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto"></div>
                                 </div>
 
-                                {/* Category Chips */}
-                                <div className="flex gap-2 overflow-x-auto no-scrollbar px-1 pt-1 pb-2">
+                                {/* Category Chips, with 더보기 at the end of the row */}
+                                <div className="flex items-center">
+                                    <div className="flex-1 min-w-0 flex gap-2 overflow-x-auto no-scrollbar px-1 pt-1 pb-2">
                                     {categories.map(cat => (
                                         <CategoryChip key={cat.value} value={cat.value} label={cat.label} active={selectedCategory === cat.value} onClick={() => setSelectedCategory(cat.value)} />
                                     ))}
+                                    </div>
+                                    <button
+                                        onClick={() => switchTab('STORES')}
+                                        className="text-xs text-[#A68A64] font-bold hover:underline flex items-center gap-0.5 shrink-0 pl-2"
+                                    >
+                                        {t.storeMore} <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                                    </button>
                                 </div>
 
                                 {/* Store Cards Horizontal List */}
@@ -2454,13 +2461,11 @@ const getStoreMenuItems = StoreMenus.getItems;
                                 </div>
                             </div>
 
-                            {/* Section Divider Bar */}
-                            <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* 통인시장 근처 코스 Section (인스타그램 연동 & 슬라이드 썸네일) */}
-                            <div className="-mx-6 px-6 py-6 space-y-4 relative isolate" style={{ backgroundColor: SECTION_BANNERS.course.color }}>
+                            <div className="-mx-6 px-6 pb-6 space-y-4" style={{ backgroundColor: SECTION_BANNERS.course.color }}>
                                 <SectionBanner name="course" />
-                                <div className="text-center space-y-1">
+                                <div className="relative text-center space-y-1" style={{ marginTop: BANNER_TITLE_OVERLAP }}>
                                     <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionCourse}</h3>
                                     <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto"></div>
                                 </div>
@@ -2469,8 +2474,6 @@ const getStoreMenuItems = StoreMenus.getItems;
                                 <CourseSlider />
                             </div>
 
-                            {/* Section Divider Bar */}
-                            <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* Contact / inquiry: opens the shared dialog in inquiry mode (Netlify form "inquiry") */}
                             {/* Background: market illustration (1672×941) shown whole at full width; the text sits in its blank centre. */}
