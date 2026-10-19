@@ -903,6 +903,38 @@
     for (const [name, update] of Object.entries(siteSurvey2)) {
         stores[name] = {...(stores[name] || {name}), ...update};
     }
+    // Stores marked 엽전 가맹점 (coin = o) in the sheet but not yet photographed: their won menu from the sheet,
+    // read 2026-10-19, converted at 1냥 = 500원 as the team asked. Prices that are not a multiple of 500 round up
+    // (you cannot pay part of a coin); price ranges use the upper price.
+    const SHEET_DATE = '2026-10-19';
+    const fromSheet = store => (key, name, priceKrw, portion = '') => ({id: `sheet-${store}-${key}`, name, coins: Math.ceil(priceKrw / 500),
+        priceKrw, portion, sourceDate: SHEET_DATE, sourceRef: 'google-sheet-menu', evidenceType: 'sheet-won-converted', planningEligible: true,
+        note: `시트 메뉴 가격 ${priceKrw.toLocaleString('ko-KR')}원을 1냥=500원으로 환산(팀 기준)`});
+    const sheetListed = (note, items) => ({membershipStatus: 'sheet-listed', sheetCheckedAt: SHEET_DATE, note, items});
+    const jamidang = fromSheet('jamidang'), bulan = fromSheet('bulan'), seolya = fromSheet('seolya'),
+        halmeoni = fromSheet('halmeoni'), tigak = fromSheet('tigak'), sonmat = fromSheet('sonmat');
+    const sheetSurvey = {
+        '자미당': sheetListed('시트 메뉴 가격 환산(현장 엽전 가격 미확인).', [
+            jamidang('kkwabaegi', '꽈배기', 2500, '3개'), jamidang('chapssal', '찹쌀도너츠', 2500, '3개'), jamidang('pat', '팥도너츠', 2000),
+            jamidang('hotdog', '핫도그', 2000), jamidang('cheese-hotdog', '치즈핫도그', 2500)]),
+        '불란집': sheetListed('시트 메뉴 가격 환산(현장 엽전 가격 미확인).', [
+            bulan('tteokbokki', '떡볶이', 5000), bulan('sundae', '순대', 5000), bulan('eomuk', '어묵', 5000), bulan('kkoma', '꼬마김밥', 4000),
+            bulan('twigim', '튀김', 5000), bulan('janchi', '잔치국수', 6000), bulan('tteokmandu', '떡만두국', 8000), bulan('tteokguk', '떡국', 6000),
+            bulan('udon', '우동', 6000), bulan('eomuk-udon', '어묵우동', 7000), bulan('ramyeon', '계란라면', 5000)]),
+        '설야만두': sheetListed('시트 메뉴 가격 환산(현장 엽전 가격 미확인).', [
+            seolya('kimchi', '김치만두', 6000, '1팩'), seolya('buchu', '부추만두', 6000, '1팩')]),
+        '원조할머니 기름떡볶이': sheetListed('시트 메뉴 가격 환산(현장 엽전 가격 미확인). 예전 방문기의 엽전 4~5냥과는 양이 다를 수 있음.', [
+            halmeoni('oil', '기름떡볶이', 5000), halmeoni('soy', '간장떡볶이', 5000), halmeoni('odeng', '오뎅', 1000),
+            halmeoni('modeum', '모듬전세트', 19000), halmeoni('bindae', '빈대떡세트', 19000)]),
+        '티각태각': sheetListed('시트 메뉴 가격 환산(현장 엽전 가격 미확인). 500원 단위가 아닌 가격은 올림.', [
+            tigak('eopo', '황금어포', 4900, '150g'), tigak('bugak-mix', '부각믹스', 12000, '220g'), tigak('gim-bugak', '김부각', 4950, '80g'),
+            tigak('eomukkang', '황금어묵깡', 3500, '70g'), tigak('gift-1', '선물세트 1호', 15000)]),
+        '손맛김밥': sheetListed('시트 메뉴 가격 환산(현장 엽전 가격 미확인). 가격 범위는 높은 가격 기준.', [
+            sonmat('sonmat', '손맛김밥', 3500), sonmat('cheese', '치즈김밥', 4500), sonmat('tuna', '참치김밥', 4500)])
+    };
+    for (const [name, update] of Object.entries(sheetSurvey)) {
+        stores[name] = {...(stores[name] || {name}), ...update};
+    }
     // 서촌호떡: two extra cards on the 2026-10-16 window (won only, converted).
     stores['서촌호떡'].items.push(fromWon2('hotteok', photo2(20))('cheese', '치즈호떡', 3000),
         fromWon2('hotteok', photo2(20))('ppurinkle-cheese', '뿌링클치즈호떡', 3500));

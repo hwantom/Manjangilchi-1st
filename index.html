@@ -1008,7 +1008,7 @@
 
             const referenceItems = Object.values(COIN_MENU_DATA.stores).flatMap(store =>
                 store.items.filter(item => !item.planningEligible && Number.isSafeInteger(item.coins)).map(item => ({ ...item, storeName: store.name })));
-            const SETTLED = ['payment-observed', 'site-confirmed', 'confirmed-non-member'];
+            const SETTLED = ['payment-observed', 'site-confirmed', 'sheet-listed', 'confirmed-non-member'];
             const pendingStores = Object.values(COIN_MENU_DATA.stores).filter(store => !SETTLED.includes(store.membershipStatus));
 
             return <div className="relative pt-4 pb-20 space-y-5">
@@ -1090,7 +1090,7 @@
                                         return <div key={item.id} className="flex items-center gap-3 rounded-xl bg-white border px-4 py-3.5">
                                             <div className="flex-1 min-w-0">
                                                 <div className="text-sm font-bold">{itemLabel(item)}</div>
-                                                {item.evidenceType === 'site-won-converted' && <div className="text-[11px] text-gray-400 mt-0.5">{ui.convertedFrom(item.priceKrw.toLocaleString())}</div>}
+                                                {item.priceKrw && <div className="text-[11px] text-gray-400 mt-0.5">{ui.convertedFrom(item.priceKrw.toLocaleString())}</div>}
                                             </div>
                                             <div className="flex items-center gap-2 shrink-0">
                                                 <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-900 whitespace-nowrap">🪙 {ui.coins(item.coins)}</span>

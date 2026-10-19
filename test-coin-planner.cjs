@@ -6,7 +6,7 @@ assert.equal(COIN_MENU_DATA.defaultBudget, 0);
 assert.equal(Object.keys(COIN_MENU_DATA.stores).length, 80);
 assert.equal(COIN_MENU_DATA.surveyedStoreCount, 80);
 assert.equal(COIN_MENU_DATA.currentOfficialVerificationComplete, false);
-assert.equal(planner.catalog().length, 123);
+assert.equal(planner.catalog().length, 154);
 assert.equal(planner.budget(-2), 0);
 assert.equal(planner.budget('bad'), 0);
 assert.equal(planner.budget(5.8), 5);
@@ -24,12 +24,13 @@ assert.equal(planner.add([], 'unknown', 100).length,0);
 const tampered = structuredClone(COIN_MENU_DATA);
 tampered.stores[first.storeName].membershipStatus='unverified';
 assert(!planner.catalog(tampered).some(item=>item.id===first.id));
-const ELIGIBLE = {'payment-observed': ['first-person-payment-report'], 'site-confirmed': ['site-price-board', 'site-won-converted']};
+const ELIGIBLE = {'payment-observed': ['first-person-payment-report'], 'site-confirmed': ['site-price-board', 'site-won-converted'], 'sheet-listed': ['sheet-won-converted']};
 for (const item of planner.catalog()) {
     const store = COIN_MENU_DATA.stores[item.storeName];
     assert(ELIGIBLE[store.membershipStatus].includes(item.evidenceType), item.id);
     assert(item.sourceDate, item.id);
     if (item.evidenceType === 'first-person-payment-report') assert(item.sourceUrl && item.visitDate, item.id);
+    else if (item.evidenceType === 'sheet-won-converted') assert.equal(item.coins, Math.ceil(item.priceKrw / 500), item.id);
     else assert(/^KakaoTalk_2026101(5_164017606|6_164708624)(_\d{2})?\.jpg$/.test(item.sourcePhoto), item.id);
     // won-only boards: 1냥 = 500원, and the original won price is kept
     if (item.evidenceType === 'site-won-converted') assert.equal(item.coins * 500, item.priceKrw, item.id);
