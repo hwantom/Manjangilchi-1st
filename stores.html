@@ -74,6 +74,9 @@
 </head>
 
 <body>
+    <form name="inquiry" data-netlify="true" netlify-honeypot="bot-field" hidden>
+        <input name="target"><input name="page"><input name="lang"><input name="field"><textarea name="message"></textarea><input name="contact"><input name="bot-field">
+    </form>
     <form name="correction" data-netlify="true" netlify-honeypot="bot-field" hidden>
         <input name="target"><input name="page"><input name="lang"><input name="field"><textarea name="message"></textarea><input name="contact"><input name="bot-field">
     </form>
@@ -2451,6 +2454,20 @@ const getStoreMenuItems = StoreMenus.getItems;
 
                             {/* Section Divider Bar */}
                             <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
+
+                            {/* Contact / inquiry: opens the shared dialog in inquiry mode (Netlify form "inquiry") */}
+                            <section className="-mx-6 px-6 py-8 bg-white">
+                                <div className="rounded-2xl bg-[#FAF8F5] border border-[#EFE8DC] p-5 text-center space-y-2">
+                                    <div className="text-2xl" aria-hidden="true">💌</div>
+                                    <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{UiText.get(lang).inquiryTitle}</h3>
+                                    <p className="text-xs text-gray-500 leading-relaxed">{UiText.get(lang).inquiryDesc}</p>
+                                    <button type="button" data-correction-target="만장일치 문의" data-correction-kind="inquiry" data-correction-page="홈"
+                                        data-correction-label={UiText.get(lang).inquiryLabel}
+                                        className="mt-2 inline-flex items-center justify-center gap-1.5 h-11 px-6 rounded-xl bg-[#A68A64] text-white font-bold text-sm shadow-sm active:scale-[0.98] transition-all">
+                                        {UiText.get(lang).inquiryButton}
+                                    </button>
+                                </div>
+                            </section>
 
                             {/* Footer - Full Bleed */}
                             <footer className="mt-auto pt-8 pb-12 bg-gray-50 border-t border-gray-200/80 -mx-6 px-6 text-gray-500">

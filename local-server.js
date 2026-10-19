@@ -108,16 +108,18 @@ const handleStatic = (req, res) => {
     });
 };
 
-// Stand-in for Netlify Forms: the "정보 수정 요청" dialog posts form-name=correction to "/".
+// Stand-in for Netlify Forms: the shared dialog posts form-name=correction ("정보 수정 요청") or form-name=inquiry
+// ("문의하기") to "/". Both are appended to the same local file, tagged with the form name.
 const CORRECTIONS_FILE = path.join(root, 'correction-requests.jsonl.local');
 const handleFormPost = async (req, res) => {
     try {
         const fields = Object.fromEntries(new URLSearchParams(await readBody(req)));
-        if (fields['form-name'] !== 'correction') { sendText(res, 404, 'Unknown form'); return; }
+        const form = fields['form-name'];
+        if (!['correction', 'inquiry'].includes(form)) { sendText(res, 404, 'Unknown form'); return; }
         if (fields['bot-field']) { sendText(res, 200, 'OK'); return; }
         const { target = '', page = '', lang = '', field = '', message = '', contact = '' } = fields;
         if (!message.trim()) { sendText(res, 400, 'message is required'); return; }
-        const entry = { receivedAt: new Date().toISOString(), target, page, lang, field, message: message.slice(0, 1000), contact: contact.slice(0, 100) };
+        const entry = { receivedAt: new Date().toISOString(), form, target, page, lang, field, message: message.slice(0, 1000), contact: contact.slice(0, 100) };
         fs.appendFileSync(CORRECTIONS_FILE, JSON.stringify(entry) + '\n');
         console.log('정보 수정 요청:', target, '-', field);
         sendText(res, 200, 'OK');

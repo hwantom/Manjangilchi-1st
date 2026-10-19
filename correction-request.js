@@ -25,16 +25,35 @@
             send: '依頼を送る', note: '内容を確認してから反映します。連絡先は返信にのみ使います。',
             empty: '正しい情報を入力してください。', sending: '送信中…', sent: '送信しました。ありがとうございます！', failed: '送信できませんでした。しばらくしてからもう一度お試しください。' }
     };
+    // General inquiries (home page "문의하기"): same dialog, different wording and topics, separate form name.
+    const INQUIRY_FIELDS = ['이용 문의', '기능 제안', '오류 신고', '제휴·협업', '기타'];
+    const INQUIRY = {
+        ko: { title: '문의하기', which: '어떤 내용인가요?', fields: INQUIRY_FIELDS, correct: '문의 내용',
+            example: '예) 엽전은 어디서 사나요? / 이런 기능이 있으면 좋겠어요', send: '문의 보내기',
+            note: '보내 주신 내용은 운영팀이 확인해요. 답변이 필요하면 연락처를 남겨 주세요.', empty: '문의 내용을 적어 주세요.', sent: '문의를 보냈어요. 고맙습니다!' },
+        en: { title: 'Contact us', which: 'What is it about?', fields: ['Using the market', 'Feature idea', 'Report a bug', 'Partnership', 'Other'],
+            correct: 'Your message', example: 'e.g. Where can I buy coins? / It would be great if…', send: 'Send message',
+            note: 'Our team reads every message. Leave a contact if you would like a reply.', empty: 'Please write your message.', sent: 'Message sent. Thank you!' },
+        zh: { title: '联系我们', which: '是关于什么的？', fields: ['使用咨询', '功能建议', '错误反馈', '合作洽谈', '其他'],
+            correct: '咨询内容', example: '例）在哪里买铜钱？ / 希望能有这样的功能', send: '发送咨询',
+            note: '运营团队会查看您的留言。如需回复，请留下联系方式。', empty: '请填写咨询内容。', sent: '已发送，谢谢！' },
+        ja: { title: 'お問い合わせ', which: 'どのような内容ですか？', fields: ['ご利用について', '機能の提案', '不具合の報告', '提携・協業', 'その他'],
+            correct: 'お問い合わせ内容', example: '例）ヨプジョンはどこで買えますか？ / こんな機能があると嬉しいです', send: '送信する',
+            note: '運営チームが確認します。返信が必要な場合は連絡先をご記入ください。', empty: 'お問い合わせ内容を入力してください。', sent: '送信しました。ありがとうございます！' }
+    };
     const currentLang = () => { try { return localStorage.getItem('tongin_lang') || 'ko'; } catch { return 'ko'; } };
     let dialog;
 
     const encode = data => new URLSearchParams(data).toString();
 
-    function build(lang) {
-        const T = TEXT[lang] || TEXT.ko;
+    function build(lang, kind) {
+        const base = TEXT[lang] || TEXT.ko;
+        const T = kind === 'inquiry' ? {...base, ...(INQUIRY[lang] || INQUIRY.ko)} : base;
+        const values = kind === 'inquiry' ? INQUIRY_FIELDS : FIELDS;
         dialog = document.createElement('dialog');
         dialog.id = 'correctionDialog';
         dialog.dataset.lang = lang;
+        dialog.dataset.kind = kind;
         dialog.className = 'w-[calc(100%-2rem)] max-w-md rounded-3xl p-0 shadow-2xl backdrop:bg-black/60';
         dialog.innerHTML = `
             <form method="dialog" class="p-6 space-y-4 text-[#2B2621]" novalidate>
@@ -52,7 +71,7 @@
                 <fieldset>
                     <legend class="text-xs font-bold text-gray-500 mb-2">${T.which}</legend>
                     <div class="flex flex-wrap gap-2">
-                        ${FIELDS.map((f, i) => `<label class="cursor-pointer"><input type="radio" name="field" value="${f}" class="peer sr-only" ${i === 0 ? 'checked' : ''}><span class="inline-block rounded-full border border-gray-200 px-3 py-1.5 text-xs font-bold text-gray-600 peer-checked:bg-[#2B2621] peer-checked:text-white peer-checked:border-[#2B2621] peer-focus-visible:ring-2 peer-focus-visible:ring-[#A68A64]">${T.fields[i]}</span></label>`).join('')}
+                        ${values.map((f, i) => `<label class="cursor-pointer"><input type="radio" name="field" value="${f}" class="peer sr-only" ${i === 0 ? 'checked' : ''}><span class="inline-block rounded-full border border-gray-200 px-3 py-1.5 text-xs font-bold text-gray-600 peer-checked:bg-[#2B2621] peer-checked:text-white peer-checked:border-[#2B2621] peer-focus-visible:ring-2 peer-focus-visible:ring-[#A68A64]">${T.fields[i]}</span></label>`).join('')}
                     </div>
                 </fieldset>
                 <label class="block">
@@ -86,12 +105,12 @@
             try {
                 const response = await fetch('/', {
                     method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: encode({ 'form-name': 'correction', 'bot-field': el('bot-field').value, target: el('target').value,
+                    body: encode({ 'form-name': kind, 'bot-field': el('bot-field').value, target: el('target').value,
                         page: el('page').value, lang: el('lang').value, field: el('field').value, message, contact: el('contact').value.trim() })
                 });
                 if (!response.ok) throw new Error(response.status);
                 status.className = 'text-xs font-bold text-emerald-600'; status.textContent = T.sent;
-                window.mjTrack?.('correction_request_submit', { target: el('target').value, field: el('field').value });
+                window.mjTrack?.(kind === 'inquiry' ? 'inquiry_submit' : 'correction_request_submit', { target: el('target').value, field: el('field').value });
                 setTimeout(() => dialog.open && dialog.close(), 1200);
             } catch {
                 status.className = 'text-xs font-bold text-red-600'; status.textContent = T.failed;
@@ -99,10 +118,10 @@
         });
     }
 
-    function open({ target = '만장일치 정보', label, page = location.pathname } = {}) {
+    function open({ target = '만장일치 정보', label, page = location.pathname, kind = 'correction' } = {}) {
         const lang = currentLang();
-        if (dialog && dialog.dataset.lang !== lang) { dialog.remove(); dialog = null; }
-        if (!dialog) build(lang);
+        if (dialog && (dialog.dataset.lang !== lang || dialog.dataset.kind !== kind)) { dialog.remove(); dialog = null; }
+        if (!dialog) build(lang, kind);
         const form = dialog.querySelector('form');
         form.reset();
         form.elements.namedItem('target').value = target;
@@ -118,7 +137,8 @@
         if (!trigger) return;
         e.preventDefault();
         e.stopPropagation();
-        open({ target: trigger.dataset.correctionTarget, label: trigger.dataset.correctionLabel, page: trigger.dataset.correctionPage || location.pathname });
+        open({ target: trigger.dataset.correctionTarget, label: trigger.dataset.correctionLabel, page: trigger.dataset.correctionPage || location.pathname,
+            kind: trigger.dataset.correctionKind === 'inquiry' ? 'inquiry' : 'correction' });
     }, true);
 
     root.openCorrectionRequest = open;
