@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 // Node 22+; values already set by the host take precedence.
 if (typeof process.loadEnvFile === 'function' && fs.existsSync(path.join(__dirname, '.env'))) process.loadEnvFile(path.join(__dirname, '.env'));
-const recommendFunction = require('./netlify/functions/recommend.js');
 const adminMenuFunction = require('./netlify/functions/admin-menu.js');
 
 const root = __dirname;
@@ -136,7 +135,7 @@ const server = http.createServer((req, res) => {
         handleFormPost(req, res);
         return;
     }
-    const fn = { '/.netlify/functions/recommend': recommendFunction, '/.netlify/functions/admin-menu': adminMenuFunction }[pathname];
+    const fn = { '/.netlify/functions/admin-menu': adminMenuFunction }[pathname];
     if (fn) {
         handleFunction(req, res, fn);
         return;
@@ -148,6 +147,5 @@ const server = http.createServer((req, res) => {
 server.listen(port, '127.0.0.1', () => {
     console.log(`Manjanilchi local server`);
     console.log(`URL: http://127.0.0.1:${port}/index.html`);
-    console.log(`OpenAI proxy: http://127.0.0.1:${port}/.netlify/functions/recommend`);
     console.log(`Keep this window open while using the site.`);
 });

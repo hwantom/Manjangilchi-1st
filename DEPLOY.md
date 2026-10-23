@@ -25,8 +25,6 @@
 
 | Key | Value (값) | 용도 |
 | :--- | :--- | :--- |
-| `OPENAI_API_KEY` | (OpenAI API 키 입력) | 서버(Functions)에서 AI 추천 이유 생성 시 사용 |
-| `OPENAI_MODEL` | `gpt-5.5` | AI 추천 이유 생성 모델 |
 | `GOOGLE_MAPS_API_KEY` | (Google Maps API 키 입력) | 지도 표시용 (config.js 생성용) |
 | `MAP_ID` | `8fbca58624e4405a846adbea` | 지도 스타일 ID |
 | `SHEET_ID` | (Google Sheet ID 입력) | 구글 시트 데이터 연동 |
@@ -36,10 +34,9 @@
 ## 5. 배포 시작 (Deploy)
 모든 설정이 끝났으면 **Deploy** 버튼을 누르세요. 
 
-> **보안 알림**: 이제 추천 기능은 `netlify/functions/recommend.js`를 통해 실행됩니다. 이 방식은 브라우저에 API 키가 절대 노출되지 않으므로 안심하고 사용하셔도 됩니다.
+> **보안 알림**: OpenAI 추천 함수(`recommend.js`)는 사이트에서 쓰지 않아 삭제했습니다. Netlify에 `OPENAI_API_KEY`가 남아 있다면 지워도 됩니다.
 
 ---
 
 ### ⚠️ 주의사항
-*   **OpenAI API 보안**: 이제 API 키가 서버 사이드에서만 관리되므로 훨씬 안전합니다. 
 *   **Google Maps API 키 보안**: Google Cloud Console에서 **'HTTP 리퍼러 제한'**을 꼭 설정하세요. Netlify 주소(예: `*.netlify.app`)만 허용하도록 지정하면 키 도용을 막을 수 있습니다.
