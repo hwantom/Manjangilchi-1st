@@ -15,7 +15,7 @@
         document.head.prepend(base);
     </script>
 
-    <script src="analytics.js?v=1"></script>
+    <script src="analytics.js?v=2"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Tongin Market Guide</title>
@@ -173,6 +173,7 @@
                 footerAddr: "위치: 서울특별시 종로구 자하문로15길 18 (통인동, 통인시장)",
                 footerHours: "도시락카페 운영시간: 11:00 - 17:00 (월요일 & 3째주 일요일 휴무)",
                 footerContact: "문의: 통인시장 고객만족센터 02-722-0936",
+                footerAnalytics: "서비스 개선을 위해 방문 통계(스크롤·클릭 등)를 익명으로 수집합니다.",
                 footerLinkMap: "시장 지도",
                 footerLinkGuide: "엽전도시락 가이드",
                 footerLinkFacility: "편의시설 안내",
@@ -253,6 +254,7 @@
                 footerAddr: "Location: 18, Jahamun-ro 15-gil, Jongno-gu, Seoul (Tongin Market)",
                 footerHours: "Dosirak Cafe hours: 11:00 - 17:00 (Closed Mon & 3rd Sun)",
                 footerContact: "Contact: Tongin Market Customer Center 02-722-0936",
+                footerAnalytics: "We collect anonymous visit statistics (scrolls, clicks) to improve the service.",
                 footerLinkMap: "Market Map",
                 footerLinkGuide: "Yeopjeon Dosirak Guide",
                 footerLinkFacility: "Facilities",
@@ -333,6 +335,7 @@
                 footerAddr: "地址: 首尔特别市钟路区紫霞门路15街18号 (通仁市场)",
                 footerHours: "便当咖啡厅营业时间: 11:00 - 17:00 (周一及第3个周日休息)",
                 footerContact: "咨询: 通仁市场客户服务中心 02-722-0936",
+                footerAnalytics: "为改进服务，我们会匿名收集访问统计（滚动、点击等）。",
                 footerLinkMap: "市场地图",
                 footerLinkGuide: "铜钱便当指南",
                 footerLinkFacility: "便利设施",
@@ -413,6 +416,7 @@
                 footerAddr: "所在地: ソウル特別市鐘路区紫霞門路15ギル18 (通仁市場)",
                 footerHours: "弁当カフェ営業時間: 11:00 - 17:00 (月曜 & 第3日曜休み)",
                 footerContact: "お問い合わせ: 通仁市場カスタマーセンター 02-722-0936",
+                footerAnalytics: "サービス改善のため、訪問統計（スクロール・クリックなど）を匿名で収集しています。",
                 footerLinkMap: "市場地図",
                 footerLinkGuide: "ヨプジョン弁当ガイド",
                 footerLinkFacility: "便利施設",
@@ -2065,6 +2069,7 @@ const getStoreMenuItems = StoreMenus.getItems;
             };
 
             const [mainTab, setMainTab] = useState(() => getInitialTab());
+            useEffect(() => { window.mjSetTab?.(mainTab); }, [mainTab]);
 
             const switchTab = useCallback((targetTab, extraParams = {}) => {
                 if (targetTab === 'MAP') {
@@ -2249,7 +2254,7 @@ const getStoreMenuItems = StoreMenus.getItems;
                     <>
                         <div className="flex-1 flex flex-col">
                             {/* Hero Section */}
-                            <div className="-mx-6 relative">
+                            <div data-mj-section="hero" className="-mx-6 relative">
                                 <LandingCarousel />
                                 {/* Bottom Dark Gradient Overlay */}
                                 <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/80 via-black/35 to-transparent pointer-events-none z-10" />
@@ -2280,7 +2285,7 @@ const getStoreMenuItems = StoreMenus.getItems;
                             </div>
 
                             {/* Main Actions Section */}
-                            <div className="-mx-6 px-6 py-4 bg-white flex gap-3">
+                            <div data-mj-section="actions" className="-mx-6 px-6 py-4 bg-white flex gap-3">
                                 <button
                                     onClick={() => {
                                         track('landing_cta_click', { cta_name: 'map' });
@@ -2307,7 +2312,7 @@ const getStoreMenuItems = StoreMenus.getItems;
                             <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* 4 Quick Icons Grid Section (Gwangjang Market Style) */}
-                            <div className="-mx-6 px-6 py-6 bg-white space-y-4">
+                            <div data-mj-section="explore" className="-mx-6 px-6 py-6 bg-white space-y-4">
                                 <div className="text-center space-y-1">
                                     <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionExplore}</h3>
                                     <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto"></div>
@@ -2347,7 +2352,7 @@ const getStoreMenuItems = StoreMenus.getItems;
                             <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* Full-bleed Tongin Market Story / Yeopjeon Banner Section (Gwangjang Market Story Style) */}
-                            <div className="-mx-6 px-6 py-8 bg-[#2C251E] text-white space-y-4 relative overflow-hidden shadow-inner">
+                            <div data-mj-section="yeopjeon" className="-mx-6 px-6 py-8 bg-[#2C251E] text-white space-y-4 relative overflow-hidden shadow-inner">
                                 {/* Background pattern tint */}
                                 <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#A68A64_1px,transparent_1px)] [background-size:16px_16px]"></div>
 
@@ -2374,7 +2379,7 @@ const getStoreMenuItems = StoreMenus.getItems;
                             <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* Store Showcase Section */}
-                            <div className="-mx-6 px-6 py-6 bg-white space-y-4">
+                            <div data-mj-section="stores" className="-mx-6 px-6 py-6 bg-white space-y-4">
                                 <div className="flex justify-between items-center relative">
                                     <div className="flex-1 text-center space-y-1 pl-12">
                                         <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionStore}</h3>
@@ -2442,7 +2447,7 @@ const getStoreMenuItems = StoreMenus.getItems;
                             <div className="h-2.5 bg-gray-100/90 -mx-6"></div>
 
                             {/* 통인시장 근처 코스 Section (인스타그램 연동 & 슬라이드 썸네일) */}
-                            <div className="-mx-6 px-6 py-6 bg-white space-y-4">
+                            <div data-mj-section="course" className="-mx-6 px-6 py-6 bg-white space-y-4">
                                 <div className="text-center space-y-1">
                                     <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{t.sectionCourse}</h3>
                                     <div className="w-6 h-0.5 bg-[#A68A64]/40 mx-auto"></div>
@@ -2457,7 +2462,7 @@ const getStoreMenuItems = StoreMenus.getItems;
 
                             {/* Contact / inquiry: opens the shared dialog in inquiry mode (Netlify form "inquiry") */}
                             {/* Background: market illustration (1672×941) shown whole at full width; the text sits in its blank centre. */}
-                            <section className="-mx-6 relative bg-[#F7F0E5] bg-no-repeat bg-center bg-cover flex items-center justify-center"
+                            <section data-mj-section="inquiry" className="-mx-6 relative bg-[#F7F0E5] bg-no-repeat bg-center bg-cover flex items-center justify-center"
                                 style={{ backgroundImage: "url('assets/inquiry-bg.webp')", aspectRatio: '1672 / 941', minHeight: '240px' }}>
                                 <div className="w-[72%] max-w-[320px] text-center space-y-2 -mt-6">
                                     <h3 className="text-lg font-extrabold text-gray-900 tracking-tight">{UiText.get(lang).inquiryTitle}</h3>
@@ -2471,7 +2476,7 @@ const getStoreMenuItems = StoreMenus.getItems;
                             </section>
 
                             {/* Footer - Full Bleed */}
-                            <footer className="mt-auto pt-8 pb-12 bg-gray-50 border-t border-gray-200/80 -mx-6 px-6 text-gray-500">
+                            <footer data-mj-section="footer" className="mt-auto pt-8 pb-12 bg-gray-50 border-t border-gray-200/80 -mx-6 px-6 text-gray-500">
                                 <div className="space-y-4">
                                     {/* Brand Header */}
                                     <div className="flex items-center gap-2">
@@ -2485,6 +2490,7 @@ const getStoreMenuItems = StoreMenus.getItems;
                                         <p>{t.footerAddr}</p>
                                         <p>{t.footerHours}</p>
                                         <p>{t.footerContact}</p>
+                                        <p className="text-gray-400">{t.footerAnalytics}</p>
                                     </div>
 
                                     {/* Links & Copyright */}

@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin-menu.html
 
-Sitemap: https://hwantom.github.io/Manjangilchi-1st/sitemap.xml
+Sitemap: https://manjangilchi-tongin.netlify.app/sitemap.xml
